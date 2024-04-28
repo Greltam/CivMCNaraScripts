@@ -1,6 +1,6 @@
 //For a list of Scripts, 
 //download each one from github and replace in Macros folder
-directoryPath = "NaraGH/"
+directoryPath = "./"
 ListOfAllScripts = [
     "McUtilityFile",
     "McIceRoading",
