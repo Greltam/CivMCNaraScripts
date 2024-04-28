@@ -2,6 +2,7 @@
 //download each one from github and replace in Macros folder
 directoryPath = "./"
 ListOfAllScripts = [
+    "NaraGHScriptDownloader",
     "McUtilityFile",
     "McIceRoading",
     "McOakHiTechReplant",
