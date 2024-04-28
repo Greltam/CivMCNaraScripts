@@ -5,7 +5,7 @@ ListOfAllScripts = [
     "McUtilityFile",
     "McIceRoading",
     "McOakHiTechReplant",
-    "McOakHitTechChop",
+    "McOakHiTechChop",
     "McMelonTowerMedTech"
 ]
 
