@@ -43,7 +43,7 @@ saplingId = "minecraft:oak_sapling"
 //change starting layer/row/tree to your current spot
 //set restarting to true
 //Stand directly in front of tree trunk when restarting.
-restarting = true //default: restarting = false
+restarting = false //default: restarting = false
 
 startingLayer = 1 //default: startingLayer = 1
 startingRow = 1 //default: startingRow = 1
