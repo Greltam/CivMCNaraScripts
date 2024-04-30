@@ -10,3 +10,4 @@ Directions!
   5. Profit!
 
 Disclaimer: New scripts added require 2 runs of the NaraGHScriptDownloader.js to first update the updater, then download the new script
+If altering scripts, make sure to rename or move into a different folder so the auto-downloader/updater script doesn't destroy your altered script
