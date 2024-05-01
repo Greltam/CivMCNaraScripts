@@ -13,9 +13,11 @@
 ------------------------*/
 
 //Directions: Start script while standing on that layers lodestone
-//Start with Fortune 3 tool(Any, golden forge to get a cheap one)
+//Start with Fortune 3 tool in mainhand(Any, golden forge to get a cheap one)
 
-//Restarting: Stand directly on the current row's lodestone
+//Restarting: Stand directly on the current layer's lodestone
+
+//Collector: Lodestone elevator @ 2979, 5140
 /*-----------------------
    0.1 Player Requirements to Start End
 -----------------------*/
