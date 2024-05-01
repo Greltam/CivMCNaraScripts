@@ -212,7 +212,8 @@ function tossLogs(row){
     if(row % 2 == 1){xLook = 30}
     util.tossAllSpecificItems(
         ["minecraft:oak_log","minecraft:oak_sapling",
-         "minecraft:stick", "minecraft:apple"],
+         "minecraft:stick", "minecraft:apple",
+         "minecraft:oak_leaves"],
         xLook, yLook)
 }
 
