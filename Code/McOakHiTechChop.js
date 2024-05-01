@@ -206,7 +206,7 @@ function chopTree(layer, row, tree){
 }
 
 function tossLogs(row){
-    Chat.log("Tossing items")
+    //Chat.log("Tossing items")
     xLook = -150
     yLook = 0
     if(row % 2 == 1){xLook = 30}
