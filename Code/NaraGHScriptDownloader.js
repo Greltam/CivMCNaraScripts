@@ -7,7 +7,8 @@ ListOfAllScripts = [
     "McIceRoading",
     "McOakHiTechReplant",
     "McOakHiTechChop",
-    "McMelonTowerMedTech"
+    "McMelonTowerMedTech",
+    "McCarrotTower"
 ]
 
 function scriptNameToGithubURL(scriptName){
