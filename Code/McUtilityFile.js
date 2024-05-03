@@ -563,6 +563,26 @@ function craftRecipe(recipeName, craftAll){
     }while(craftAll)
 }
 
+//turn some text into JSON text with included color
+function simpleJSONString(text, color){
+    return "{\"text\":\"" + text + "\",\"color\":\"" + color + "\"}"
+}
+
+//combine multiple JSON text strings together
+//Would probably be wise to use a StringBuilder
+function wrapJSONStringsTogether(JSONStringArray){
+    completeJSONString = "["
+    for(let i = 0; i < JSONStringArray.length; i++){
+        completeJSONString = completeJSONString + JSONStringArray[i]
+        if(i != (JSONStringArray.length - 1)){
+            completeJSONString = completeJSONString + ","
+        }
+    }
+    completeJSONString = completeJSONString + "]"
+    return completeJSONString
+}
+
+
 //You can alias this files functions with a different name while exporting
 //We don't do this because we are not pepega.
 module.exports = {
@@ -614,5 +634,7 @@ module.exports = {
     nextHotbar: nextHotbar,
     inventoryContains: inventoryContains,
     getRecipeIndex : getRecipeIndex,
-    craftRecipe: craftRecipe
+    craftRecipe: craftRecipe,
+    simpleJSONString : simpleJSONString,
+    wrapJSONStringsTogether : wrapJSONStringsTogether
 }
