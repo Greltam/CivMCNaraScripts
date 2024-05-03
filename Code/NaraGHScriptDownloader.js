@@ -11,6 +11,7 @@ ListOfAllScripts = [
     //Auxiliary helper files
     "McIceRoading",
     "McCraftChests",
+    "McCraftBottles",
     
     //Main Farm files
     "McOakHiTechReplant",
