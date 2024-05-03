@@ -2,9 +2,17 @@
 //download each one from github and replace in Macros folder
 directoryPath = "./"
 ListOfAllScripts = [
+    //Self updating
     "NaraGHScriptDownloader",
+    
+    //Main utility file
     "McUtilityFile",
+    
+    //Auxiliary helper files
     "McIceRoading",
+    "McCraftChests",
+    
+    //Main Farm files
     "McOakHiTechReplant",
     "McOakHiTechChop",
     "McMelonTowerMedTech",
