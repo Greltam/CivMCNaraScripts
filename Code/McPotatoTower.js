@@ -3,7 +3,7 @@
     !!! Script starts at 3997, 7388, 103 !!!
     Find 1.2 Player Configurables to adjust for script restarts
 
-    SaTa Potato Tower Script on CivMC @ 4000, 7400, 104
+    GSEZ Carrot Tower Script on CivMC @ 4000, 7400, 104
     Written by Greltam 5/2/2024
 
     Tab-outable.
@@ -51,7 +51,7 @@ layerHeight = 3 //default: layerHeight = 3
 
 //Time it takes to cross sides
 //replace after doing hitech stuff
-secondsToHarvest = 7 
+secondsToHarvest = 6
 
 //direction to look at carrots to harvest while strafing
 harvestLookX = 0
@@ -80,7 +80,7 @@ yStartPosition = 103
 /*-------------------
    3 Functions Start
 -------------------*/
-
+//new 
 function harvestDoubleStrip(){
     if(util.checkQuit()){
         return
@@ -117,7 +117,7 @@ function moveToNextLayer(){
     util.simpleMove("key.keyboard.left.shift",harvestLookX,harvestLookY,10)
 }
 
-function tossPotatoes(){
+function tossCarrots(){
     //Chat.log("Tossing items")
     util.tossAllSpecificItems(
         ["minecraft:potato","minecraft:poisonous_potato"],
@@ -129,7 +129,7 @@ function tossPotatoes(){
 function setStartingLayer(){
     playerY = util.player.getY()
     //set layer
-    startingLayer = ((playerY - yStartPosition) / layerHeight) + 1
+    startingLayer = ((yStartPosition - playerY ) / layerHeight) + 1
     startingLayer = Math.floor(startingLayer)
     Chat.log("Starting layer = " + startingLayer)
 }
@@ -160,7 +160,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
             break
         }
         harvestDoubleStrip()
-        tossPotatoes()
+        tossCarrots()
     }
 
     //move to the start of the next layer
