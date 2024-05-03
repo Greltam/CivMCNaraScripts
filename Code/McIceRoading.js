@@ -51,6 +51,30 @@ jumpKey = "key.keyboard.space"            //default: "key.keyboard.space"
    2 Global Variables End
 -----------------------*/
 
+/*------------------------
+   2.1 Formatted Strings Start
+------------------------*/
+greetingsText = Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("Zeal", "dark_aqua"),
+        util.simpleJSONString(" Ice Roader, boosting Nitro!!", "aqua")
+        ])
+)
+    
+quitText =  Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("To Quit, Press: ", "red"),
+        util.simpleJSONString(util.getQuitKey(), "white")
+        ])
+)
+
+finishedText =  Chat.createTextHelperFromJSON(
+    util.simpleJSONString("Out of Nitro.", "aqua")
+)
+/*-----------------------
+   2.1 Formatted Strings End
+-----------------------*/
+
 /*-------------------
    3 Functions Start
 -------------------*/
@@ -76,9 +100,8 @@ function snapToCardinal(){
 /*-------------------
    4 Program Start
 -------------------*/
-
-Chat.log("Zeal Ice Roader, boosting Nitro!!")
-Chat.log("Press: " + util.getQuitKey() + " to end script")
+Chat.log(greetingsText)
+Chat.log(quitText)
 
 snapToCardinal()
 
@@ -100,7 +123,7 @@ while(!util.checkQuit()){
     KeyBind.key(useKey, false)
     KeyBind.key(jumpKey, false)
 
-Chat.log("Out of Nitro. ")
+Chat.log(finishedText)
 
 /*-------------------
    4 Program End
