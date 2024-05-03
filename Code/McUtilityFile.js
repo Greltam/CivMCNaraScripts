@@ -517,6 +517,19 @@ function nextHotbar(){
     playerInv.close()
 }
 
+//Looks through the inventory to check for a certain itemID existing
+function inventoryContains(itemID){
+    inventory = Player.openInventory()
+    for(let i = 0; i < inventory.getTotalSlots(); i++){
+        if(!inventory.getSlot(i).isEmpty()){
+            if(inventory.getSlot(i).getItemID() === itemID){
+                return true
+            }
+        }
+    }
+    return false
+}
+
 //helper function to get index of desired recipeName, if possible.
 //players green recipe book must be open to work
 function getRecipeIndex(recipeName){
@@ -599,5 +612,7 @@ module.exports = {
     tossAllSpecificItems : tossAllSpecificItems,
     selectHotbar: selectHotbar,
     nextHotbar: nextHotbar,
-    craftRecipe: craftRecipe,
+    inventoryContains: inventoryContains,
+    getRecipeIndex : getRecipeIndex,
+    craftRecipe: craftRecipe
 }
