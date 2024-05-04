@@ -275,14 +275,17 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 0.2)
                 
             //toss logs into collector
-            tossLogs(j)            
-                            
+            tossLogs(j)
+            //move to next row, sitting flush with the block so tree bridge chop is already aligned
+            util.simpleMove("key.keyboard.w", -90,0,50)
+            /*                
             //move over to next row
             util.moveToLocation(
                 xChopStartPosition + (j * 6),
                 zStartPosition - 86, 
                 yStartPosition + ((i-1) * layerHeight) - 1 + util.getEyeHeight(),
                 0.2)
+            */
         }
         else{
             //move to end of row
@@ -302,12 +305,16 @@ for(let i = startingLayer; i <= totalLayers; i++){
             if(j == rowsPerLayer){
                 break
             }
+            //move to next row, sitting flush with the block so tree bridge chop is already aligned
+            util.simpleMove("key.keyboard.w", -90,0,50)
+            /*
             //move over to next row
             util.moveToLocation(
                 xChopStartPosition + (j * 6),
                 zStartPosition - 1, 
                 yStartPosition + ((i-1) * layerHeight) - 1 + util.getEyeHeight(),
                 0.2)
+            */
         }
         
         //if restarting, set restart to false and change starting back to defaults
