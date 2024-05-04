@@ -245,10 +245,6 @@ for(let i = startingLayer; i <= totalLayers; i++){
             xChopStartPosition, zStartPosition, 
             yStartPosition + ((i-1) * layerHeight) - 1 + util.getEyeHeight(),
             0.2)
-        util.moveToLocation(
-            xChopStartPosition - 0.1, zStartPosition - 1, 
-            yStartPosition + ((i-1) * layerHeight) - 1 + util.getEyeHeight(),
-            0.2)
     }
     
     //turn on fall protection
