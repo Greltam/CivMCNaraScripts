@@ -154,7 +154,7 @@ function chopTree(layer, row, tree){
 //separate for even/odd rows
     if(row % 2 == 1){//odd row, starting bottom and going up
         xDestination = xDestination - 0.2 //stay to the side to not hit glass
-        zDestination = zStartPosition - 5 - ((tree-1) * 5) - 0.18
+        zDestination = zStartPosition - 5 - ((tree-1) * 5) + 0.18
     }
     else{
         xDestination = xDestination + 0.2 //stay to the side to not hit glass
