@@ -172,6 +172,127 @@ function complexMove(keyArray, xAngle, yAngle, ticks){
     }
 }
 
+//testing new movement function to get around unfair advantage
+//from moveToLocation alternating between 180 & -180
+function WASDToLocation(keyArray, xPos, zPos, tolerance){
+    //aim for middle of block
+    xPos = xPos + 0.5
+    zPos = zPos + 0.5
+
+    //define variables for main loop.
+    wKey = false
+    aKey = false
+    sKey = false
+    dKey = false
+    //Cutoff for key activation when multiplying key and destination vectors 
+    normalTolerance = 0.5
+    
+    //Normalized Vector direction for each movement key
+    yaw = util.player.getYaw() + 180 //idk why + 180 but makes it work
+    wRadians = (yaw * (Math.PI/180)) 
+    wVector = [Math.sin(wRadians), Math.cos(wRadians)]
+    dRadians = ((yaw + 90) * (Math.PI/180))
+    dVector = [Math.sin(dRadians), Math.cos(dRadians)]
+    sRadians = ((yaw + 180) * (Math.PI/180))
+    sVector = [Math.sin(sRadians), Math.cos(sRadians)]
+    aRadians = ((yaw + 270) * (Math.PI/180))
+    aVector = [Math.sin(aRadians), Math.cos(aRadians)]
+    
+    //Normalized Vector for final destination
+    //No idea why I have to flip playerZ and zPos
+    destVector = [xPos - player.getX(), player.getZ() - zPos]
+    destDivisor = Math.sqrt(
+        (destVector[0] * destVector[0]) + (destVector[1] * destVector[1]))
+    destNormal = [destVector[0] /destDivisor, destVector[1] /destDivisor]
+    
+    
+    //bind all keyArrays
+    for(let i = 0; i < keyArray.length; i++){
+        KeyBind.key(keyArray[i], true)
+    }
+    
+    while(Math.abs(Math.abs(player.getX()) - Math.abs(xPos)) > tolerance
+        || Math.abs(Math.abs(player.getZ()) -  Math.abs(zPos)) > tolerance)
+    {
+        if(checkQuit()){
+            break
+        }
+        //Recalculate Normalized Vector direction for each movement key
+        yaw = util.player.getYaw() + 180
+        wRadians = (yaw * (Math.PI/180))
+        wVector[0] = Math.sin(wRadians)
+        wVector[1] = Math.cos(wRadians)
+        dRadians = ((yaw + 90) * (Math.PI/180))
+        dVector[0] = Math.sin(dRadians)
+        dVector[1] = Math.cos(dRadians)
+        sRadians = ((yaw + 180) * (Math.PI/180))
+        sVector[0] = Math.sin(sRadians)
+        sVector[1] = Math.cos(sRadians)
+        aRadians = ((yaw + 270) * (Math.PI/180))
+        aVector[0] = Math.sin(aRadians)
+        aVector[1] = Math.cos(aRadians)
+        
+        //Recalculate Normalized Vector for final destination
+        destVector[0] = xPos - player.getX()
+        destVector[1] = player.getZ() - zPos 
+        destDivisor = Math.sqrt(
+            (destVector[0] * destVector[0]) + (destVector[1] * destVector[1]))
+        destNormal[0] = destVector[0] / destDivisor
+        destNormal[1] = destVector[1] / destDivisor
+        
+        //Check if the magnitude of WASD vector lines up with Dest vector
+        //and activate key
+        if(wVector[0] * destNormal[0] > normalTolerance 
+            || wVector[1] * destNormal[1] > normalTolerance){
+            wKey = true
+        }
+        
+        if(dVector[0] * destNormal[0] > normalTolerance 
+            || dVector[1] * destNormal[1] > normalTolerance){
+            dKey = true
+        }
+        
+        if(sVector[0] * destNormal[0] > normalTolerance 
+            || sVector[1] * destNormal[1] > normalTolerance){
+            sKey = true
+        }
+        
+        if(aVector[0] * destNormal[0] > normalTolerance
+            || aVector[1] * destNormal[1] > normalTolerance){
+            aKey = true
+        }
+        
+        //Bind keys
+        if(wKey){ KeyBind.key("key.keyboard.w", true)}
+        else{ KeyBind.key("key.keyboard.w", false)}
+        if(aKey){ KeyBind.key("key.keyboard.a", true)}
+        else{ KeyBind.key("key.keyboard.a", false)}
+        if(sKey){ KeyBind.key("key.keyboard.s", true)}
+        else{ KeyBind.key("key.keyboard.s", false)}
+        if(dKey){ KeyBind.key("key.keyboard.d", true)}
+        else{ KeyBind.key("key.keyboard.d", false)}
+        //Chat.log("Normal x:" + destNormal[0] + " Normal z:" + destNormal[1])
+        //Chat.log("W:" + wKey + " A:" + aKey + " S:" + sKey + " D:" + dKey)
+        //reset keys for next tick
+        wKey = false
+        aKey = false
+        sKey = false
+        dKey = false
+            
+        spinTicks(1)
+    }   
+    
+    
+    //unbind all keyArrays
+    for(let i = 0; i < keyArray.length; i++){
+        KeyBind.key(keyArray[i], false)
+    }
+    KeyBind.key("key.keyboard.w", false)
+    KeyBind.key("key.keyboard.a", false)
+    KeyBind.key("key.keyboard.s", false)
+    KeyBind.key("key.keyboard.d", false)
+    return true
+}
 //Walk character towards x,z, stopping within tolerance limit
 //If we get stuck, return false if we make it to dest we return true
 function complexMoveToLocation(keyArray, xPos, zPos, yPos, tolerance){
@@ -615,6 +736,7 @@ module.exports = {
     spinTicks: spinTicks,
     simpleMove: simpleMove,
     complexMove: complexMove,
+    WASDToLocation : WASDToLocation,
     complexMoveToLocation : complexMoveToLocation,
     moveToLocation : moveToLocation,
     simpleInteract: simpleInteract,
