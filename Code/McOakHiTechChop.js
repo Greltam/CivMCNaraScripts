@@ -79,7 +79,7 @@ treeBridgeLength = 5 //default: treeBridgeLength = 5
 /*------------------------
    2 Global Variables Start
 ------------------------*/
-farmName = "GSEZ Carrot Tower"
+farmName = "GSEZ Oak Tower"
 regrowthTime = 23.5 * 3600 //hours multiplied by seconds per hour
 
 //Player starts script at this location
