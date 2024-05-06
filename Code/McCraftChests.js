@@ -143,7 +143,7 @@ if(continueCrafting){
 
 //util.resetKeyBinds()
 
-Chat.log("Nice Chests, but I think I need to exam them again...")
+Chat.log("Nice Chests bro.")
 
 /*-------------------
    4 Program End
