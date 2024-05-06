@@ -19,9 +19,13 @@ replaceToolEnchantments = false //When replacing tool, use exact enchantments
 eyeHeight = Player.getPlayer().getEyeHeight()
 player = Player.getPlayer()
 
+//added for Discord logging of farm usage
+tossedItemsArray = [] // array of ["itemId",quantity] that script tosses
+scriptStartTime = 0
+scriptEndTime = 0
+
 SINGLE_CHEST = 1
 DOUBLE_CHEST = 2
-
 function getQuitKey(){
     return quitKey
 }
@@ -57,6 +61,59 @@ function setToolSaveDurability(dura){
 
 function getEyeHeight(){
     return eyeHeight
+}
+
+function getScriptStartTime(){
+    return scriptStartTime
+}
+//send variable time as Time.time() which is given in milliseconds
+//alter to seconds to work with Unix timestamps
+function setScriptStartTime(time){
+    scriptStartTime = Math.floor(time/1000)
+}
+function getScriptEndTime(){
+    return scriptEndTime
+}
+//send variable time as Time.time() which is given in milliseconds
+//alter to seconds to work with Unix timestamps
+function setScriptEndTime(time){
+    scriptEndTime = Math.floor(time/1000)
+}
+function getScriptElapsedTime(){
+    return scriptEndTime - scriptStartTime
+}
+function logScriptStart(farmName){
+    setScriptStartTime(Time.time())
+    Chat.say("/g ZealFarm " + farmName)
+    spinTicks(10)
+    Chat.say("/g ZealFarm " + "Launched: <t:" + scriptStartTime + ":t> <t:"
+        + scriptStartTime + ":D>")
+    spinTicks(10)
+}
+
+//regrowthTime is in seconds
+function logScriptEnd(farmName, regrowthTime){
+    setScriptEndTime(Time.time())
+    nextHarvest = Math.floor((Time.time()/1000) + regrowthTime)
+    hoursElapsed = Math.floor(getScriptElapsedTime()/60)
+    minutesElapsed = Math.floor(getScriptElapsedTime()%60)
+    if(minutesElapsed < 10){minutesElapsed = "0" + minutesElapsed}
+    
+    Chat.say("/g ZealFarm " + farmName)
+    spinTicks(10)
+    Chat.say("/g ZealFarm " + "Finished: <t:" + scriptEndTime + ":t> <t:"
+        + scriptEndTime + ":D>")
+    spinTicks(10)
+    Chat.say("/g ZealFarm " + "Regrown in: <t:" + nextHarvest + ":R> on "
+        +"<t:" + nextHarvest + ":t> <t:" + nextHarvest + ":D>")
+    spinTicks(10)
+    Chat.say("/g ZealFarm " + "Time Elapsed: " + hoursElapsed + ":" + minutesElapsed)
+    spinTicks(10)
+    for(let i = 0; i < tossedItemsArray.length; i++){
+        Chat.say("/g ZealFarm " + "Yield " + tossedItemsArray[i][0] +": "
+            + tossedItemsArray[i][1])
+        spinTicks(10)
+    }
 }
 
 //If player is using a tool, return durability, 
@@ -564,6 +621,22 @@ function chestAllItems(xLook, yLook, chestType, toChest){
     spinTicks(20)
 }
 
+//item is an ItemStackHelper that is being tossed
+function trackTossedItem(item){
+    //check for item name in list tossedItemsArray
+    for(let i = 0; i < tossedItemsArray.length; i++){
+        //if found, update quantity
+        if(tossedItemsArray[i][0] == item.getItemId()){
+            tossedItemsArray[i][1] += item.getCount()
+            return            
+        }
+    }
+    //item wasn't in list, add to list
+    tossedItemsArray.push([item.getItemId(),item.getCount()])
+    
+    return
+}
+
 //toss out items from slotStart for numslots while looking at x,y
 //refer to https://wiki.vg/Inventory for getting correct slot numbering
 function tossItems(xLook, yLook, slotStart, numSlots){
@@ -580,6 +653,7 @@ function tossItems(xLook, yLook, slotStart, numSlots){
         if(checkQuit()){
             return
         }
+        trackTossedItem(inv.getSlot(i))
         inv.click(i)
         spinTicks(10)
         inv.click(-999)
@@ -608,6 +682,9 @@ function tossAllSpecificItems(itemArray, xLook, yLook){
         //iterate through item array item types and check for match on current item
         for(let j = 0; j < itemArray.length; j++){
             if(itemArray[j] == currentItem.getItemId()){
+            
+                trackTossedItem(currentItem)
+                
                 inv.click(i)
                 spinTicks(10)
                 inv.click(-999)
@@ -708,6 +785,7 @@ function wrapJSONStringsTogether(JSONStringArray){
 //We don't do this because we are not pepega.
 module.exports = {
 //exporting variables
+    tossedItemsArray : tossedItemsArray,
     SINGLE_CHEST: SINGLE_CHEST,
     DOUBLE_CHEST: DOUBLE_CHEST,
     player: player,
@@ -728,6 +806,13 @@ module.exports = {
     getQuitFromFallingYLevel : getQuitFromFallingYLevel,
     setQuitFromFallingYLevel : setQuitFromFallingYLevel,
     getEyeHeight : getEyeHeight,
+    getScriptStartTime : getScriptStartTime,
+    setScriptStartTime : setScriptStartTime,
+    getScriptEndTime : getScriptEndTime,
+    setScriptEndTime : setScriptEndTime,
+    getScriptElapsedTime : getScriptElapsedTime,
+    logScriptStart : logScriptStart,
+    logScriptEnd : logScriptEnd,
     getToolSaveDurability : getToolSaveDurability,
     setToolSaveDurability : setToolSaveDurability,
     getToolDurability: getToolDurability,
