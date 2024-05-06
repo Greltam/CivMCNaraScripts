@@ -140,7 +140,7 @@ function moveToNextLayer(){
 }
 
 function tossMelons(){
-    Chat.log("Tossing items")
+    //Chat.log("Tossing items")
     xLook = 90
     yLook = -30
     util.tossAllSpecificItems(
@@ -155,7 +155,7 @@ function setStartingLayer(){
     //set layer
     startingLayer = ((yStartPosition - playerY) / layerHeight) + 1
     startingLayer = Math.floor(startingLayer)
-    Chat.log("starting layer = " + startingLayer)
+    //Chat.log("starting layer = " + startingLayer)
 }
 
 /*-------------------
