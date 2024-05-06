@@ -67,6 +67,8 @@ tossLookY = -25
 /*------------------------
    2 Global Variables Start
 ------------------------*/
+farmName = "GSEZ Carrot Tower"
+regrowthTime = 21.34 * 3600 //hours multiplied by seconds per hour
 
 //Player starts script at this location
 xStartPosition = 2977 
@@ -75,6 +77,40 @@ yStartPosition = 80
 
 /*-----------------------
    2 Global Variables End
+-----------------------*/
+
+/*------------------------
+   2.1 Formatted Strings Start
+------------------------*/
+greetingsText = Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("GSEZ", "dark_aqua"),
+        util.simpleJSONString(" Carrot", "gold"),
+        util.simpleJSONString(" Tower", "green"),
+        util.simpleJSONString(", booting", "gold")
+    ])
+)
+    
+quitText =  Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("To ", "white"),
+        util.simpleJSONString("Quit", "red"),
+        util.simpleJSONString(", Press: ", "white"),
+        util.simpleJSONString(util.getQuitKey(), "gold")
+    ])
+)
+
+finishedText =  Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("GSEZ", "dark_aqua"),
+        util.simpleJSONString(" Carrot", "gold"),
+        util.simpleJSONString(" Tower", "green"),
+        util.simpleJSONString(", shutting down...", "red")
+    ])
+)
+    
+/*-----------------------
+   2.1 Formatted Strings End
 -----------------------*/
 
 /*-------------------
@@ -131,7 +167,7 @@ function setStartingLayer(){
     //set layer
     startingLayer = ((playerY - yStartPosition) / layerHeight) + 1
     startingLayer = Math.floor(startingLayer)
-    Chat.log("Starting layer = " + startingLayer)
+    //Chat.log("Starting layer = " + startingLayer)
 }
 
 /*-------------------
@@ -141,9 +177,9 @@ function setStartingLayer(){
 /*-------------------
    4 Program Start
 -------------------*/
-
-Chat.log("Zeal Carrot Engines Revving Up")
-Chat.log("Press: " + util.getQuitKey() + " to end script")
+Chat.log(greetingsText)
+Chat.log(quitText)
+util.logScriptStart(farmName)
 
 //set starting layer in case restarting on another layer
 setStartingLayer()
@@ -180,7 +216,8 @@ KeyBind.key("key.mouse.right", false)
 KeyBind.key("key.mouse.left", false)
 
 
-Chat.log("Praise his name, for he has blessed us with bountiful carrots.")
+Chat.log(finishedText)
+util.logScriptEnd(farmName, regrowthTime)
 
 /*-------------------
    4 Program End
