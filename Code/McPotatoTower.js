@@ -167,7 +167,7 @@ function setStartingLayer(){
     //set layer
     startingLayer = ((yStartPosition - playerY ) / layerHeight) + 1
     startingLayer = Math.floor(startingLayer)
-    Chat.log("Starting layer = " + startingLayer)
+    //Chat.log("Starting layer = " + startingLayer)
 }
 
 /*-------------------
