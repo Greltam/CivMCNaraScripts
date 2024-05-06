@@ -58,7 +58,7 @@ continueCrafting = true
    4 Program Start
 -------------------*/
 
-Chat.log("Zeal Deepslate Tile Converterble luxury test drive.")
+Chat.log("Zeal Deepslate Tile Converterble test drive.")
 //Chat.log("(Must have green recipe book open)")
 Chat.log("Press: " + util.getQuitKey() + " to end script")
 
@@ -72,7 +72,7 @@ Chat.log("Press: " + util.getQuitKey() + " to end script")
 
 //util.resetKeyBinds()
 
-Chat.log("A wise choice, will that be cash or credit?")
+Chat.log("Exhilarating")
 
 /*-------------------
    4 Program End
