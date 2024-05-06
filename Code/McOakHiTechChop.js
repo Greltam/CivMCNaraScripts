@@ -155,11 +155,11 @@ function setStartingPosition(){
     //set layer, we are -1 y level while chopping trees
     startingLayer = ((playerY - yStartPosition + 1) / layerHeight) + 1
     startingLayer = Math.floor(startingLayer)
-    Chat.log("starting layer = " + startingLayer)
+    //Chat.log("starting layer = " + startingLayer)
     //set row
     startingRow = ((playerX - xChopStartPosition) / rowWidth) + 1
     startingRow = Math.floor(startingRow)
-    Chat.log("starting Row = " + startingRow)
+    //Chat.log("starting Row = " + startingRow)
     //set tree
     if(startingRow % 2 === 1){
         startingTree = ((zStartPosition - playerZ) / treeBridgeLength) + 1
@@ -167,7 +167,7 @@ function setStartingPosition(){
         if(startingTree <= 1){
             startingTree = 1
         }
-        Chat.log("starting Tree = " + startingTree)
+        //Chat.log("starting Tree = " + startingTree)
     }
     else{
         startingTree = ((playerZ - zRowEndPosition) / treeBridgeLength) + 1
@@ -175,7 +175,7 @@ function setStartingPosition(){
         if(startingTree <= 1){
             startingTree = 1
         }
-        Chat.log("starting Tree = " + startingTree)
+        //Chat.log("starting Tree = " + startingTree)
     }
     restarting = true
 }
