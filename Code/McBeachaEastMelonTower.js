@@ -57,6 +57,9 @@ endLengths = 5 //default: treeBridgeLength = 5
 /*------------------------
    2 Global Variables Start
 ------------------------*/
+farmName = "SaTa Beacha34 East Melon Tower"
+regrowthTime = 18.5 * 3600 //hours multiplied by seconds per hour
+
 //Player starts script at this location
 xStartPosition = 4020 
 zStartPosition = 7378
@@ -69,6 +72,40 @@ secondsToHarvest = 11
 
 /*-----------------------
    2 Global Variables End
+-----------------------*/
+
+/*------------------------
+   2.1 Formatted Strings Start
+------------------------*/
+greetingsText = Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("SaTa East", "yellow"),
+        util.simpleJSONString(" Melon", "dark_green"),
+        util.simpleJSONString(" Tower", "gray"),
+        util.simpleJSONString(", booting", "gold")
+    ])
+)
+    
+quitText =  Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("To ", "white"),
+        util.simpleJSONString("Quit", "red"),
+        util.simpleJSONString(", Press: ", "white"),
+        util.simpleJSONString(util.getQuitKey(), "gold")
+    ])
+)
+
+finishedText =  Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("SaTa East", "yellow"),
+        util.simpleJSONString(" Melon", "dark_green"),
+        util.simpleJSONString(" Tower", "gray"),
+        util.simpleJSONString(", shutting down...", "red")
+    ])
+)
+    
+/*-----------------------
+   2.1 Formatted Strings End
 -----------------------*/
 
 /*-------------------
@@ -128,9 +165,9 @@ function setStartingLayer(){
 /*-------------------
    4 Program Start
 -------------------*/
-
-Chat.log("Zeal Melon Engines Revving Up")
-Chat.log("Press: " + util.getQuitKey() + " to end script")
+Chat.log(greetingsText)
+Chat.log(quitText)
+util.logScriptStart(farmName)
 
 //set starting layer if restarting on another layer
 setStartingLayer()
@@ -156,9 +193,8 @@ KeyBind.key("key.keyboard.space", false)
 KeyBind.key("key.mouse.right", false)
 KeyBind.key("key.mouse.left", false)
 
-
-Chat.log("Melon Accomplished, we're going home Boys!")
-
+Chat.log(finishedText)
+util.logScriptEnd(farmName, regrowthTime)
 /*-------------------
    4 Program End
 -------------------*/
