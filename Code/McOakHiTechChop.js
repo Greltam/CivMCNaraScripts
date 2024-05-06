@@ -79,6 +79,9 @@ treeBridgeLength = 5 //default: treeBridgeLength = 5
 /*------------------------
    2 Global Variables Start
 ------------------------*/
+farmName = "GSEZ Carrot Tower"
+regrowthTime = 23.5 * 3600 //hours multiplied by seconds per hour
+
 //Player starts script at this location
 xStartPosition = 2958 
 zStartPosition = 5202
@@ -94,6 +97,40 @@ upperCutTicks = 50
 util.setQuitFromFallingYLevel(yStartPosition)
 /*-----------------------
    2 Global Variables End
+-----------------------*/
+
+/*------------------------
+   2.1 Formatted Strings Start
+------------------------*/
+greetingsText = Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("GSEZ", "dark_aqua"),
+        util.simpleJSONString(" Oak", "yellow"),
+        util.simpleJSONString(" Tower", "dark_green"),
+        util.simpleJSONString(", booting...", "gold")
+    ])
+)
+    
+quitText =  Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("To ", "white"),
+        util.simpleJSONString("Quit", "red"),
+        util.simpleJSONString(", Press: ", "white"),
+        util.simpleJSONString(util.getQuitKey(), "gold")
+    ])
+)
+
+finishedText =  Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("GSEZ", "dark_aqua"),
+        util.simpleJSONString(" Oak", "yellow"),
+        util.simpleJSONString(" Tower", "dark_green"),
+        util.simpleJSONString(", shutting down...", "red")
+    ])
+)
+    
+/*-----------------------
+   2.1 Formatted Strings End
 -----------------------*/
 
 /*-------------------
@@ -228,10 +265,9 @@ function tossLogs(row){
 /*-------------------
    4 Program Start
 -------------------*/
-
-
-Chat.log("Zeal Oak Exterminator, Booting...")
-Chat.log("Press: " + util.getQuitKey() + " to end script")
+Chat.log(greetingsText)
+Chat.log(quitText)
+util.logScriptStart(farmName)
 
 setStartingPosition()
 
@@ -359,7 +395,8 @@ KeyBind.key("key.mouse.right", false)
 KeyBind.key("key.mouse.left", false)
 
 
-Chat.log("Oak has been exterminated, shutting down...")
+Chat.log(finishedText)
+util.logScriptEnd(farmName, regrowthTime)
 
 /*-------------------
    4 Program End
