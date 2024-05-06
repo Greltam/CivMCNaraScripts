@@ -3,7 +3,7 @@
     !!! Script starts at 3997, 7388, 103 !!!
     Find 1.2 Player Configurables to adjust for script restarts
 
-    GSEZ Carrot Tower Script on CivMC @ 4000, 7400, 104
+    SaTa Potato Tower Script on CivMC @ 4000, 7400, 104
     Written by Greltam 5/2/2024
 
     Tab-outable.
@@ -67,6 +67,8 @@ tossLookY = -25
 /*------------------------
    2 Global Variables Start
 ------------------------*/
+farmName = "SaTa Potato Tower"
+regrowthTime = 21.5 * 3600 //hours multiplied by seconds per hour
 
 //Player starts script at this location
 xStartPosition = 3997 
@@ -75,6 +77,40 @@ yStartPosition = 103
 
 /*-----------------------
    2 Global Variables End
+-----------------------*/
+
+/*------------------------
+   2.1 Formatted Strings Start
+------------------------*/
+greetingsText = Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("SaTa", "yellow"),
+        util.simpleJSONString(" Potato", "gold"),
+        util.simpleJSONString(" Tower", "gray"),
+        util.simpleJSONString(", booting", "gold")
+    ])
+)
+    
+quitText =  Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("To ", "white"),
+        util.simpleJSONString("Quit", "red"),
+        util.simpleJSONString(", Press: ", "white"),
+        util.simpleJSONString(util.getQuitKey(), "gold")
+    ])
+)
+
+finishedText =  Chat.createTextHelperFromJSON(
+    util.wrapJSONStringsTogether([
+        util.simpleJSONString("SaTa", "yellow"),
+        util.simpleJSONString(" Potato", "gold"),
+        util.simpleJSONString(" Tower", "gray"),
+        util.simpleJSONString(", shutting down...", "red")
+    ])
+)
+    
+/*-----------------------
+   2.1 Formatted Strings End
 -----------------------*/
 
 /*-------------------
@@ -142,8 +178,9 @@ function setStartingLayer(){
    4 Program Start
 -------------------*/
 
-Chat.log("Zeal Potato Engines Revving Up")
-Chat.log("Press: " + util.getQuitKey() + " to end script")
+Chat.log(greetingsText)
+Chat.log(quitText)
+util.logScriptStart(farmName)
 
 //set starting layer in case restarting on another layer
 setStartingLayer()
@@ -180,7 +217,8 @@ KeyBind.key("key.mouse.right", false)
 KeyBind.key("key.mouse.left", false)
 
 
-Chat.log("PO. TAY. TO. Boil 'em, Mash 'em, Stick 'em in a stew.")
+Chat.log(finishedText)
+util.logScriptEnd(farmName, regrowthTime)
 
 /*-------------------
    4 Program End
