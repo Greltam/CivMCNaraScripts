@@ -182,6 +182,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
         tossMelons()
     }
     moveToNextLayer()
+    util.checkHunger()
 }
     
 
