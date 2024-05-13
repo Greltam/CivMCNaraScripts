@@ -129,6 +129,7 @@ function refillHunger(){
             //eat food if holding food
             spinTicks(1)
         }
+        KeyBind.key("key.mouse.right", false)
         //done eating, swap item back
         if(swapMainHand){
             inv = Player.openInventory()
