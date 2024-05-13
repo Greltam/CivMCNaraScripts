@@ -275,6 +275,8 @@ setStartingPosition()
 for(let i = startingLayer; i <= totalLayers; i++){
     if(util.checkQuit()){break}
     
+    util.checkHunger() //eat food if hungry
+    
     //start at lodestone - move to chop start
     if(!restarting){
         util.moveToLocation(
