@@ -180,6 +180,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
     harvestLayer()
     tossMelons()
     moveToNextLayer()
+    util.checkHunger()
 }
     
 
