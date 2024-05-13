@@ -11,11 +11,19 @@
 */
 
 quitKey = "key.keyboard.j" // key used to stop script
+
 quitFromFalling = false
 quitFromFallingYLevel = -64
+
+//Used for tool replacement during checkQuit()
 saveTool = true //used in checkQuit to stop script when tool gets low durability
 toolSaveDurability = 10 // Durability of tool to stop using it
 replaceToolEnchantments = false //When replacing tool, use exact enchantments
+
+//Used for eating when hungry during checkQuit()
+eatFood = true //does the script need to feed the player?
+hungerThreshold = 18 //lower level of hunger needed to start eating
+
 eyeHeight = Player.getPlayer().getEyeHeight()
 player = Player.getPlayer()
 
@@ -26,6 +34,8 @@ scriptEndTime = 0
 
 SINGLE_CHEST = 1
 DOUBLE_CHEST = 2
+
+
 function getQuitKey(){
     return quitKey
 }
@@ -57,6 +67,77 @@ function getToolSaveDurability(){
 }
 function setToolSaveDurability(dura){
     toolSaveDurability = dura
+}
+function checkHunger(){
+     if(eatFood){
+         if(player.getFoodLevel() < hungerThreshold){
+             Chat.log("Trying to refill")
+             refillHunger()
+             return true
+         }
+     }
+     return false
+}
+function refillHunger(){
+    holdingFood = false
+    swapMainHand = false
+    foodSlotNumber = 0
+    mainHandSlotNumber = 0
+    
+    //check for valid slot in inventory with food if not holding any
+    if(player.getMainHand().isFood()){
+        holdingFood = true
+        //all good, go to eat foodloop
+    }
+    else if(player.getOffHand().isFood()){
+        //swap hotbar with food from offhand
+        swapMainHand = true
+        foodSlotNumber = 45 //45 is offhand
+    }
+    else{
+        //look in inventory for food
+        inv = Player.openInventory()
+        for(let i = 9; i <= 44; i++){
+            if(inv.getSlot(i).isFood()){
+                swapMainHand = true
+                foodSlotNumber = i
+                
+                spinTicks(20)
+                inv.close()
+                spinTicks(20)
+                break
+            }
+        }
+    }
+    if(swapMainHand){
+        inv = Player.openInventory()
+        mainHandSlotNumber = inv.getSelectedHotbarSlotIndex() + 36
+        inv.swap(mainHandSlotNumber,foodSlotNumber)
+        spinTicks(20)
+        inv.close()
+        spinTicks(20)
+        
+        holdingFood = true
+    
+    }
+    //swap mainhand and foodslot
+        
+    if(holdingFood){
+        KeyBind.key("key.mouse.right", true)
+        //while not full hunger
+        while(player.getFoodLevel() < 20 && player.getMainHand().isFood()){
+            //eat food if holding food
+            spinTicks(1)
+        }
+        //done eating, swap item back
+        if(swapMainHand){
+            inv = Player.openInventory()
+            inv.swap(mainHandSlotNumber,foodSlotNumber)
+            spinTicks(20)
+            inv.close()
+            spinTicks(20)  
+        }
+    }
 }
 
 function getEyeHeight(){
@@ -797,6 +878,8 @@ module.exports = {
     saveTool: saveTool,
     toolSaveDurability: toolSaveDurability,
     replaceToolEnchantments: replaceToolEnchantments,
+    eatFood : eatFood,
+    hungerThreshold : hungerThreshold,
     eyeHeight : eyeHeight,
 //exporting functions
     getSaveTool : getSaveTool,
@@ -806,6 +889,8 @@ module.exports = {
     getQuitFromFallingYLevel : getQuitFromFallingYLevel,
     setQuitFromFallingYLevel : setQuitFromFallingYLevel,
     getEyeHeight : getEyeHeight,
+    checkHunger : checkHunger,
+    refillHunger : refillHunger,
     getScriptStartTime : getScriptStartTime,
     setScriptStartTime : setScriptStartTime,
     getScriptEndTime : getScriptEndTime,
