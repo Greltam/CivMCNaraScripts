@@ -240,7 +240,7 @@ function setStartingLayer(){
 
 Chat.log(greetingsText)
 Chat.log(quitText)
-//util.logScriptStart(farmName)
+util.logScriptStart(farmName)
 
 //set starting layer in case restarting on another layer
 setStartingLayer()
@@ -293,7 +293,7 @@ KeyBind.key("key.mouse.left", false)
 
 
 Chat.log(finishedText)
-//util.logScriptEnd(farmName, regrowthTime)
+util.logScriptEnd(farmName, regrowthTime)
 
 /*-------------------
    4 Program End
