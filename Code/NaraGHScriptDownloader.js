@@ -20,7 +20,11 @@ ListOfAllScripts = [
     "McZealWestMelonTower",
     "McBeachaEastMelonTower",
     "McCarrotTower",
-    "McPotatoTower"
+    "McPotatoTower",
+
+    //Nether Farms
+    "McTwistingVines",
+    "McNetherwart"
 ]
 
 function scriptNameToGithubURL(scriptName){
