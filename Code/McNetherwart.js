@@ -1,6 +1,6 @@
 //Zeal Nether Netherwart Tower Script
 /*
-    !!! Script starts at 2289, 8144, 7 !!!
+    !!! Script starts at 2289, 8144, 39 !!!
     Find 1.2 Player Configurables to adjust for script restarts
 
     Zeal Nether Netherwart Tower Script @ 2289, 8144, 7
@@ -12,10 +12,11 @@
    0.1 Player Requirements to Start
 ------------------------*/
 
-//Directions: Start script while standing on that layers lodestone
-//Start with Fortune 3 or ST tool in mainhand(Any, golden forge to get a cheap one)
+//Directions: Start script while standing at the start of a layer
+//Layer Start: Odd Layer 2289x, 8144z; Even Layer 2289x, 8098z
+//Start with Fortune 3 tool in mainhand(Any, golden forge to get a cheap one)
 
-//Restarting: 
+//Restarting: Restart on the layer's starting spot
 
 //Collector: 
 /*-----------------------
