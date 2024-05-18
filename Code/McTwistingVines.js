@@ -1,6 +1,6 @@
 //Zeal Nether Twisting Vines Tower Script
 /*
-    !!! Script starts at 2292, 8144, 7 !!!
+    !!! Script starts at 2293, 8144, 31 !!!
     Find 1.2 Player Configurables to adjust for script restarts
 
     Zeal Nether Twisting Vines Tower Script @ 2292, 8144, 7
@@ -12,10 +12,11 @@
    0.1 Player Requirements to Start
 ------------------------*/
 
-//Directions: 
+//Directions: Start on the layers starting spot
+//Layer start: Odd Layer Southmost 2293x, 8144z; Even Layer 2293x, 8098
 //Start with Fortune 3 or ST tool in mainhand(Any, golden forge to get a cheap one)
 
-//Restarting: 
+//Restarting: Start on the layers starting spot
 
 //Collector: 
 /*-----------------------
@@ -51,7 +52,7 @@ layerHeight = 12 //default: layerHeight = 3
 
 //Time it takes to cross sides
 //replace after doing hitech stuff
-secondsToHarvest = 13
+secondsToHarvest = 14
 
 //direction to look at carrots to harvest while strafing
 harvestLookX = 180
