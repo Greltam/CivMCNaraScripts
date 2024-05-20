@@ -68,7 +68,7 @@ yStartPosition = 104
 
 //Time it takes for e5 diamond axe to cross sides
 //replace after doing hitech stuff
-secondsToHarvest = 11
+secondsToHarvest = 9
 
 /*-----------------------
    2 Global Variables End
