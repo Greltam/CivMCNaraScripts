@@ -262,6 +262,7 @@ for(let i = startingLayer; i >= 1; i--){
             setOddLayer()
             harvestCell()
             tossItems()
+            util.simpleMove("key.mouse.right", harvestLookX, 0, 5)
         }
         else{
             setEvenLayer()
@@ -269,9 +270,13 @@ for(let i = startingLayer; i >= 1; i--){
             harvestCell()
             if(j != cellsPerLayer){ //don't extra move at last spot
                 //move flush to start block
+                util.simpleMove("key.mouse.right", harvestLookX, 0, 5)
                 util.simpleMove("key.keyboard.w", harvestLookX, harvestLookY, 1*20)
                 util.simpleMove("key.keyboard.w", firstRowBackupX, harvestLookY, 1*20)
                 util.simpleMove("key.keyboard.w", tossLookX, harvestLookY, 1*20)
+            }
+            if( j == cellsPerLayer){
+                util.simpleMove("key.mouse.right", 0, 90, 5)
             }
         }
     }
