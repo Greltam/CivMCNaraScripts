@@ -10,6 +10,8 @@
     util.setQuitKey("key.keyboard.j")
 */
 
+playerKeys = [] //array contains keyString currently pressed
+
 quitKey = "key.keyboard.j" // key used to stop script
 
 quitFromFalling = false
@@ -35,6 +37,53 @@ scriptEndTime = 0
 SINGLE_CHEST = 1
 DOUBLE_CHEST = 2
 
+//analogous to KeyBind.key(keyString, bool)
+//store keyString in a separate array to keep track of desired keypresses
+//so script can repress if key becomes unpressed due to outside forces
+function key(keyString, bool){
+    //check if it's already been added to playerKeys
+    for(let i = 0; i < playerKeys.length; i++){
+        //if found, already pressed
+        if(playerKeys[i] == keyString){
+            //if unpressing key
+            if(!bool){
+                KeyBind.key(keyString,bool)
+                playerKeys.splice(i,1)
+                return
+            }
+            //don't repress if already pressed
+            else
+                return
+        }
+    }
+    //Key wasnt already pressed and is being unpressed
+    if(!bool){
+        return
+    }
+    //key wasn't in list, add to list and press
+    playerKeys.push(keyString)
+    KeyBind.key(keyString,bool)
+}
+
+//go through playerKeys and make sure they are actually pressed.
+function checkPlayerKeys(){
+    minecraftKeys = KeyBind.getPressedKeys()
+    //for each key in playerKeys, check if in getPressedKeys
+    for(let i = 0; i < playerKeys.length; i++){
+        //if not in getPressedKeys, press
+        if(!minecraftKeys.contains(playerKeys[i])){
+            KeyBind.key(playerKeys[i],true)
+        }
+    }
+}
+
+//unset all pressed keys and clear playerKey array
+function resetKeys(){
+    for(let i = 0; i < playerKeys.length; i++){
+        KeyBind.key(playerKeys[i],false)
+    }
+    playerKeys = []
+}
 
 function getQuitKey(){
     return quitKey
@@ -78,6 +127,7 @@ function checkHunger(){
      }
      return false
 }
+
 function refillHunger(){
     holdingFood = false
     swapMainHand = false
@@ -273,6 +323,8 @@ function spinTicks(tickNumber){
         if(checkQuit()){
             return
         }
+        //make sure all desired keypresses continue pressed
+        checkPlayerKeys()
         Client.waitTick(1) 
     } 
 }
@@ -862,7 +914,6 @@ function wrapJSONStringsTogether(JSONStringArray){
     return completeJSONString
 }
 
-
 //You can alias this files functions with a different name while exporting
 //We don't do this because we are not pepega.
 module.exports = {
@@ -871,6 +922,7 @@ module.exports = {
     SINGLE_CHEST: SINGLE_CHEST,
     DOUBLE_CHEST: DOUBLE_CHEST,
     player: player,
+    playerKeys : playerKeys,
     quitKey: quitKey,
     quitFromFalling : quitFromFalling,
     quitFromFallingYLevel : quitFromFallingYLevel,
@@ -883,6 +935,9 @@ module.exports = {
     hungerThreshold : hungerThreshold,
     eyeHeight : eyeHeight,
 //exporting functions
+    key : key,
+    checkPlayerKeys : checkPlayerKeys,
+    resetKeys : resetKeys,
     getSaveTool : getSaveTool,
     setSaveTool: setSaveTool,
     getQuitFromFalling : getQuitFromFalling,
