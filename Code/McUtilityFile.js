@@ -329,12 +329,74 @@ function spinTicks(tickNumber){
     } 
 }
 
+//change direction of looking gradually in order to not activate
+//anticheat kick. Taken from HG_80
+function smoothLookAt(yaw, pitch){
+ // interpolation
+    const lerp = (a, b, f) => {
+        return a + f * (b - a);
+    }
+    
+    // round to n decimals
+    const round = (n, d) => {
+        const p = Math.pow(10, d);
+        return Math.round(n * p) / p;
+    }
+
+    // probably not needed
+    const clampYaw = (angle ) => {
+        angle = angle % 360;
+        
+        if (angle < -180) {
+            angle += 360;
+        } else if (angle > 180) {
+            angle -= 360;
+        }
+
+        return angle;
+    }
+
+    const plyr = Player.getPlayer();
+
+    yaw = clampYaw(yaw);
+
+    let currYaw = plyr.getYaw();
+
+    // gets shortest path (to avoid spinning)
+    let deltaYaw = yaw - currYaw;
+
+    if (deltaYaw > 180) {
+        currYaw += 360;
+    } else if (deltaYaw < -180) {
+        currYaw -= 360;
+    }
+
+    let currPitch = plyr.getPitch();
+
+    const roundedYaw = round(yaw, 1);
+    const roundedPitch = round(pitch, 1);
+
+    while (round(currYaw, 1) !== roundedYaw || round(plyr.getPitch(), 1) !== roundedPitch) {
+        if (currYaw !== yaw) {
+            currYaw = lerp(currYaw, yaw, 0.1); // defines how smooth you want it (0.5 in third parameter would be 100% of the angle in 2 ms, in theory)
+        }
+        
+        if (currPitch !== pitch) {
+            currPitch = lerp(currPitch, pitch, 0.1);
+        }
+        
+        plyr.lookAt(currYaw, currPitch);
+        Time.sleep(1);
+    }
+}
+
+
 //Activate a single key/mouse while looking at x,y for ticks length
 function simpleMove(keyString, xAngle, yAngle, ticks){
     if(checkQuit()){
         return
     }
-    player.lookAt(xAngle,yAngle)
+    smoothLookAt(xAngle,yAngle)
     spinTicks(5)
     KeyBind.key(keyString, true)
     spinTicks(ticks)
@@ -347,7 +409,7 @@ function complexMove(keyArray, xAngle, yAngle, ticks){
     if(checkQuit()){
         return
     }
-    Player.getPlayer().lookAt(xAngle,yAngle)
+    smoothLookAt(xAngle,yAngle)
     spinTicks(5)
     
     //bind all keyArrays
@@ -577,7 +639,7 @@ function simpleInteract(xLook, yLook){
     if(checkQuit()){
         return
     }
-    Player.getPlayer().lookAt(xLook, yLook)
+    smoothLookAt(xLook, yLook)
     spinTicks(10)
     Player.getPlayer().interact()
     spinTicks(10)
@@ -588,7 +650,7 @@ function simpleLook(xLook, yLook, ticks){
     if(checkQuit()){
         return
     }
-    Player.getPlayer().lookAt(xLook, yLook)
+    smoothLookAt(xLook, yLook)
     spinTicks(ticks)
 }
 
@@ -661,7 +723,7 @@ function chestItems(xLook, yLook, slotStart, numSlots){
     }
     
     //Look at chest and interact
-    Player.getPlayer().lookAt(xLook,yLook)
+    smoothLookAt(xLook,yLook)
     spinTicks(15)
     Player.getPlayer().interact()
     spinTicks(15)
@@ -695,7 +757,7 @@ function chestAllItems(xLook, yLook, chestType, toChest){
     }
     
     //Look at chest and interact
-    Player.getPlayer().lookAt(xLook,yLook)
+    smoothLookAt(xLook,yLook)
     spinTicks(15)
     Player.getPlayer().interact()
     spinTicks(15)
@@ -778,7 +840,7 @@ function tossItems(xLook, yLook, slotStart, numSlots){
         return
     }
     
-    Player.getPlayer().lookAt(xLook, yLook)
+    smoothLookAt(xLook, yLook)
     inv = Player.openInventory()
     spinTicks(10)
     
@@ -801,7 +863,7 @@ function tossAllSpecificItems(itemArray, xLook, yLook){
         return
     }
     
-    Player.getPlayer().lookAt(xLook, yLook)
+    smoothLookAt(xLook, yLook)
     inv = Player.openInventory()
     spinTicks(10)
     
@@ -960,6 +1022,7 @@ module.exports = {
     swapDamagedTool : swapDamagedTool,
     checkQuit: checkQuit,
     spinTicks: spinTicks,
+    smoothLookAt: smoothLookAt,
     simpleMove: simpleMove,
     complexMove: complexMove,
     WASDToLocation : WASDToLocation,
