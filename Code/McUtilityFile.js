@@ -329,6 +329,27 @@ function spinTicks(tickNumber){
     } 
 }
 
+//In order to Lerp the eye movement of a lookAt(x,z,y) function,
+//we need to rather get the yaw,pitch change and use that for a 
+//smoothLookAt function call. This is to battle anti-cheat kicking.
+function getYawPitchFromCoords(xPos,zPos,yPos){
+
+    entity = Player.getPlayer()
+    plX = entity.getX()
+    plZ = entity.getZ()
+    plY = entity.getY()
+    
+    delX = xPos - plX
+    delZ = zPos - plZ
+    delY = yPos - plY
+    
+    distance = Math.sqrt((delZ * delZ) + (delX * delX))
+    pitch = Math.atan2(delY,distance) * 180/Math.PI
+    yaw = (Math.atan2(delX,delZ) * -1 * 180/Math.PI)
+    
+    return [yaw,pitch]
+}
+
 //change direction of looking gradually in order to not activate
 //anticheat kick. Taken from HG_80
 function smoothLookAt(yaw, pitch){
@@ -554,8 +575,11 @@ function complexMoveToLocation(keyArray, xPos, zPos, yPos, tolerance){
     }
     xPos = xPos + 0.5
     zPos = zPos + 0.5
-    player.lookAt(xPos,yPos,zPos)
+    
+    vec = getYawPitchFromCoords(xPos,zPos,yPos)    
+    smoothLookAt(vec[0],vec[1])
     spinTicks(5)
+    
     keyString = "key.keyboard.w"
     
     //bind all keyArrays and move forward "w"
@@ -572,7 +596,8 @@ function complexMoveToLocation(keyArray, xPos, zPos, yPos, tolerance){
             return true
         }
             
-            player.lookAt(xPos,yPos,zPos)
+            vec = getYawPitchFromCoords(xPos,zPos,yPos)    
+            smoothLookAt(vec[0],vec[1])
             if(player.getYaw() > 178 || player.getYaw() < -178){
                 player.lookAt(180, player.getPitch())
             }
@@ -1022,6 +1047,7 @@ module.exports = {
     swapDamagedTool : swapDamagedTool,
     checkQuit: checkQuit,
     spinTicks: spinTicks,
+    getYawPitchFromCoords: getYawPitchFromCoords,
     smoothLookAt: smoothLookAt,
     simpleMove: simpleMove,
     complexMove: complexMove,
