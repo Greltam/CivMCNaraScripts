@@ -185,7 +185,7 @@ function chopTree(layer, row, tree){
 
 //figure out next tree destination location
     xDestination = xChopStartPosition + ((row - 1) * 6)
-    yDestination = yStartPosition - 1 + ((layer-1) * layerHeight) + util.getEyeHeight()
+    yDestination = yStartPosition - 2.5 + ((layer-1) * layerHeight) + util.getEyeHeight()
     zDestination = 0
     
 //separate for even/odd rows
@@ -309,7 +309,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 ["key.mouse.left"],
                 xChopStartPosition + ((j - 1) * 6),
                 zStartPosition - 86,
-                yStartPosition + ((i-1) * layerHeight) - 1 + util.getEyeHeight(),
+                yStartPosition + ((i-1) * layerHeight) - 2.5 + util.getEyeHeight(),
                 0.2)
                 
             //toss logs into collector
@@ -334,7 +334,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 ["key.mouse.left"],
                 xChopStartPosition + ((j - 1) * 6),
                 zStartPosition - 1, 
-                yStartPosition + ((i-1) * layerHeight) - 1 + util.getEyeHeight(),
+                yStartPosition + ((i-1) * layerHeight) - 2.5 + util.getEyeHeight(),
                 0.2)
             
             //toss logs into collector
