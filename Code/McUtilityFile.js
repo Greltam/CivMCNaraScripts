@@ -409,6 +409,8 @@ function smoothLookAt(yaw, pitch){
         plyr.lookAt(currYaw, currPitch);
         Time.sleep(1);
     }
+    
+    plyr.lookAt(yaw, pitch);
 }
 
 
