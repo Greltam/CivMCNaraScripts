@@ -408,8 +408,16 @@ function smoothLookAt(yaw, pitch){
         
         plyr.lookAt(currYaw, currPitch);
         Time.sleep(1);
-    }
+    }    
     
+    //fully set the yaw / pitch to remove hidden decimals from lerping
+    //be careful of the threshold between 180 to -180 that will cause
+    //the bot to do a full 360 causing anti-cheat kick.
+    if(Math.abs(yaw) == 180){ //if asking for either 180/-180 north 
+        if(yaw * currYaw < 0){ //if yaws cross the threshold one will be -
+            yaw = yaw * -1    //set the yaw to be the same sign as currYaw
+        }
+    }
     plyr.lookAt(yaw, pitch);
 }
 
