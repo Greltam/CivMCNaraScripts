@@ -134,9 +134,9 @@ function harvestLayer(){
 }
 
 function moveToNextLayer(){
-    util.simpleMove("key.keyboard.d",180,0,7*20)
-    util.simpleMove("key.keyboard.s",180,0,1*20)
-    util.simpleMove("key.keyboard.left.shift",180,0,20)
+    util.simpleMove(["key.keyboard.d"],180,0,7*20)
+    util.simpleMove(["key.keyboard.s"],180,0,1*20)
+    util.simpleMove(["key.keyboard.left.shift"],180,0,20)
 }
 
 function tossMelons(){
