@@ -20,6 +20,7 @@ ListOfAllScripts = [
     "McZealWestMelonTower",
     "McBeachaEastMelonTower",
     "McCarrotTower",
+    "McWheatTower",
     "McPotatoTower",
 
     //Nether Farms
