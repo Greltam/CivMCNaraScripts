@@ -22,7 +22,6 @@
    0.1 Player Requirements to Start End
 -----------------------*/
 
-
 /*------------------------
    1.1 Import Files Start
 ------------------------*/
@@ -34,6 +33,9 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
+//set item list and look vector for tossing items into collector
+util.setTossItemList(["minecraft:potato","minecraft:poisonous_potato"])
+util.setTossLookVector([90,-25])
 
 //alter the default quitkey from j to whatever you want.
 util.setQuitKey("key.keyboard.j") //default: util.setQuitKey("key.keyboard.j") 
@@ -56,10 +58,6 @@ secondsToHarvest = 6
 //direction to look at carrots to harvest while strafing
 harvestLookX = 0
 harvestLookY = 45
-
-//direction to look when tossing carrots into water collector
-tossLookX = 90
-tossLookY = -25
 /*-----------------------
    1.2 Player Configurables End
 -----------------------*/
@@ -153,13 +151,6 @@ function moveToNextLayer(){
     util.simpleMove("key.keyboard.left.shift",harvestLookX,harvestLookY,10)
 }
 
-function tossCarrots(){
-    //Chat.log("Tossing items")
-    util.tossAllSpecificItems(
-        ["minecraft:potato","minecraft:poisonous_potato"],
-        tossLookX, tossLookY)
-}
-
 //called at start of script to set layer in carrot farm
 //especially for restarts
 function setStartingLayer(){
@@ -197,25 +188,15 @@ for(let i = startingLayer; i <= totalLayers; i++){
             break
         }
         harvestDoubleStrip()
-        tossCarrots()
+        util.tossItems()
     }
 
     //move to the start of the next layer
     moveToNextLayer()
 }
-    
-
 
 //Reset keybinds to prevent phantom key holds.
-KeyBind.key("key.keyboard.w", false)
-KeyBind.key("key.keyboard.a", false)
-KeyBind.key("key.keyboard.s", false)
-KeyBind.key("key.keyboard.d", false)
-KeyBind.key("key.keyboard.left.control", false)
-KeyBind.key("key.keyboard.space", false)
-KeyBind.key("key.mouse.right", false)
-KeyBind.key("key.mouse.left", false)
-
+util.resetKeys()
 
 Chat.log(finishedText)
 util.logScriptEnd(farmName, regrowthTime)
