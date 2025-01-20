@@ -43,6 +43,11 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
+//set item list and look vector for tossing items into collector
+util.setTossItemList(["minecraft:oak_log","minecraft:oak_sapling",
+         "minecraft:stick", "minecraft:apple",
+         "minecraft:oak_leaves"])
+util.setTossLookVector([-150,0])
 
 //alter the default quitkey from j to whatever you want.
 util.setQuitKey("key.keyboard.j") //default: util.setQuitKey("key.keyboard.j") 
@@ -185,7 +190,7 @@ function chopTree(layer, row, tree){
 
 //figure out next tree destination location
     xDestination = xChopStartPosition + ((row - 1) * 6)
-    yDestination = yStartPosition - 2.5 + ((layer-1) * layerHeight) + util.getEyeHeight()
+    yDestination = yStartPosition - 1 + ((layer-1) * layerHeight)
     zDestination = 0
     
 //separate for even/odd rows
@@ -250,12 +255,12 @@ function tossLogs(row){
     //Chat.log("Tossing items")
     xLook = -150
     yLook = 0
+    
     if(row % 2 == 1){xLook = 30}
-    util.tossAllSpecificItems(
-        ["minecraft:oak_log","minecraft:oak_sapling",
-         "minecraft:stick", "minecraft:apple",
-         "minecraft:oak_leaves"],
-        xLook, yLook)
+    
+    util.setTossLookVector([xLook,yLook])
+    util.tossItems()
+    
 }
 
 /*-------------------
@@ -296,6 +301,10 @@ for(let i = startingLayer; i <= totalLayers; i++){
         for(let l = startingTree; l <= treesPerRow; l++){
             if(util.checkQuit()){break}
             while(!chopTree(i,j,l)){
+                util.simpleMove("key.keyboard.s",
+                    Player.getPlayer().getYaw(),
+                    Player.getPlayer().getPitch(),
+                    40)
                 chopTree(i,j,l-1)
             }
         }
@@ -309,7 +318,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 ["key.mouse.left"],
                 xChopStartPosition + ((j - 1) * 6),
                 zStartPosition - 86,
-                yStartPosition + ((i-1) * layerHeight) - 2.5 + util.getEyeHeight(),
+                yStartPosition + ((i-1) * layerHeight) - 1,
                 0.2)
                 
             //toss logs into collector
@@ -334,7 +343,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 ["key.mouse.left"],
                 xChopStartPosition + ((j - 1) * 6),
                 zStartPosition - 1, 
-                yStartPosition + ((i-1) * layerHeight) - 2.5 + util.getEyeHeight(),
+                yStartPosition + ((i-1) * layerHeight) - 1,
                 0.2)
             
             //toss logs into collector
@@ -390,12 +399,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
 }
 
 //Reset keybinds to prevent phantom key holds.
-KeyBind.key("key.keyboard.w", false)
-KeyBind.key("key.keyboard.left.control", false)
-KeyBind.key("key.keyboard.space", false)
-KeyBind.key("key.mouse.right", false)
-KeyBind.key("key.mouse.left", false)
-
+util.resetKeys()
 
 Chat.log(finishedText)
 util.logScriptEnd(farmName, regrowthTime)
