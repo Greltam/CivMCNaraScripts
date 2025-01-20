@@ -32,6 +32,9 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
+//set item list and look vector for tossing items into collector
+util.setTossItemList(["minecraft:melon", "minecraft:melon_slice"])
+util.setTossLookVector([-90,-30])
 
 //alter the default quitkey from j to whatever you want.
 util.setQuitKey("key.keyboard.j") //default: util.setQuitKey("key.keyboard.j") 
@@ -139,15 +142,6 @@ function moveToNextLayer(){
     util.simpleMove("key.keyboard.left.shift",90,0,20)
 }
 
-function tossMelons(){
-    //Chat.log("Tossing items")
-    xLook = -90
-    yLook = -30
-    util.tossAllSpecificItems(
-        ["minecraft:melon", "minecraft:melon_slice"],
-        xLook, yLook)
-}
-
 //called at start of script to set position in tree farm
 //especially for restarts
 function setStartingLayer(){
@@ -178,7 +172,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
         break
     }
     harvestLayer()
-    tossMelons()
+    util.tossItems()
     moveToNextLayer()
     util.checkHunger()
 }
@@ -186,11 +180,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
 
 
 //Reset keybinds to prevent phantom key holds.
-KeyBind.key("key.keyboard.w", false)
-KeyBind.key("key.keyboard.left.control", false)
-KeyBind.key("key.keyboard.space", false)
-KeyBind.key("key.mouse.right", false)
-KeyBind.key("key.mouse.left", false)
+util.resetKeys()
 
 Chat.log(finishedText)
 util.logScriptEnd(farmName, regrowthTime)
