@@ -13,11 +13,12 @@
 ------------------------*/
 
 //Directions: Start script while standing on that layers lodestone
-//Start with Fortune 3 tool in mainhand(Any, golden forge to get a cheap one)
+//Start with Fortune 3 tool in mainhand
+//(Any, use golden forge factory to get a cheap one)
 
 //Restarting: Stand directly on the current layer's lodestone
 
-//Collector: Lodestone elevator @ 2979, 5140
+//Collector: Lodestone elevator @ 3026, 5141, 83
 /*-----------------------
    0.1 Player Requirements to Start End
 -----------------------*/
@@ -34,10 +35,12 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
+//set item list and look vector for tossing items into collector
+util.setTossItemList(["minecraft:wheat","minecraft:wheat_seeds"])
+util.setTossLookVector([90,-25])
 
 //alter the default quitkey from j to whatever you want.
 util.setQuitKey("key.keyboard.j") //default: util.setQuitKey("key.keyboard.j") 
-
 
 //Always restart on a lodestone
 startingLayer = 1 //default: startingLayer = 1
@@ -57,9 +60,7 @@ secondsToHarvest = 7 //or 8
 harvestLookX = 180
 harvestLookY = 45
 
-//direction to look when tossing carrots into water collector
-tossLookX = 90
-tossLookY = -25
+
 /*-----------------------
    1.2 Player Configurables End
 -----------------------*/
@@ -68,10 +69,10 @@ tossLookY = -25
    2 Global Variables Start
 ------------------------*/
 farmName = "GSEZ Wheat Tower"
-regrowthTime = 21.34 * 3600 //hours multiplied by seconds per hour
+regrowthTime = 43 * 3600 //hours multiplied by seconds per hour
 
 //Player starts script at this location
-xStartPosition = 2977 
+xStartPosition = 3024 
 zStartPosition = 5137
 yStartPosition = 80
 
@@ -153,13 +154,6 @@ function moveToNextLayer(){
     util.simpleMove("key.keyboard.space",harvestLookX,harvestLookY,10)
 }
 
-function tossCarrots(){
-    //Chat.log("Tossing items")
-    util.tossAllSpecificItems(
-        ["minecraft:wheat","minecraft:wheat_seeds"],
-        tossLookX, tossLookY)
-}
-
 //called at start of script to set layer in carrot farm
 //especially for restarts
 function setStartingLayer(){
@@ -179,7 +173,7 @@ function setStartingLayer(){
 -------------------*/
 Chat.log(greetingsText)
 Chat.log(quitText)
-//util.logScriptStart(farmName)
+util.logScriptStart(farmName)
 
 //set starting layer in case restarting on another layer
 setStartingLayer()
@@ -196,7 +190,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
             break
         }
         harvestDoubleStrip()
-        tossCarrots()
+        util.tossItems()
     }
     
     //move to the start of the next layer
@@ -206,18 +200,11 @@ for(let i = startingLayer; i <= totalLayers; i++){
 
 
 //Reset keybinds to prevent phantom key holds.
-KeyBind.key("key.keyboard.w", false)
-KeyBind.key("key.keyboard.a", false)
-KeyBind.key("key.keyboard.s", false)
-KeyBind.key("key.keyboard.d", false)
-KeyBind.key("key.keyboard.left.control", false)
-KeyBind.key("key.keyboard.space", false)
-KeyBind.key("key.mouse.right", false)
-KeyBind.key("key.mouse.left", false)
+util.resetKeys()
 
-
+//Log script finish
 Chat.log(finishedText)
-//util.logScriptEnd(farmName, regrowthTime)
+util.logScriptEnd(farmName, regrowthTime)
 
 /*-------------------
    4 Program End
