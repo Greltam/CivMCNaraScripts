@@ -10,6 +10,11 @@
     util.setQuitKey("key.keyboard.j")
 */
 
+//standardize tossing items into collectors for all scripts
+tossItemList = [] //array of what items player can toss
+tossLookVector = [0,0] //direction to look when tossing items
+
+//standardize and confirm key presses
 playerKeys = [] //array contains keyString currently pressed
 
 quitKey = "key.keyboard.j" // key used to stop script
@@ -36,6 +41,16 @@ scriptEndTime = 0
 
 SINGLE_CHEST = 1
 DOUBLE_CHEST = 2
+MAX_CRAFT = 999 // used in craftManually to simulate a shift click craft
+
+//List of farm items to toss into collectors
+function setTossItemList(list){
+    tossItemList = list
+}
+//Direction to look when tossing items into collectors
+function setTossLookVector(vector){
+    tossLookVector = vector
+}
 
 //analogous to KeyBind.key(keyString, bool)
 //store keyString in a separate array to keep track of desired keypresses
@@ -173,13 +188,13 @@ function refillHunger(){
     //swap mainhand and foodslot
         
     if(holdingFood){
-        KeyBind.key("key.mouse.right", true)
+        key("key.mouse.right", true)
         //while not full hunger
         while(player.getFoodLevel() < 20 && player.getMainHand().isFood()){
             //eat food if holding food
             spinTicks(1)
         }
-        KeyBind.key("key.mouse.right", false)
+        key("key.mouse.right", false)
         //done eating, swap item back
         if(swapMainHand){
             inv = Player.openInventory()
@@ -192,7 +207,7 @@ function refillHunger(){
 }
 
 function getEyeHeight(){
-    return eyeHeight
+    return Player.getPlayer().getEyeHeight()
 }
 
 function getScriptStartTime(){
@@ -216,11 +231,16 @@ function getScriptElapsedTime(){
 }
 function logScriptStart(farmName){
     setScriptStartTime(Time.time())
+    
+    Chat.say("/g ZealFarm " + farmName + " Launched.")
+    //Verbose
+    /*
     Chat.say("/g ZealFarm " + farmName)
     spinTicks(10)
     Chat.say("/g ZealFarm " + "Launched: <t:" + scriptStartTime + ":t> <t:"
         + scriptStartTime + ":D>")
     spinTicks(10)
+    */
 }
 
 //regrowthTime is in seconds
@@ -231,6 +251,12 @@ function logScriptEnd(farmName, regrowthTime){
     minutesElapsed = Math.floor(getScriptElapsedTime()%60)
     if(minutesElapsed < 10){minutesElapsed = "0" + minutesElapsed}
     
+    Chat.say("/g ZealFarm " + farmName + " Finished. "
+        + "Regrown in: <t:" + nextHarvest + ":R>"
+    )
+    spinTicks(10)
+    //Verbose
+    /*
     Chat.say("/g ZealFarm " + farmName)
     spinTicks(10)
     Chat.say("/g ZealFarm " + "Finished: <t:" + scriptEndTime + ":t> <t:"
@@ -246,6 +272,7 @@ function logScriptEnd(farmName, regrowthTime){
             + tossedItemsArray[i][1])
         spinTicks(10)
     }
+    */
 }
 
 //If player is using a tool, return durability, 
@@ -262,7 +289,7 @@ function getToolDurability(){
 //returns true if did a valid swap, false if no valid tool found
 function swapDamagedTool(){
 
-    KeyBind.key("key.mouse.left", false)
+    key("key.mouse.left", false)
     //get the type of tool being used.
     currentTool = player.getMainHand().getItemId() //current tool id
     
@@ -283,7 +310,7 @@ function swapDamagedTool(){
                 playerInv.swap(i,playerInv.getSelectedHotbarSlotIndex()+36)
                 playerInv.close()
                 spinTicks(2)
-                KeyBind.key("key.mouse.left", true)
+                key("key.mouse.left", true)
                 spinTicks(2)
                 return true
             }
@@ -408,14 +435,14 @@ function smoothLookAt(yaw, pitch){
         
         plyr.lookAt(currYaw, currPitch);
         Time.sleep(1);
-    }    
+    }
     
-    //fully set the yaw / pitch to remove hidden decimals from lerping
+    //fully set the yaw / pitch the remove hidden decimals from lerping
     //be careful of the threshold between 180 to -180 that will cause
     //the bot to do a full 360 causing anti-cheat kick.
     if(Math.abs(yaw) == 180){ //if asking for either 180/-180 north 
         if(yaw * currYaw < 0){ //if yaws cross the threshold one will be -
-            yaw = yaw * -1    //set the yaw to be the same sign as currYaw
+            yaw = yaw * -1
         }
     }
     plyr.lookAt(yaw, pitch);
@@ -429,9 +456,9 @@ function simpleMove(keyString, xAngle, yAngle, ticks){
     }
     smoothLookAt(xAngle,yAngle)
     spinTicks(5)
-    KeyBind.key(keyString, true)
+    key(keyString, true)
     spinTicks(ticks)
-    KeyBind.key(keyString, false)
+    key(keyString, false)
 }
 
 //Activate a multiple keys/mouse buttons while looking at x,y for ticks length
@@ -445,14 +472,16 @@ function complexMove(keyArray, xAngle, yAngle, ticks){
     
     //bind all keyArrays
     for(let i = 0; i < keyArray.length; i++){
-        KeyBind.key(keyArray[i], true)
+        key(keyArray[i], true)
+        spinTicks(1)
     }
     
     spinTicks(ticks)
     
     //unbind all keyArrays
     for(let i = 0; i < keyArray.length; i++){
-        KeyBind.key(keyArray[i], false)
+        key(keyArray[i], false)
+        spinTicks(1)
     }
 }
 
@@ -492,7 +521,7 @@ function WASDToLocation(keyArray, xPos, zPos, tolerance){
     
     //bind all keyArrays
     for(let i = 0; i < keyArray.length; i++){
-        KeyBind.key(keyArray[i], true)
+        key(keyArray[i], true)
     }
     
     while(Math.abs(Math.abs(player.getX()) - Math.abs(xPos)) > tolerance
@@ -547,14 +576,14 @@ function WASDToLocation(keyArray, xPos, zPos, tolerance){
         }
         
         //Bind keys
-        if(wKey){ KeyBind.key("key.keyboard.w", true)}
-        else{ KeyBind.key("key.keyboard.w", false)}
-        if(aKey){ KeyBind.key("key.keyboard.a", true)}
-        else{ KeyBind.key("key.keyboard.a", false)}
-        if(sKey){ KeyBind.key("key.keyboard.s", true)}
-        else{ KeyBind.key("key.keyboard.s", false)}
-        if(dKey){ KeyBind.key("key.keyboard.d", true)}
-        else{ KeyBind.key("key.keyboard.d", false)}
+        if(wKey){ key("key.keyboard.w", true)}
+        else{ key("key.keyboard.w", false)}
+        if(aKey){ key("key.keyboard.a", true)}
+        else{ key("key.keyboard.a", false)}
+        if(sKey){ key("key.keyboard.s", true)}
+        else{ key("key.keyboard.s", false)}
+        if(dKey){ key("key.keyboard.d", true)}
+        else{ key("key.keyboard.d", false)}
         //Chat.log("Normal x:" + destNormal[0] + " Normal z:" + destNormal[1])
         //Chat.log("W:" + wKey + " A:" + aKey + " S:" + sKey + " D:" + dKey)
         //reset keys for next tick
@@ -569,17 +598,18 @@ function WASDToLocation(keyArray, xPos, zPos, tolerance){
     
     //unbind all keyArrays
     for(let i = 0; i < keyArray.length; i++){
-        KeyBind.key(keyArray[i], false)
+        key(keyArray[i], false)
     }
-    KeyBind.key("key.keyboard.w", false)
-    KeyBind.key("key.keyboard.a", false)
-    KeyBind.key("key.keyboard.s", false)
-    KeyBind.key("key.keyboard.d", false)
+    key("key.keyboard.w", false)
+    key("key.keyboard.a", false)
+    key("key.keyboard.s", false)
+    key("key.keyboard.d", false)
     return true
 }
 //Walk character towards x,z, stopping within tolerance limit
 //If we get stuck, return false if we make it to dest we return true
 function complexMoveToLocation(keyArray, xPos, zPos, yPos, tolerance){
+    
     if(checkQuit()){
         return true
     }
@@ -593,12 +623,19 @@ function complexMoveToLocation(keyArray, xPos, zPos, yPos, tolerance){
     keyString = "key.keyboard.w"
     
     //bind all keyArrays and move forward "w"
-    KeyBind.key(keyString, true)
+    key(keyString, true)
     for(let i = 0; i < keyArray.length; i++){
-        KeyBind.key(keyArray[i], true)
+        key(keyArray[i], true)
     }
-    lastX = player.getX()
-    lastZ = player.getZ()
+    
+    //Increase to 3 frames to check for player stuck position
+    lastX0 = player.getX()
+    lastX1 = player.getX()
+    lastX2 = player.getX()
+    lastZ0 = player.getZ()
+    lastZ1 = player.getZ()
+    lastZ2 = player.getZ()
+    
     while(Math.abs(Math.abs(player.getX()) - Math.abs(xPos)) > tolerance
         || Math.abs(Math.abs(player.getZ()) -  Math.abs(zPos)) > tolerance)
     {
@@ -606,23 +643,41 @@ function complexMoveToLocation(keyArray, xPos, zPos, yPos, tolerance){
             return true
         }
             
-            vec = getYawPitchFromCoords(xPos,zPos,yPos)    
-            smoothLookAt(vec[0],vec[1])
-            if(player.getYaw() > 178 || player.getYaw() < -178){
-                player.lookAt(180, player.getPitch())
-            }
+        vec = getYawPitchFromCoords(xPos,zPos,yPos)
+        
+        //snap really close yaw(xLook) at cardinals to keep alignment
+        if(vec[0] >= 178 && vec[0] <= 180){vec[0] = 180}
+        if(vec[0] <= -178 && vec[0] >= -180){vec[0] = -180}
+        if(vec[0] >= -2 && vec[0] <= 2){vec[0] = 0}
+        if(vec[0] <= -88 && vec[0] >= -92){vec[0] = -90}
+        if(vec[0] >= 88 && vec[0] <= 90){vec[0] = 90}        
+            
+        smoothLookAt(vec[0],vec[1])
+            
         spinTicks(1)
-        if(player.getX() === lastX && player.getZ() === lastZ){
+        
+        //player is stuck
+        if(player.getX() === lastX2 && player.getZ() === lastZ2){
+            //unbind all keyArrays and move forward "w"
+            key(keyString, false)
+            for(let i = 0; i < keyArray.length; i++){
+                key(keyArray[i], false)
+            }
             return false
         }
-        lastX = player.getX()
-        lastZ = player.getZ()
+        //update player positional frames
+        lastX2 = lastX1
+        lastZ2 = lastZ1
+        lastX1 = lastX0
+        lastZ1 = lastZ0
+        lastX0 = player.getX()
+        lastZ0 = player.getZ()
     }
 
     //unbind all keyArrays and move forward "w"
-    KeyBind.key(keyString, false)
+    key(keyString, false)
     for(let i = 0; i < keyArray.length; i++){
-        KeyBind.key(keyArray[i], false)
+        key(keyArray[i], false)
     }
     return true
 }
@@ -631,43 +686,6 @@ function complexMoveToLocation(keyArray, xPos, zPos, yPos, tolerance){
 function moveToLocation(xPos, zPos, yPos, tolerance){
     complexMoveToLocation([],xPos,zPos,yPos,tolerance)
 }
-/*    if(checkQuit()){
-        return
-    }
-    xPos = xPos + 0.5
-    zPos = zPos + 0.5
-    Player.getPlayer().lookAt(xPos,yPos,zPos)
-    spinTicks(5)
-    keyString = "key.keyboard.w"
-    
-    KeyBind.key(keyString, true)
-    //update player looking infrequently 
-    updateLookCounter = 0
-    updateLookFrequency = 10
-    
-    while(Math.abs(Math.abs(Player.getPlayer().getX()) - Math.abs(xPos)) > tolerance
-        || Math.abs(Math.abs(Player.getPlayer().getZ()) -  Math.abs(zPos)) > tolerance)
-    {
-        if(checkQuit()){
-            return
-        }
-        
-        //updateLookCounter = updateLookCounter + 1
-        //if(updateLookCounter >= updateLookFrequency){
-            Player.getPlayer().lookAt(xPos,yPos,zPos)
-            if(Player.getPlayer().getYaw() > 178
-                || Player.getPlayer().getYaw() < -178){
-                Player.getPlayer().lookAt(180, Player.getPlayer().getPitch())
-            }
-            updateLookCounter = 0
-        //}
-        
-        spinTicks(1)
-    }
-    KeyBind.key(keyString, false)
-}
-*/ 
-//end moveToLocation old code that was moved to complexMoveToLocation
 
 //single interact call while looking at x,y
 function simpleInteract(xLook, yLook){
@@ -708,19 +726,19 @@ function startAttack(){
     if(checkQuit()){
         return
     }
-    KeyBind.key("key.mouse.left", true)
+    key("key.mouse.left", true)
 }
 
 //deactivate mouse left
 function endAttack(){
-    KeyBind.key("key.mouse.left", false)
+    key("key.mouse.left", false)
     if(checkQuit()){
         return
     }
 }
 //deactivate mouse left
 function stopAttack(){
-    KeyBind.key("key.mouse.left", false)
+    key("key.mouse.left", false)
     if(checkQuit()){
         return
     }
@@ -731,12 +749,12 @@ function startUse(){
     if(checkQuit()){
         return
     }
-    KeyBind.key("key.mouse.right", true)
+    key("key.mouse.right", true)
 }
 
 //deactivate mouse right
 function endUse(){
-    KeyBind.key("key.mouse.right", false)
+    key("key.mouse.right", false)
     if(checkQuit()){
         return
     }
@@ -744,7 +762,7 @@ function endUse(){
 
 //deactivate mouse right
 function stopUse(){
-    KeyBind.key("key.mouse.right", false)
+    key("key.mouse.right", false)
     if(checkQuit()){
         return
     }
@@ -925,6 +943,14 @@ function tossAllSpecificItems(itemArray, xLook, yLook){
         }
     }
 }
+
+//Standardize item tossing across scripts
+function tossItems(){
+    //Chat.log("Tossing items")
+    util.tossAllSpecificItems(tossItemList,
+        tossLookVector[0], tossLookVector[1])
+}
+
 //set selected hotbar to slotNumber
 //refer to https://wiki.vg/Inventory for getting correct slot numbering
 function selectHotbar(slotNumber){
@@ -946,6 +972,19 @@ function nextHotbar(){
     playerInv.close()
 }
 
+//Returns the selected item in hand. Primitive implementation
+//requiring only the players inventory
+function getItemInSelectedHotbar(){
+    playerInv = Player.openInventory()
+    hotbarNumber = playerInv.getSelectedHotbarSlotIndex()
+    hotbarItem = playerInv.getSlot(hotbarNumber + 36)
+    playerInv.close()
+    spinTicks(5)
+    
+    return hotbarItem
+}
+
+
 //Looks through the inventory to check for a certain itemID existing
 function inventoryContains(itemID){
     inventory = Player.openInventory()
@@ -955,6 +994,29 @@ function inventoryContains(itemID){
                 return true
             }
         }
+    }
+    return false
+}
+
+//Looks through the inventory to check for a certain itemID existing
+//and returns the slot number
+function getInventorySlot(itemID){
+    inventory = Player.openInventory()
+    for(let i = 0; i < inventory.getTotalSlots(); i++){
+        if(!inventory.getSlot(i).isEmpty()){
+            if(inventory.getSlot(i).getItemID() === itemID){
+                return i
+            }
+        }
+    }
+    return false
+}
+
+function moveItemToHotbar(item,hotbarNumber){
+    if(inventoryContains(item)){
+        itemSlot = getInventorySlot(item)
+        inventory = Player.openInventory()
+        inventory.swapHotbar(itemSlot,hotbarNumber)        
     }
     return false
 }
@@ -974,6 +1036,82 @@ function getRecipeIndex(recipeName){
         }
     }
     return -1
+}
+
+//Crafting is borked via misaligned server/client versions
+//Add manual crafting to circumvent recipe based crafting
+//Crafting slots are:
+// 1 2 3       for        1 2        for
+// 4 5 6 = 0 crafting     3 4 = 0   player
+// 7 8 9      tables
+//
+// Example: Nether Brick Slabs
+// [["minecraft:nether_bricks",1],
+//  ["minecraft:nether_bricks",2],
+//  ["minecraft:nether_bricks",3]]
+//
+//
+function craftManually(listOfItemsAndSlots, quantity){
+    if(checkQuit()){
+        return
+    }
+    inventory = Player.openInventory()
+    spinTicks(5)
+    
+    //check if player is self crafting or table crafting
+    selfCrafting = true
+    inventoryStart = 9
+    inventoryEnd = 44
+    
+    if(inventory.getType() == "Survival Inventory"){
+        selfCrafting = true
+        inventoryStart = 9
+        inventoryEnd = 44
+    }
+    if(inventory.getType() == "Crafting Table"){
+        selfCrafting = false
+        inventoryStart = 10
+        inventoryEnd = 45
+    }
+    
+    Chat.log("type:" + inventory.getType())
+    Chat.log("inventory: " + inventoryStart + "-" + inventoryEnd)
+    //go through items in inventory slots and check if they
+    //are in the listOfItemsAndSlots, first [0] spot
+    //then put it in the crafting slot it's supposed to be in
+    
+    //iterate over the craftinglist first, for each item look
+    //for it in the inventory, then place in crafting slot
+    for(let lia = 0; lia < listOfItemsAndSlots.length; lia++){
+        craftInput = listOfItemsAndSlots[lia]
+        Chat.log(craftInput[0] + " slot: " + craftInput[1])
+        for(let pi = inventoryStart; pi <= inventoryEnd; pi++){
+            //swap item into crafting slot if found
+            if(!inventory.getSlot(pi).isEmpty()){
+                Chat.log("slot #:" + pi + " slot item: " 
+                    + inventory.getSlot(pi).getItemID())
+                if(inventory.getSlot(pi).getItemID() == craftInput[0]){
+                    inventory.swap(pi,craftInput[1])
+                    spinTicks(4)
+                    break //found our item, don't look for anymore
+                }
+            }
+        }
+    }
+    
+    //craft the quantity from filled crafting slots.
+    if(quantity == MAX_CRAFT){
+        inventory.quick(0)
+    }
+    else{
+        for(let i = 0; i < quantity; i++){
+            inventory.click(0)
+            spinTicks(2)
+        }
+    }
+    
+    inventory.close()
+    spinTicks(10)
 }
 
 //If finding recipeName in recipe book, craft full stack once,
@@ -1015,9 +1153,12 @@ function wrapJSONStringsTogether(JSONStringArray){
 //We don't do this because we are not pepega.
 module.exports = {
 //exporting variables
+    tossItemList : tossItemList,
+    tossLookVector : tossLookVector,
     tossedItemsArray : tossedItemsArray,
     SINGLE_CHEST: SINGLE_CHEST,
     DOUBLE_CHEST: DOUBLE_CHEST,
+    MAX_CRAFT : MAX_CRAFT,
     player: player,
     playerKeys : playerKeys,
     quitKey: quitKey,
@@ -1032,6 +1173,8 @@ module.exports = {
     hungerThreshold : hungerThreshold,
     eyeHeight : eyeHeight,
 //exporting functions
+    setTossItemList : setTossItemList,
+    setTossLookVector : setTossLookVector,
     key : key,
     checkPlayerKeys : checkPlayerKeys,
     resetKeys : resetKeys,
@@ -1077,10 +1220,15 @@ module.exports = {
     chestAllItems: chestAllItems,
     tossItems: tossItems,
     tossAllSpecificItems : tossAllSpecificItems,
+    tossItems : tossItems,
     selectHotbar: selectHotbar,
     nextHotbar: nextHotbar,
+    getItemInSelectedHotbar: getItemInSelectedHotbar,
     inventoryContains: inventoryContains,
+    getInventorySlot: getInventorySlot,
+    moveItemToHotbar: moveItemToHotbar,
     getRecipeIndex : getRecipeIndex,
+    craftManually : craftManually,
     craftRecipe: craftRecipe,
     simpleJSONString : simpleJSONString,
     wrapJSONStringsTogether : wrapJSONStringsTogether
