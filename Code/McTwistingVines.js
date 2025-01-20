@@ -35,6 +35,9 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
+//set item list and look vector for tossing items into collector
+util.setTossItemList(["minecraft:twisting_vines"])
+util.setTossLookVector([90,0])
 
 //alter the default quitkey from j to whatever you want.
 util.setQuitKey("key.keyboard.j") //default: util.setQuitKey("key.keyboard.j") 
@@ -57,10 +60,6 @@ secondsToHarvest = 14
 //direction to look at carrots to harvest while strafing
 harvestLookX = 180
 harvestLookY = 0
-
-//direction to look when tossing carrots into water collector
-tossLookX = 90
-tossLookY = 0
 /*-----------------------
    1.2 Player Configurables End
 -----------------------*/
@@ -200,13 +199,6 @@ function moveToNextLayer(){
     util.simpleMove("key.keyboard.left.shift",harvestLookX,harvestLookY,10)
 }
 
-function tossVines(){
-    //Chat.log("Tossing items")
-    util.tossAllSpecificItems(
-        ["minecraft:twisting_vines"],
-        tossLookX, tossLookY)
-}
-
 //called at start of script to set layer in carrot farm
 //especially for restarts
 function setStartingLayer(){
@@ -245,10 +237,10 @@ for(let i = startingLayer; i >= 1; i--){
         }
         if(i % 2 == 1){
             harvestOddCell()
-            tossVines()
+            util.tossItems()
         }
         else{
-            tossVines()
+            util.tossItems()
             harvestEvenCell()
         }
     }
@@ -256,19 +248,9 @@ for(let i = startingLayer; i >= 1; i--){
     //move to the start of the next layer
     //moveToNextLayer()
 }
-    
-
 
 //Reset keybinds to prevent phantom key holds.
-KeyBind.key("key.keyboard.w", false)
-KeyBind.key("key.keyboard.a", false)
-KeyBind.key("key.keyboard.s", false)
-KeyBind.key("key.keyboard.d", false)
-KeyBind.key("key.keyboard.left.control", false)
-KeyBind.key("key.keyboard.space", false)
-KeyBind.key("key.mouse.right", false)
-KeyBind.key("key.mouse.left", false)
-
+util.resetKeys()
 
 Chat.log(finishedText)
 util.logScriptEnd(farmName, regrowthTime)
