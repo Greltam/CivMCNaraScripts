@@ -82,6 +82,32 @@ rowWalkDuration = 22 * 20 // seconds * ticks per second
 /*-------------------
    3 Functions Start
 -------------------*/
+
+//called at start of script to set position in tree farm
+//especially for restarts
+function setStartingPosition(){
+    playerX = util.player.getX()
+    playerY = util.player.getY()
+    playerZ = util.player.getZ()
+    
+    //if we are at the lodestone level, set position as start of a layer and break
+    if((playerY - yStartPosition) % layerHeight === 0){
+        startingLayer = ((playerY - yStartPosition) / layerHeight) + 1
+        startingRow = 1 
+        startingTree = 1
+        restarting = false
+        return
+    }
+    //set layer, we are -1 y level while chopping trees
+    startingLayer = ((playerY - yStartPosition + 1) / layerHeight) + 1
+    startingLayer = Math.floor(startingLayer)
+    //Chat.log("starting layer = " + startingLayer)
+    //set row
+   
+    restarting = true
+}
+
+
 function fillHotbarWithSaplings(){
 
     inv = Player.openInventory()
@@ -111,6 +137,7 @@ function fillHotbarWithSaplings(){
 Chat.log("Zeal Oak Replantinator, Booting...")
 Chat.log("Press: " + util.getQuitKey() + " to end script")
 
+setStartingPosition()
 //chop all the layers
 for(let i = startingLayer; i <= totalLayers; i++){
     if(util.checkQuit()){break}
@@ -119,13 +146,14 @@ for(let i = startingLayer; i <= totalLayers; i++){
     
     //start at lodestone - move to chop start
     if(!restarting){
+        ////Chat.log("YPos = " + (yStartPosition + ((i-1) * layerHeight) - 1))
         util.moveToLocation(
             xStartPosition - 92, zStartPosition, 
-            yStartPosition + ((i-1) * layerHeight) - 1 + util.getEyeHeight(),
+            yStartPosition + ((i-1) * layerHeight) - 1,
             0.2)
         util.moveToLocation(
             xStartPosition - 92.1,zStartPosition - 1, 
-            yStartPosition + ((i-1) * layerHeight) - 1 + util.getEyeHeight(),
+            yStartPosition + ((i-1) * layerHeight) - 1,
             0.2)
     }
     
@@ -181,11 +209,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
 }
 
 //Reset keybinds to prevent phantom key holds.
-KeyBind.key("key.keyboard.w", false)
-KeyBind.key("key.keyboard.left.control", false)
-KeyBind.key("key.keyboard.space", false)
-KeyBind.key("key.mouse.right", false)
-KeyBind.key("key.mouse.left", false)
+util.resetKeys()
 
 
 Chat.log("Oak has been replantinated, shutting down...")
