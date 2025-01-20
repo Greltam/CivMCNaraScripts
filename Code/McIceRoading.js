@@ -81,16 +81,16 @@ finishedText =  Chat.createTextHelperFromJSON(
 function snapToCardinal(){
     playerYaw = Player.getPlayer().getYaw()
     if(playerYaw < 45 && playerYaw > -45){
-        player.lookAt(0,0)
+        util.simpleLook(0,0,1)
     }
     else if(playerYaw < -45 && playerYaw > -135){
-        player.lookAt(-90,0)
+        util.simpleLook(-90,0,1)
     }
     else if(playerYaw < 135 && playerYaw > 45){
-        player.lookAt(90,0)
+        util.simpleLook(90,0,1)
     }
     else{
-        player.lookAt(180,0)    
+        util.simpleLook(180,0,1)    
     }
 }
 /*-------------------
@@ -107,21 +107,17 @@ snapToCardinal()
 
 while(!util.checkQuit()){
     
-    KeyBind.key(sprintKey, true)
-    KeyBind.key(forwardKey, true)
-    KeyBind.key(useKey, true)
+    util.key(sprintKey, true)
+    util.key(forwardKey, true)
+    util.key(useKey, true)
     
-    KeyBind.key(jumpKey, true)
+    util.key(jumpKey, true)
     util.spinTicks(1)
-    KeyBind.key(jumpKey, false)
+    util.key(jumpKey, false)
     util.spinTicks(1)
 }
 
-//util.resetKeyBinds()
-    KeyBind.key(sprintKey, false)
-    KeyBind.key(forwardKey, false)
-    KeyBind.key(useKey, false)
-    KeyBind.key(jumpKey, false)
+util.resetKeys()
 
 Chat.log(finishedText)
 
