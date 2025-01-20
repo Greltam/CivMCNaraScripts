@@ -35,6 +35,9 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
+//set item list and look vector for tossing items into collector
+util.setTossItemList(["minecraft:nether_wart"])
+util.setTossLookVector([-90,-25])
 
 //alter the default quitkey from j to whatever you want.
 util.setQuitKey("key.keyboard.j") //default: util.setQuitKey("key.keyboard.j") 
@@ -64,12 +67,6 @@ firstRowLookX = 90
 
 strafeLeft = "key.keyboard.a"
 strafeRight = "key.keyboard.d"
-
-
-
-//direction to look when tossing netherwart into water collector
-tossLookX = -90
-tossLookY = -25
 /*-----------------------
    1.2 Player Configurables End
 -----------------------*/
@@ -129,27 +126,25 @@ finishedText =  Chat.createTextHelperFromJSON(
 -------------------*/
 
 function setEvenLayer(){
-harvestLookX = 0
-harvestLookY = 42
-
-firstRowBackupX = 135
-firstRowLookX = 90
-
-strafeLeft = "key.keyboard.d"
-strafeRight = "key.keyboard.a"
-
+    harvestLookX = 0
+    harvestLookY = 42
+    
+    firstRowBackupX = 135
+    firstRowLookX = 90
+    
+    strafeLeft = "key.keyboard.d"
+    strafeRight = "key.keyboard.a"
 }
 
 function setOddLayer(){
-harvestLookX = 180
-harvestLookY = 42
-
-firstRowBackupX = 45
-firstRowLookX = 90
-
-strafeLeft = "key.keyboard.a"
-strafeRight = "key.keyboard.d"
-
+    harvestLookX = 180
+    harvestLookY = 42
+    
+    firstRowBackupX = 45
+    firstRowLookX = 90
+    
+    strafeLeft = "key.keyboard.a"
+    strafeRight = "key.keyboard.d"
 }
 
 function harvestCell(){
@@ -214,13 +209,6 @@ function moveToNextLayer(){
     util.simpleMove("key.keyboard.left.shift",harvestLookX,harvestLookY,10)
 }
 
-function tossItems(){
-    //Chat.log("Tossing items")
-    util.tossAllSpecificItems(
-        ["minecraft:nether_wart"],
-        tossLookX, tossLookY)
-}
-
 //called at start of script to set layer in carrot farm
 //especially for restarts
 function setStartingLayer(){
@@ -261,19 +249,19 @@ for(let i = startingLayer; i >= 1; i--){
         if(i%2 == 1){
             setOddLayer()
             harvestCell()
-            tossItems()
+            util.tossItems()
             util.simpleMove("key.mouse.right", harvestLookX, 0, 5)
         }
         else{
             setEvenLayer()
-            tossItems()
+            util.tossItems()
             harvestCell()
             if(j != cellsPerLayer){ //don't extra move at last spot
                 //move flush to start block
                 util.simpleMove("key.mouse.right", harvestLookX, 0, 5)
                 util.simpleMove("key.keyboard.w", harvestLookX, harvestLookY, 1*20)
                 util.simpleMove("key.keyboard.w", firstRowBackupX, harvestLookY, 1*20)
-                util.simpleMove("key.keyboard.w", tossLookX, harvestLookY, 1*20)
+                util.simpleMove("key.keyboard.w", -90, harvestLookY, 1*20)
             }
             if( j == cellsPerLayer){
                 util.simpleMove("key.mouse.right", 0, 90, 5)
@@ -284,19 +272,9 @@ for(let i = startingLayer; i >= 1; i--){
     //move to the start of the next layer
     //moveToNextLayer()
 }
-    
-
 
 //Reset keybinds to prevent phantom key holds.
-KeyBind.key("key.keyboard.w", false)
-KeyBind.key("key.keyboard.a", false)
-KeyBind.key("key.keyboard.s", false)
-KeyBind.key("key.keyboard.d", false)
-KeyBind.key("key.keyboard.left.control", false)
-KeyBind.key("key.keyboard.space", false)
-KeyBind.key("key.mouse.right", false)
-KeyBind.key("key.mouse.left", false)
-
+util.resetKeys()
 
 Chat.log(finishedText)
 util.logScriptEnd(farmName, regrowthTime)
