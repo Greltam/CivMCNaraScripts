@@ -24,6 +24,11 @@
    0.1 Player Requirements to Start
 ------------------------*/
 
+//!!!IMPORTANT!!!
+//Clear any stray wart blocks present in front of all doors
+//on each row of each layer. (East side only)
+//!!!IMPORTANT!!!
+
 //Player must place axe in the rightmost hotbar(9)
 //Player must place hoe in the next rightmost hotbar(8)
 //Hoe should be high durability
