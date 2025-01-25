@@ -25,7 +25,8 @@ ListOfAllScripts = [
 
     //Nether Farms
     "McTwistingVines",
-    "McNetherwart"
+    "McNetherwart",
+    "McNetherStemTower"
 ]
 
 function scriptNameToGithubURL(scriptName){
