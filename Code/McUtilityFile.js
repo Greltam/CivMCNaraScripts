@@ -41,7 +41,7 @@ scriptEndTime = 0
 
 SINGLE_CHEST = 1
 DOUBLE_CHEST = 2
-MAX_CRAFT = 999 // used in craftManually to simulate a shift click craft
+CRAFT_MAX = 999 // used in craftManually to simulate a shift click craft
 
 //List of farm items to toss into collectors
 function setTossItemList(list){
@@ -433,9 +433,24 @@ function smoothLookAt(yaw, pitch){
             currPitch = lerp(currPitch, pitch, 0.1);
         }
         
+        //attempt to stop following plyr.lookAt(currYaw, currPitch)
+        //from crossing 180/-180 yaw and causing a Vulcan kick
+        if(yaw == 180){
+            if(currYaw < 0){
+                yaw = -180
+            }
+        }
+        else if(yaw == -180){
+            if(currYaw > 0){
+                yaw = 180
+            }
+        }
         plyr.lookAt(currYaw, currPitch);
         Time.sleep(1);
     }
+    
+    //Since adding the boundary check in the tween, 
+    //this may be unnecessary
     
     //fully set the yaw / pitch the remove hidden decimals from lerping
     //be careful of the threshold between 180 to -180 that will cause
@@ -958,7 +973,7 @@ function selectHotbar(slotNumber){
     playerInv = Player.openInventory()
     playerInv.setSelectedHotbarSlotIndex(slotNumber)
     playerInv.close()
-    spinTicks(5)
+    spinTicks(2)
 }
 
 function nextHotbar(){
@@ -1056,7 +1071,7 @@ function craftManually(listOfItemsAndSlots, quantity){
         return
     }
     inventory = Player.openInventory()
-    spinTicks(5)
+    spinTicks(20)
     
     //check if player is self crafting or table crafting
     selfCrafting = true
@@ -1074,8 +1089,8 @@ function craftManually(listOfItemsAndSlots, quantity){
         inventoryEnd = 45
     }
     
-    Chat.log("type:" + inventory.getType())
-    Chat.log("inventory: " + inventoryStart + "-" + inventoryEnd)
+    ////Chat.log("type:" + inventory.getType())
+    ////Chat.log("inventory: " + inventoryStart + "-" + inventoryEnd)
     //go through items in inventory slots and check if they
     //are in the listOfItemsAndSlots, first [0] spot
     //then put it in the crafting slot it's supposed to be in
@@ -1084,15 +1099,15 @@ function craftManually(listOfItemsAndSlots, quantity){
     //for it in the inventory, then place in crafting slot
     for(let lia = 0; lia < listOfItemsAndSlots.length; lia++){
         craftInput = listOfItemsAndSlots[lia]
-        Chat.log(craftInput[0] + " slot: " + craftInput[1])
+        ////Chat.log(craftInput[0] + " slot: " + craftInput[1])
         for(let pi = inventoryStart; pi <= inventoryEnd; pi++){
             //swap item into crafting slot if found
             if(!inventory.getSlot(pi).isEmpty()){
-                Chat.log("slot #:" + pi + " slot item: " 
-                    + inventory.getSlot(pi).getItemID())
+                ////Chat.log("slot #:" + pi + " slot item: " 
+                ////    + inventory.getSlot(pi).getItemID())
                 if(inventory.getSlot(pi).getItemID() == craftInput[0]){
                     inventory.swap(pi,craftInput[1])
-                    spinTicks(4)
+                    spinTicks(3)
                     break //found our item, don't look for anymore
                 }
             }
@@ -1100,18 +1115,22 @@ function craftManually(listOfItemsAndSlots, quantity){
     }
     
     //craft the quantity from filled crafting slots.
-    if(quantity == MAX_CRAFT){
+    if(quantity == CRAFT_MAX){
+        ////Chat.log("Item at slot 0: " + inventory.getSlot(0).getItemID())
         inventory.quick(0)
+        spinTicks(3)
     }
     else{
         for(let i = 0; i < quantity; i++){
             inventory.click(0)
-            spinTicks(2)
+            spinTicks(3)
         }
     }
     
-    inventory.close()
-    spinTicks(10)
+    if(selfCrafting){
+        inventory.close()
+        spinTicks(20)
+    }
 }
 
 //If finding recipeName in recipe book, craft full stack once,
@@ -1158,7 +1177,7 @@ module.exports = {
     tossedItemsArray : tossedItemsArray,
     SINGLE_CHEST: SINGLE_CHEST,
     DOUBLE_CHEST: DOUBLE_CHEST,
-    MAX_CRAFT : MAX_CRAFT,
+    CRAFT_MAX : CRAFT_MAX,
     player: player,
     playerKeys : playerKeys,
     quitKey: quitKey,
