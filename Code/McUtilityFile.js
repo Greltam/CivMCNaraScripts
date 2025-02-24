@@ -10,6 +10,10 @@
     util.setQuitKey("key.keyboard.j")
 */
 
+//should the script go over the 180 -> -180 north looking boundary
+//or smooth tween a large rotation?
+//Vulkan kicks often when crossing the boundary.
+passLookBoundary = false
 //standardize tossing items into collectors for all scripts
 tossItemList = [] //array of what items player can toss
 tossLookVector = [0,0] //direction to look when tossing items
@@ -99,7 +103,12 @@ function resetKeys(){
     }
     playerKeys = []
 }
-
+function getPassLookBoundary(){
+    return passLookBoundary
+}
+function setPassLookBoundary(bool){
+    passLookBoundary = bool
+}
 function getQuitKey(){
     return quitKey
 }
@@ -407,16 +416,24 @@ function smoothLookAt(yaw, pitch){
     const plyr = Player.getPlayer();
 
     yaw = clampYaw(yaw);
-
     let currYaw = plyr.getYaw();
-
+    
+    //attempt to stop 180 -> -180 boundary spinning
+    //JSMacros defaults a lookAt(180,x) to instead
+    //make character look at (-180,x) causing a spin
+    if(yaw == 180){
+        yaw = -180
+    }
+    
     // gets shortest path (to avoid spinning)
-    let deltaYaw = yaw - currYaw;
-
-    if (deltaYaw > 180) {
-        currYaw += 360;
-    } else if (deltaYaw < -180) {
-        currYaw -= 360;
+    if(passLookBoundary){
+        let deltaYaw = yaw - currYaw;
+    
+        if (deltaYaw > 180) {
+            currYaw += 360;
+        } else if (deltaYaw < -180) {
+            currYaw -= 360;
+        }
     }
 
     let currPitch = plyr.getPitch();
@@ -424,7 +441,8 @@ function smoothLookAt(yaw, pitch){
     const roundedYaw = round(yaw, 1);
     const roundedPitch = round(pitch, 1);
 
-    while (round(currYaw, 1) !== roundedYaw || round(plyr.getPitch(), 1) !== roundedPitch) {
+    while (round(currYaw, 1) !== roundedYaw
+     || round(plyr.getPitch(), 1) !== roundedPitch) {
         if (currYaw !== yaw) {
             currYaw = lerp(currYaw, yaw, 0.1); // defines how smooth you want it (0.5 in third parameter would be 100% of the angle in 2 ms, in theory)
         }
@@ -433,34 +451,14 @@ function smoothLookAt(yaw, pitch){
             currPitch = lerp(currPitch, pitch, 0.1);
         }
         
-        //attempt to stop following plyr.lookAt(currYaw, currPitch)
-        //from crossing 180/-180 yaw and causing a Vulcan kick
-        if(yaw == 180){
-            if(currYaw < 0){
-                yaw = -180
-            }
-        }
-        else if(yaw == -180){
-            if(currYaw > 0){
-                yaw = 180
-            }
-        }
+        ////Chat.log("Yaw: " + currYaw + " Pitch: " + currPitch)
         plyr.lookAt(currYaw, currPitch);
         Time.sleep(1);
     }
     
-    //Since adding the boundary check in the tween, 
-    //this may be unnecessary
-    
-    //fully set the yaw / pitch the remove hidden decimals from lerping
-    //be careful of the threshold between 180 to -180 that will cause
-    //the bot to do a full 360 causing anti-cheat kick.
-    if(Math.abs(yaw) == 180){ //if asking for either 180/-180 north 
-        if(yaw * currYaw < 0){ //if yaws cross the threshold one will be -
-            yaw = yaw * -1
-        }
-    }
+    //final lookAt call needed to snap player to inputted yaw/pitch
     plyr.lookAt(yaw, pitch);
+    Time.sleep(1);
 }
 
 
@@ -1180,6 +1178,7 @@ module.exports = {
     CRAFT_MAX : CRAFT_MAX,
     player: player,
     playerKeys : playerKeys,
+    passLookBoundary : passLookBoundary,
     quitKey: quitKey,
     quitFromFalling : quitFromFalling,
     quitFromFallingYLevel : quitFromFallingYLevel,
@@ -1197,6 +1196,8 @@ module.exports = {
     key : key,
     checkPlayerKeys : checkPlayerKeys,
     resetKeys : resetKeys,
+    getPassLookBoundary : getPassLookBoundary,
+    setPassLookBoundary : setPassLookBoundary,
     getSaveTool : getSaveTool,
     setSaveTool: setSaveTool,
     getQuitFromFalling : getQuitFromFalling,
