@@ -43,6 +43,7 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
+util.setPassLookBoundary(true)
 //set item list and look vector for tossing items into collector
 util.setTossItemList(["minecraft:oak_log","minecraft:oak_sapling",
          "minecraft:stick", "minecraft:apple",
