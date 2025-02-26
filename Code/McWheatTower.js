@@ -35,6 +35,7 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
+util.setPassLookBoundary(false)
 //set item list and look vector for tossing items into collector
 util.setTossItemList(["minecraft:wheat","minecraft:wheat_seeds"])
 util.setTossLookVector([90,-25])
