@@ -34,6 +34,7 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
+util.setPassLookBoundary(false)
 //set item list and look vector for tossing items into collector
 util.setTossItemList(["minecraft:carrot"])
 util.setTossLookVector([90,-25])
