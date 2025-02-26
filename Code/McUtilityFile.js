@@ -13,7 +13,7 @@
 //should the script go over the 180 -> -180 north looking boundary
 //or smooth tween a large rotation?
 //Vulkan kicks often when crossing the boundary.
-passLookBoundary = false
+passLookBoundary = true
 //standardize tossing items into collectors for all scripts
 tossItemList = [] //array of what items player can toss
 tossLookVector = [0,0] //direction to look when tossing items
