@@ -23,7 +23,6 @@
 /*------------------------
    0.1 Player Requirements to Start
 ------------------------*/
-
 //!!!IMPORTANT!!!
 //Clear any stray wart blocks present in front of all doors
 //on each row of each layer. (East side only)
@@ -40,7 +39,8 @@
 //10 stacks of crimson fungus
 //2 stacks of bone blocks
 //2 stacks of bonemeal
-//An extra axe
+//2 e(4/5)u3 diamond axes
+//1 e5u3 diamond hoe
 
 /*-----------------------
    0.1 Player Requirements to Start End
@@ -59,6 +59,11 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
+//set either to true to plant entire farm as one stem type
+plantAllCrimson = false //default: plantAllCrimson = false
+plantAllWarped = false //default: plantAllWarped = false
+
+
 //set item list and look vector for tossing items into collector
 util.setTossItemList(["minecraft:crimson_stem",
     "minecraft:nether_wart_block",
@@ -274,6 +279,13 @@ function plantFungus(layerNum, rowNum){
         useCrimson = false
     }
     
+    if(plantAllCrimson){
+        useCrimson = true
+    }
+    if(plantAllWarped){
+        useCrimson = false
+    }
+    
     //move hotbar to slot 6 
     util.selectHotbar(6)
     //check if holding fungus    
@@ -310,10 +322,12 @@ function chopTree(layer, row, tree){
     //Move from start or tree to next cell
     //East side row start, move west
     if(row % 2 == 1){
+        util.simpleMove("key.mouse.right",90,0,5)
         util.simpleMove("key.keyboard.w",90,0,nextCellMoveTicks)
     }
     //Weast side row start, move east
     else{
+        util.simpleMove("key.mouse.right",-90,0,5)
         util.simpleMove("key.keyboard.w",-90,0,nextCellMoveTicks)
     }
         
@@ -390,7 +404,8 @@ for(let i = startingLayer; i <= totalLayers; i++){
         
         //done chopping east-west row, move to next row
         if(j % 2 == 1){
-            //move to end of row
+            //open door and move to end of row
+            util.simpleMove("key.mouse.right",90,0,5)
             util.simpleMove("key.keyboard.w", 90,0,50)
             
             //On a North-South layer
@@ -406,7 +421,8 @@ for(let i = startingLayer; i <= totalLayers; i++){
         }
         //done chopping west-east row
         else{ 
-            //move to end of row
+            //open door and move to end of row
+            util.simpleMove("key.mouse.right",-90,0,5)
             util.simpleMove("key.keyboard.w", -90,0,50)
             
             //On a North-South layer
