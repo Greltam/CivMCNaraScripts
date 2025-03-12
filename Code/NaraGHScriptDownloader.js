@@ -7,6 +7,10 @@ ListOfAllScripts = [
     
     //Main utility file
     "McUtilityFile",
+
+    //Event utility files
+    "McUReconnect",
+    "McUKillSnitchEngage",
     
     //Auxiliary helper files
     "McIceRoading",
