@@ -444,11 +444,11 @@ function smoothLookAt(yaw, pitch){
     while (round(currYaw, 1) !== roundedYaw
      || round(plyr.getPitch(), 1) !== roundedPitch) {
         if (currYaw !== yaw) {
-            currYaw = lerp(currYaw, yaw, 0.1); // defines how smooth you want it (0.5 in third parameter would be 100% of the angle in 2 ms, in theory)
+            currYaw = lerp(currYaw, yaw, 0.05); // defines how smooth you want it (0.5 in third parameter would be 100% of the angle in 2 ms, in theory)
         }
         
         if (currPitch !== pitch) {
-            currPitch = lerp(currPitch, pitch, 0.1);
+            currPitch = lerp(currPitch, pitch, 0.05);
         }
         
         ////Chat.log("Yaw: " + currYaw + " Pitch: " + currPitch)
