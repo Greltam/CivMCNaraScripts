@@ -61,7 +61,7 @@ const util = require("./McUtilityFile.js")
 ------------------------*/
 //set either to true to plant entire farm as one stem type
 plantAllCrimson = false //default: plantAllCrimson = false
-plantAllWarped = false //default: plantAllWarped = false
+plantAllWarped = true //default: plantAllWarped = false
 
 
 //set item list and look vector for tossing items into collector
