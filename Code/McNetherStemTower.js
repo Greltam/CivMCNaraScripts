@@ -33,6 +33,7 @@
 //Hoe should be high durability
 //Player must place fungus in next rightmost hotbar(7)
 //Player must place bonemeal in next rightmost hotbar(6)
+//Player must place sticks in the next rightmost hotbar(5)
 
 //Inventory will be filled with:
 //10 stacks of warped fungus
@@ -306,10 +307,29 @@ function plantFungus(layerNum, rowNum){
     heldItem = util.getItemInSelectedHotbar()
     if(heldItem.getItemId() == desiredFungus)
     {
+        //we need to check if we double bonemealed
+        itemNumber = heldItem.getCount()
+        
         //plant fungus on block pitch = 70
         util.simpleMove(
             "key.mouse.right", util.player.getYaw(), 70, 5
         )
+        
+        //check if we actually planted a fungus
+        util.spinTicks(10)
+        heldItem = util.getItemInSelectedHotbar()
+        if(itemNumber === heldItem.getCount()){
+            //we did not plant the fungus
+            //we probably double bonemealed one onto the nylium
+            //to activate rb, we need to right click with a stick
+            
+            //move hotbar to slot 4 
+            util.selectHotbar(4)
+            //right click fungus with stick
+            util.simpleMove(
+                "key.mouse.right", util.player.getYaw(), 70, 5
+            )
+        }
     }
 
 }
@@ -339,8 +359,8 @@ function chopTree(layer, row, tree){
     
     //remove wart if on bottom two blocks
     util.selectHotbar(7) //select hoe
-    util.simpleMove("key.mouse.left",pYaw, 50.5, 5)
-    util.simpleMove("key.mouse.left",pYaw, 75, 5)
+    util.simpleMove("key.mouse.left",pYaw, 50.5, 8)
+    util.simpleMove("key.mouse.left",pYaw, 75, 8)
     //eye and foot level logs
     util.selectHotbar(8) //select Axe
     util.simpleMove("key.mouse.left",pYaw, 50.5, floorCutTicks)
@@ -371,6 +391,8 @@ function chopTree(layer, row, tree){
 /*-------------------
    4 Program Start
 -------------------*/
+
+
 Chat.log(greetingsText)
 Chat.log(quitText)
 util.logScriptStart(farmName)
@@ -486,6 +508,8 @@ for(let i = startingLayer; i <= totalLayers; i++){
 
 //Reset keybinds to prevent phantom key holds.
 util.resetKeys()
+
+
 
 
 Chat.log(finishedText)
