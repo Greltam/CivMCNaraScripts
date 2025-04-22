@@ -28,6 +28,7 @@ ListOfAllScripts = [
     "McPotatoTower",
     "McCocoaTower",
     "McSugarcane",
+    "McSweetBerry",
 
     //Nether Farms
     "McTwistingVines",
