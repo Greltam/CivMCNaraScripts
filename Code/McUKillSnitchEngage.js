@@ -75,7 +75,8 @@ for(let i = 0; i < textArray.length; i++){
             {
                 Chat.log("KILLSNITCHENGAGED")
                 GlobalVars.putBoolean("killsnitch", true)
-                Client.waitTick(40)
+                Chat.say("/logout")
+                Client.waitTick(400)
                 Client.disconnect() 
             }
         }
