@@ -52,7 +52,7 @@ util.setQuitKey("key.keyboard.j") //default: util.setQuitKey("key.keyboard.j")
 startingLayer = 1 //default: startingLayer = 1
 
 //total layers in the tree farm
-totalLayers = 30 //default: totalLayers = 14
+totalLayers = 54 //default: totalLayers = 14
 carrotsPerRow = 25 //default: treesPerRow = 27
 rowsPerLayer = 14 //default: rowsPerLayer = 30
 doubleRows = Math.floor(rowsPerLayer/2)
