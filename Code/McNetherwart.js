@@ -268,7 +268,10 @@ for(let i = startingLayer; i >= 1; i--){
             }
         }
     }
-
+    
+    //falling to next layer hurts so eat to not die
+    util.checkHunger() //eat food if hungry
+    
     //move to the start of the next layer
     //moveToNextLayer()
 }
