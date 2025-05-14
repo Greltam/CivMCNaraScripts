@@ -49,7 +49,7 @@ textArray = text.split(" ")
 
 for(let i = 0; i < textArray.length; i++){
     if(textArray[i] == disconnectPhrase){
-        Chat.log("DisconnectPhrase")
+        //Chat.log("DisconnectPhrase")
         
         isRealSnitchEvent = false
         iPositionOfCoords = i+1
@@ -58,14 +58,14 @@ for(let i = 0; i < textArray.length; i++){
         if(textArray.length >= i+3)
         {
             if(textArray[i+1].startsWith("[")){
-                Chat.log(textArray[i+1])
-                Chat.log("OneSplit")
+                //Chat.log(textArray[i+1])
+                //Chat.log("OneSplit")
                 isRealSnitchEvent = true
                 iPositionOfCoords = i+1
             }
             if(textArray[i+2].startsWith("[")){
-                Chat.log(textArray[i+2])
-                Chat.log("TwoSplit")
+                //Chat.log(textArray[i+2])
+                //Chat.log("TwoSplit")
                 isRealSnitchEvent = true
                 iPositionOfCoords = i+2
             }            
