@@ -44,24 +44,53 @@ disconnectPhrase = "KILLSNITCHENGAGE"   //default: "KILLSNITCHENGAGE"
 /*-------------------
    4 Program Start
 -------------------*/
-text = event.text.getString()
+text = event.text.getStringStripFormatting()
 textArray = text.split(" ")
 
 for(let i = 0; i < textArray.length; i++){
     if(textArray[i] == disconnectPhrase){
-        //most likely for a snitch
-        if(textArray.length >= i+4){
+        Chat.log("DisconnectPhrase")
+        
+        isRealSnitchEvent = false
+        iPositionOfCoords = i+1
+        
+        //look for a [ in the next 2 spots
+        if(textArray.length >= i+3)
+        {
+            if(textArray[i+1].startsWith("[")){
+                Chat.log(textArray[i+1])
+                Chat.log("OneSplit")
+                isRealSnitchEvent = true
+                iPositionOfCoords = i+1
+            }
+            if(textArray[i+2].startsWith("[")){
+                Chat.log(textArray[i+2])
+                Chat.log("TwoSplit")
+                isRealSnitchEvent = true
+                iPositionOfCoords = i+2
+            }            
+        }
+        
+        if(isRealSnitchEvent){
         /*
+            *Old: Jukes and Noteblocks have different outputs
             find snitch coords
             //next i+1 should be [world or [world_nether
             //then i+2 = x
             //then i+3 = y
             //then i+4 = z]
         */
-            snitchX = Number(textArray[i+2])
-            snitchY = Number(textArray[i+3])
-            zTextSplit = textArray[i+4].split("]")
+            xTextSplit = textArray[iPositionOfCoords].split("[")
+            snitchX = Number(xTextSplit[1])
+            //snitchX = Number(textArray[iPositionOfCoords])
+            //Chat.log("sX " + snitchX)
+            
+            snitchY = Number(textArray[iPositionOfCoords + 1])
+            //Chat.log("sY " + snitchY)
+            
+            zTextSplit = textArray[iPositionOfCoords + 2].split("]")
             snitchZ = Number(zTextSplit[0])
+            //Chat.log("sZ " + snitchZ)
             
             deltaX = snitchX - Player.getPlayer().getX()
             deltaY = snitchY - Player.getPlayer().getY()
@@ -69,9 +98,9 @@ for(let i = 0; i < textArray.length; i++){
             
             //clean up with Math.abs()?
             //Player is within snitch, fire kill snitch
-            if(deltaX >= -11 && deltaX <= 11 &&
-                deltaY >= -11 && deltaY <= 11 &&
-                deltaZ >= -11 && deltaZ <= 11)
+            if(deltaX >= -13 && deltaX <= 13 &&
+                deltaY >= -13 && deltaY <= 13 &&
+                deltaZ >= -13 && deltaZ <= 13)
             {
                 Chat.log("KILLSNITCHENGAGED")
                 GlobalVars.putBoolean("killsnitch", true)
