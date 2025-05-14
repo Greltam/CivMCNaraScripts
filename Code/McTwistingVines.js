@@ -244,6 +244,8 @@ for(let i = startingLayer; i >= 1; i--){
             harvestEvenCell()
         }
     }
+    //falling damages so eat food to not die
+    util.checkHunger() //eat food if hungry
 
     //move to the start of the next layer
     //moveToNextLayer()
