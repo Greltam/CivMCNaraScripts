@@ -49,7 +49,7 @@ while(!hasReconnected){
         hours = date.getHours()
         while(!(hours >= 3 && hours <= 4)){
             //every half hour see if we are between 3am and 4am
-            Client.waitTick(1800 * 20)
+            Client.waitTick(600 * 20)
             
             //refresh current datetime
             date = new Date()
@@ -57,10 +57,9 @@ while(!hasReconnected){
         }
         //it is after server reset time so we reconnect
     }
-    else{
-        //try to connect every 20 seconds
-        Client.waitTick(20 * 20)
-    }
+    
+    //try to connect every 20 seconds
+    Client.waitTick(20 * 20)
     
     //If a disconnect has occured due to a KillSnitchEngage snitch msg
     if(GlobalVars.getBoolean("killsnitch")){
