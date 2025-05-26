@@ -33,7 +33,11 @@ ListOfAllScripts = [
     //Nether Farms
     "McTwistingVines",
     "McNetherwart",
-    "McNetherStemTower"
+    "McNetherStemTower",
+
+    //Delayed Start Scripts
+    "vDelayZealOak",
+    "vDelayNetherStem"
 ]
 
 function scriptNameToGithubURL(scriptName){
