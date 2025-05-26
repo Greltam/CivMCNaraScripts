@@ -410,6 +410,10 @@ util.logScriptEnd(farmName, regrowthTime)
 //if we restarted script over night logout because we are
 //probably still asleep.
 if(GlobalVars.getBoolean("delayFarm")){
+
+    GlobalVars.putBoolean("delayFarm",false)
+    GlobalVars.putBoolean("delayZealOak",false)
+    
     GlobalVars.putBoolean("killsnitch", true)
     Chat.say("/logout")
     Client.waitTick(400)
