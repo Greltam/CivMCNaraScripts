@@ -391,8 +391,6 @@ function chopTree(layer, row, tree){
 /*-------------------
    4 Program Start
 -------------------*/
-
-
 Chat.log(greetingsText)
 Chat.log(quitText)
 util.logScriptStart(farmName)
@@ -509,11 +507,21 @@ for(let i = startingLayer; i <= totalLayers; i++){
 //Reset keybinds to prevent phantom key holds.
 util.resetKeys()
 
-
-
-
 Chat.log(finishedText)
 util.logScriptEnd(farmName, regrowthTime)
+
+//if we restarted script over night logout because we are
+//probably still asleep.
+if(GlobalVars.getBoolean("delayFarm")){
+
+    GlobalVars.putBoolean("delayFarm",false)
+    GlobalVars.putBoolean("delayNetherStem",false)
+    
+    GlobalVars.putBoolean("killsnitch", true)
+    Chat.say("/logout")
+    Client.waitTick(400)
+    Client.disconnect() 
+}
 
 /*-------------------
    4 Program End
