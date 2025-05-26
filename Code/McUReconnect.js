@@ -21,14 +21,46 @@
 -----------------------*/
 
 /*-------------------
+   3 Functions Start
+-------------------*/
+
+
+/*-------------------
+   3 Functions End
+-------------------*/
+
+function restartFarmScripts(){
+    if(GlobalVars.getBoolean("delayZealOak")){
+        JsMacros.runScript("McOakHiTechChop.js")
+    }
+    if(GlobalVars.getBoolean("delayetherStem")){
+        JsMacros.runScript("McNetherStemTower.js")
+    }
+}
+/*-------------------
    4 Program Start
 -------------------*/
 hasReconnected = false
 
 while(!hasReconnected){
     
-    //try to connect every 20 seconds
-    Client.waitTick(20 * 20)
+    if(GlobalVars.getBoolean("delayFarm")){
+        date = new Date()
+        hours = date.getHours()
+        while(!(hours >= 3 && hours <= 4)){
+            //every half hour see if we are between 3am and 4am
+            Client.waitTick(1800 * 20)
+            
+            //refresh current datetime
+            date = new Date()
+            hours = date.getHours()
+        }
+        //it is after server reset time so we reconnect
+    }
+    else{
+        //try to connect every 20 seconds
+        Client.waitTick(20 * 20)
+    }
     
     //If a disconnect has occured due to a KillSnitchEngage snitch msg
     if(GlobalVars.getBoolean("killsnitch")){
@@ -46,6 +78,7 @@ while(!hasReconnected){
     }
     else{
         hasReconnected = true
+        restartFarmScripts()
     }
 }
 
