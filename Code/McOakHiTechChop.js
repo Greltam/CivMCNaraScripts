@@ -43,7 +43,6 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
-util.setPassLookBoundary(true)
 //set item list and look vector for tossing items into collector
 util.setTossItemList(["minecraft:oak_log","minecraft:oak_sapling",
          "minecraft:stick", "minecraft:apple",
@@ -85,6 +84,8 @@ treeBridgeLength = 5 //default: treeBridgeLength = 5
 /*------------------------
    2 Global Variables Start
 ------------------------*/
+
+
 farmName = "GSEZ Oak Tower"
 regrowthTime = 23.5 * 3600 //hours multiplied by seconds per hour
 
@@ -401,9 +402,19 @@ for(let i = startingLayer; i <= totalLayers; i++){
 
 //Reset keybinds to prevent phantom key holds.
 util.resetKeys()
+GlobalVars.putBoolean("delayZealOak",false)
 
 Chat.log(finishedText)
 util.logScriptEnd(farmName, regrowthTime)
+
+//if we restarted script over night logout because we are
+//probably still asleep.
+if(GlobalVars.getBoolean("delayFarm")){
+    GlobalVars.putBoolean("killsnitch", true)
+    Chat.say("/logout")
+    Client.waitTick(400)
+    Client.disconnect() 
+}
 
 /*-------------------
    4 Program End
