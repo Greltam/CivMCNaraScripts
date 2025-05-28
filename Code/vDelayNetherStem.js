@@ -11,6 +11,10 @@
    0.1 Player Requirements to Start
 ------------------------*/
 
+//Edit:
+//    GlobalVars.putInt("delayStartHour",3)
+//where 3 is the hour you want the bot to start up.
+
 //Player must stand at script start: 2264, 8097, 34
 
 //!!!IMPORTANT!!!
@@ -53,6 +57,7 @@
    0.1 Player Requirements to Start End
 -----------------------*/
 
+GlobalVars.putInt("delayStartHour",3)
 GlobalVars.putBoolean("delayFarm",true)
 GlobalVars.putBoolean("delayNetherStem",true)
 Chat.log("Nether stem farm delayed start")
