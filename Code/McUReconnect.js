@@ -33,7 +33,7 @@ function restartFarmScripts(){
     if(GlobalVars.getBoolean("delayZealOak")){
         JsMacros.runScript("McOakHiTechChop.js")
     }
-    if(GlobalVars.getBoolean("delayetherStem")){
+    if(GlobalVars.getBoolean("delayNetherStem")){
         JsMacros.runScript("McNetherStemTower.js")
     }
 }
@@ -45,17 +45,20 @@ hasReconnected = false
 while(!hasReconnected){
     
     if(GlobalVars.getBoolean("delayFarm")){
+        startHour = 3 //default incase not set
+        startHour = GlobalVars.getInt("delayStartHour")
         date = new Date()
         hours = date.getHours()
-        while(!(hours >= 3 && hours <= 4)){
-            //every half hour see if we are between 3am and 4am
+        
+        while(hours != startHour){
+            //every 10 minutes see if we are at the starting hour
             Client.waitTick(600 * 20)
             
             //refresh current datetime
             date = new Date()
             hours = date.getHours()
         }
-        //it is after server reset time so we reconnect
+        //it is at the delayed starting hour so reconnect
     }
     
     //try to connect every 20 seconds
