@@ -10,6 +10,9 @@
 /*------------------------
    0.1 Player Requirements to Start
 ------------------------*/
+//Edit:
+//    GlobalVars.putInt("delayStartHour",3)
+//where 3 is the hour you want the bot to start up.
 
 //Player must stand at script start: 2958, 5202, 67
 //Player must have 3 diamond axes(>=e4u3) 
@@ -35,7 +38,7 @@
 /*-----------------------
    0.1 Player Requirements to Start End
 -----------------------*/
-
+GlobalVars.putInt("delayStartHour",3)
 GlobalVars.putBoolean("delayFarm",true)
 GlobalVars.putBoolean("delayZealOak",true)
 Chat.log("GSEZ oak farm delayed start")
