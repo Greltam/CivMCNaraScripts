@@ -267,6 +267,9 @@ for(let i = towerNumber; i <= 4; i++){
     util.simpleMove("key.keyboard.w",0,0,1*20)
     //align to tower wall
     util.simpleMove("key.keyboard.d",0,0,1*20)
+
+    //reset cocoabeam to 1 for after restarts
+    cocoaBeam = 1
 }
 
 //Chat.log("Done Cocoa Beaning")
