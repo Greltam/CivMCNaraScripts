@@ -37,7 +37,16 @@ ListOfAllScripts = [
 
     //Delayed Start Scripts
     "vDelayZealOak",
-    "vDelayNetherStem"
+    "vDelayNetherStem",
+
+    //Simple utility scripts
+    "zBridge",
+    "zCrouchMine",
+    "zJumpUsing",
+    "zKeepAttacking",
+    "zKeepMoving",
+    "zKeepUsing",
+    "zOreBreak"
 ]
 
 function scriptNameToGithubURL(scriptName){
