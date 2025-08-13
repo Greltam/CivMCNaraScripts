@@ -63,11 +63,41 @@ Chat.log("Zeal Deepslate Tile Converterble test drive.")
 Chat.log("Press: " + util.getQuitKey() + " to end script")
 
 //craft all cobbled deepslate into polished deepslate
-    util.craftRecipe("minecraft:polished_deepslate", true)
+    while(util.inventoryContains("minecraft:cobbled_deepslate")){
+        if(util.checkQuit()){
+            break
+        }
+        util.craftManually(
+         [["minecraft:cobbled_deepslate",1],
+          ["minecraft:cobbled_deepslate",2],
+          ["minecraft:cobbled_deepslate",3],
+          ["minecraft:cobbled_deepslate",4]],util.CRAFT_MAX)
+    }
+    //util.craftRecipe("minecraft:polished_deepslate", true)
 //craft all polished deepslate into deepslate bricks
-    util.craftRecipe("minecraft:deepslate_bricks", true)
+while(util.inventoryContains("minecraft:polished_deepslate")){
+        if(util.checkQuit()){
+            break
+        }
+        util.craftManually(
+         [["minecraft:polished_deepslate",1],
+          ["minecraft:polished_deepslate",2],
+          ["minecraft:polished_deepslate",3],
+          ["minecraft:polished_deepslate",4]],util.CRAFT_MAX)
+    }
+    //util.craftRecipe("minecraft:deepslate_bricks", true)
 //craft all deepslate bricks into deepslate tiles
-    util.craftRecipe("minecraft:deepslate_tiles", true)
+while(util.inventoryContains("minecraft:deepslate_bricks")){
+        if(util.checkQuit()){
+            break
+        }
+        util.craftManually(
+         [["minecraft:deepslate_bricks",1],
+          ["minecraft:deepslate_bricks",2],
+          ["minecraft:deepslate_bricks",3],
+          ["minecraft:deepslate_bricks",4]],util.CRAFT_MAX)
+    }
+    //util.craftRecipe("minecraft:deepslate_tiles", true)
 
 
 //util.resetKeyBinds()
