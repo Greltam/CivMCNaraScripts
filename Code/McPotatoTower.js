@@ -57,7 +57,7 @@ secondsToHarvest = 6
 
 //direction to look at carrots to harvest while strafing
 harvestLookX = 0
-harvestLookY = 45
+harvestLookY = 20
 /*-----------------------
    1.2 Player Configurables End
 -----------------------*/
@@ -114,7 +114,22 @@ finishedText =  Chat.createTextHelperFromJSON(
 /*-------------------
    3 Functions Start
 -------------------*/
-//new 
+
+function harvestStarterStrip(){
+    if(util.checkQuit()){
+        return
+    }
+    //move flush to fence
+    util.simpleMove("key.keyboard.w", harvestLookX, harvestLookY, 1*20)
+    //harvest row while strafing left
+    util.complexMove(["key.keyboard.a","key.mouse.right"],
+        harvestLookX, 45, secondsToHarvest * 20)
+
+    //harvest row while strafing right
+    util.complexMove(["key.keyboard.d","key.mouse.right"],
+        harvestLookX, 30, secondsToHarvest * 20)
+}
+
 function harvestDoubleStrip(){
     if(util.checkQuit()){
         return
@@ -181,7 +196,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
     if(util.checkQuit()){
         break
     }
-
+    harvestStarterStrip()
     //harvest all the double rows
     for(let j = 1; j <= doubleRows; j++){
         if(util.checkQuit()){
