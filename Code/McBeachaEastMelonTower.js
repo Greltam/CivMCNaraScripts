@@ -121,11 +121,11 @@ function harvestDoubleStrip(){
         return
     }
     util.simpleMove("key.keyboard.a",180,0,2*20)
-    util.complexMove(["key.keyboard.w","key.mouse.left"],180,27,secondsToHarvest * 20)
+    util.complexMove(["key.keyboard.w","key.mouse.left"],180,13,secondsToHarvest * 20)
 
     
     util.simpleMove("key.keyboard.d",0,0,1*20)
-    util.complexMove(["key.keyboard.w","key.mouse.left"],0,27,secondsToHarvest * 20)
+    util.complexMove(["key.keyboard.w","key.mouse.left"],0,13,secondsToHarvest * 20)
 }
 
 function harvestLayer(){
