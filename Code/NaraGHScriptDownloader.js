@@ -38,6 +38,7 @@ ListOfAllScripts = [
     //Delayed Start Scripts
     "vDelayZealOak",
     "vDelayNetherStem",
+    "vDelayAFK",
 
     //Simple utility scripts
     "zBridge",
