@@ -41,6 +41,8 @@ util.setQuitKey("key.keyboard.j") //default: util.setQuitKey("key.keyboard.j")
    2 Global Variables Start
 ------------------------*/
 continueCrafting = true
+currentLog = ""
+currentPlank = ""
 
 listOfAllPlanks = [
     "minecraft:oak_planks",
@@ -49,6 +51,9 @@ listOfAllPlanks = [
     "minecraft:jungle_planks",
     "minecraft:acacia_planks",
     "minecraft:dark_oak_planks",
+    "minecraft:mangrove_planks",
+    "minecraft:cherry_planks",
+    "minecraft:pale_oak_planks",
     "minecraft:crimson_planks",
     "minecraft:warped_planks"
     ]
@@ -60,6 +65,9 @@ listOfAllLogs = [
     "minecraft:jungle_log",
     "minecraft:acacia_log",
     "minecraft:dark_oak_log",
+    "minecraft:mangrove_log",
+    "minecraft:cherry_log",
+    "minecraft:pale_oak_log",
     "minecraft:crimson_stem",
     "minecraft:warped_stem"
     ]
@@ -76,6 +84,12 @@ function containsWood(){
         return false
     }
     //Chat.log("Checking for wood.")
+    for(let i = 0; i < listOfAllLogs.length; i++){
+        if(util.inventoryContains(listOfAllLogs[i])){
+            //Chat.log(listOfAllLogs[i] + " found.")
+            return true
+        }
+    }
     for(let i = 0; i < listOfAllPlanks.length; i++){
         if(util.inventoryContains(listOfAllPlanks[i])){
             //Chat.log(listOfAllPlanks[i] + " found.")
@@ -83,15 +97,36 @@ function containsWood(){
         }
     }
     
-    for(let i = 0; i < listOfAllLogs.length; i++){
-        if(util.inventoryContains(listOfAllLogs[i])){
-            //Chat.log(listOfAllLogs[i] + " found.")
-            return true
-        }
-    }
     //Chat.log("No wood found.")
     return false
 }
+
+function getCurrentLog(){
+    if(util.checkQuit()){
+        return false
+    }
+    for(let i = 0; i < listOfAllLogs.length; i++){
+        if(util.inventoryContains(listOfAllLogs[i])){
+            //Chat.log(listOfAllLogs[i] + " found.")
+            currentLog = listOfAllLogs[i]
+            return
+        }
+    }
+}
+function getCurrentPlank(){
+    if(util.checkQuit()){
+        return false
+    }
+    for(let i = 0; i < listOfAllPlanks.length; i++){
+        if(util.inventoryContains(listOfAllPlanks[i])){
+            //Chat.log(listOfAllPlanks[i] + " found.")
+            currentPlank = listOfAllPlanks[i]
+            return
+        }
+    }
+}
+
+
 /*-------------------
    3 Functions End
 -------------------*/
@@ -121,8 +156,31 @@ if(inventory.getType() != "Crafting Table"){
 
 //craft all wood into chests
 if(continueCrafting){
-    //if we have any type of wood in our inventory
+    //manually craft chests using oak logs/planks
     while(containsWood()){
+        if(util.checkQuit()){
+            break
+        }
+        getCurrentLog()
+        util.craftManually(
+         [[currentLog,1]],util.CRAFT_MAX)
+        util.craftManually(
+         [[currentLog,1]],util.CRAFT_MAX)
+        
+        getCurrentPlank()
+        util.craftManually(
+            [[currentPlank,1],
+             [currentPlank,2],
+             [currentPlank,3],
+             [currentPlank,4],
+             [currentPlank,6],
+             [currentPlank,7],
+             [currentPlank,8],
+             [currentPlank,9]],util.CRAFT_MAX)
+    }
+
+    //if we have any type of wood in our inventory
+/*    while(containsWood()){
         //craft chest if we have the recipe available
         if(util.getRecipeIndex("minecraft:chest") != -1){
             //Chat.log("Crafting: minecraft:chest")
@@ -137,7 +195,7 @@ if(continueCrafting){
                 break
             }
         }
-    }
+    }*/
 }
 
 
