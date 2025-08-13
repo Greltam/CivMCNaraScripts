@@ -83,7 +83,15 @@ if(inventory.getType() != "Crafting Table"){
 
 //craft all glass into bottles
 if(continueCrafting){
-    util.craftRecipe("minecraft:glass_bottle", true)
+    while(util.inventoryContains("minecraft:glass")){
+        if(util.checkQuit()){
+            break
+        }
+        util.craftManually(
+         [["minecraft:glass",1],["minecraft:glass",3],
+          ["minecraft:glass",5]],util.CRAFT_MAX)
+    }
+    //util.craftRecipe("minecraft:glass_bottle", true)
 }
 
 
