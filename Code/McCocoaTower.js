@@ -53,6 +53,9 @@ secondsToFall = 62 // 36 // + 26 for expansion
 /*------------------------
    2 Global Variables Start
 ------------------------*/
+
+util.setTossItemList(["minecraft:cocoa_beans"])
+         
 farmName = "Zeal Exclave Cocoa Tower"
 regrowthTime = 24 * 3600 //hours multiplied by seconds per hour
 
@@ -186,11 +189,21 @@ function setStartingPosition(){
     
 }
 
+function tossCocoa(xAngle){
+    //Chat.log("Tossing items")
+    xLook = xAngle - 90
+    yLook = 45
+    
+    util.setTossLookVector([xLook,yLook])
+    util.tossItems()
+    
+}
+
 function flipTrapdoor(xAngle){
     if(util.checkQuit()){
         return
     }
-    util.simpleInteract(xAngle,30)
+    util.simpleInteract(xAngle,60)
 }
 
 //new harvest type, up harvests 2 columns, down harvests 1 column
@@ -239,15 +252,19 @@ for(let i = towerNumber; i <= 4; i++){
     for(let j = cocoaBeam; j <= 12; j++){
         if(j <= 3){
             sideHarvest(0)
+            tossCocoa(0)
         }
         else if(j <= 6){
-            sideHarvest(-90)            
+            sideHarvest(-90)
+            tossCocoa(-90)
         }
         else if(j <= 9){
-            sideHarvest(180)        
+            sideHarvest(180)
+            tossCocoa(180)
         }
         else if(j <= 12){
-            sideHarvest(90)        
+            sideHarvest(90)
+            tossCocoa(90)
         }
     }
     //move to next tower
