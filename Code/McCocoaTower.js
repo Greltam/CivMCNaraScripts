@@ -213,11 +213,11 @@ function newHarvest(xAngle){
     }
     util.startUse()
     util.simpleMove("key.keyboard.space",
-        xAngle - 47,23,secondsToClimb*20)
+        xAngle - 43,23,secondsToClimb*20)
     util.endUse()
     
     util.startUse()
-    util.simpleMove("",xAngle - 90,23,secondsToFall*20)
+    util.simpleMove("",xAngle - 86,23,secondsToFall*20)
     util.endUse()
 }
 
