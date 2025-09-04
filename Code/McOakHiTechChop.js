@@ -44,7 +44,7 @@ const util = require("./McUtilityFile.js")
    1.2 Player Configurables Start
 ------------------------*/
 //set item list and look vector for tossing items into collector
-util.setTossItemList(["minecraft:oak_log","minecraft:oak_sapling",
+util.setTossItemList(["minecraft:oak_log",
          "minecraft:stick", "minecraft:apple",
          "minecraft:oak_leaves"])
 util.setTossLookVector([-150,0])
@@ -70,13 +70,14 @@ startingRow = 1 //default: startingRow = 1
 startingTree = 1 //default: startingTree = 1
 
 //total layers in the tree farm
-totalLayers = 8 //default: totalLayers = 8
+totalLayers = 16 //default: totalLayers = 8
 treesPerRow = 16 //default: treesPerRow = 16
 rowsPerLayer = 16 //default: rowsPerLayer = 16
 layerHeight = 12 //default: layerHeight = 12
 rowWidth = 6 //default: rowWidth = 6
 treeBridgeLength = 5 //default: treeBridgeLength = 5
 
+treeSapling = "minecraft:oak_sapling"
 /*-----------------------
    1.2 Player Configurables End
 -----------------------*/
@@ -92,7 +93,7 @@ regrowthTime = 23.5 * 3600 //hours multiplied by seconds per hour
 //Player starts script at this location
 xStartPosition = 2958 
 zStartPosition = 5202
-yStartPosition = 67
+yStartPosition = 19
 
 //west side of the tree farm, beginning of chopping trees
 xChopStartPosition = 2866
@@ -188,6 +189,27 @@ function setStartingPosition(){
 }
 
 
+function replantSapling(){
+    //move hotbar to slot 5
+    util.selectHotbar(1)
+    //check if holding bonemeal
+    heldItem = util.getItemInSelectedHotbar()
+    
+    //if we don't have bonemeal
+    if(heldItem.getItemId() != treeSapling){
+        //move from inventory to hotbar
+        util.moveItemToHotbar(treeSapling,1)
+    }
+    
+    //we do have bonemeal
+    util.simpleMove(
+        "key.mouse.right", util.player.getYaw(), 70, 2
+    )
+    util.spinTicks(10)
+    
+    //check if we used any.
+}
+
 function chopTree(layer, row, tree){
 
 //figure out next tree destination location
@@ -198,15 +220,15 @@ function chopTree(layer, row, tree){
 //separate for even/odd rows
     if(row == 1){
         xDestination = xDestination - 0.2 //stay to the left as flush with start location
-        zDestination = zStartPosition - 5 - ((tree-1) * 5) - 0.18
+        zDestination = zStartPosition - 5 - ((tree-1) * 5) - 0.33
     }
     else if(row % 2 == 1){//odd row, starting bottom and going up
         xDestination = xDestination + 0.2 //stay to the side to not hit glass
-        zDestination = zStartPosition - 5 - ((tree-1) * 5) - 0.18
+        zDestination = zStartPosition - 5 - ((tree-1) * 5) - 0.33
     }
     else{
         xDestination = xDestination + 0.2 //stay to the side to not hit glass
-        zDestination = zStartPosition - 82 + ((tree-1) * 5) + 0.18
+        zDestination = zStartPosition - 82 + ((tree-1) * 5) + 0.33
     }
 
 //chop leaves in front of tree
@@ -218,7 +240,7 @@ function chopTree(layer, row, tree){
     //to tell tree chop loop to redo next tree
     //Tried a while loop with call to chop last tree but got double recursion
     if(!util.complexMoveToLocation(["key.mouse.left"],
-        xDestination, zDestination, yDestination, 0.05)){
+        xDestination, zDestination, yDestination, 0.2)){
         return false
     }
         
@@ -250,6 +272,9 @@ function chopTree(layer, row, tree){
         //upper level logs
         util.simpleMove("key.mouse.left",0, -75, upperCutTicks)
     }
+    
+    //Try to replant
+    replantSapling()
     return true
 }
 
@@ -284,6 +309,21 @@ for(let i = startingLayer; i <= totalLayers; i++){
     
     util.checkHunger() //eat food if hungry
     
+    //check for replant chest
+    if(!restarting){
+        if((i % 4) == 1){
+        
+            //chest current saplings
+            util.chestSpecificItems(-180,-90,
+                "minecraft:oak_sapling", true) 
+            
+            
+            //pick up oak saplings from chest
+            //saplings will be in barrel from slot 0 to 15
+            util.chestItems(-180,-90,0,16)
+        }
+    }
+    
     //start at lodestone - move to chop start
     if(!restarting){
         util.moveToLocation(
@@ -295,6 +335,9 @@ for(let i = startingLayer; i <= totalLayers; i++){
     //turn on fall protection
     util.setQuitFromFallingYLevel(yStartPosition + ((i-1) * layerHeight) - 1)
     util.setQuitFromFalling(true)
+    
+    
+    
     //chop all the rows
     for(let j = startingRow; j <= rowsPerLayer; j++){
         if(util.checkQuit()){break}
