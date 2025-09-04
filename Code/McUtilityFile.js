@@ -781,6 +781,14 @@ function stopUse(){
     }
 }
 
+function inventoryBorderSlot(inventory){
+    invTitle = chestInv.getContainerTitle()
+    Chat.log(invTitle)
+    if(invTitle == "Barrel"){
+        return 27
+    }
+}
+
 //interact with chest at x,y, dumping items from slotstart for numslots
 //refer to https://wiki.vg/Inventory for getting correct slot numbering
 function chestItems(xLook, yLook, slotStart, numSlots){
@@ -804,6 +812,53 @@ function chestItems(xLook, yLook, slotStart, numSlots){
         }
         chestInv.quick(i)
         spinTicks(6)
+    }
+    
+    //close the chest object
+    chestInv.close()
+    if(checkQuit()){
+        return
+    }
+    spinTicks(20)
+}
+
+//interact with chest at x,y, dumping specific items for or to chest
+//refer to https://wiki.vg/Inventory for getting correct slot numbering
+function chestSpecificItems(xLook, yLook, itemCode, toChest){
+    if(checkQuit()){
+        return
+    }
+    
+    //Look at chest and interact
+    smoothLookAt(xLook,yLook)
+    spinTicks(15)
+    Player.getPlayer().interact()
+    spinTicks(15)
+    
+    //get chest object
+    chestInv = Player.openInventory()
+    border = inventoryBorderSlot(chestInv)
+    slotStart = 0
+    slotEnd = 0
+    
+    if(toChest){
+        slotStart = border
+        slotEnd = chestInv.getTotalSlots()
+    }
+    else{
+        slotEnd = border
+    }
+    
+    //dump items either from player or chest
+    //from slotStart for slotEnd 
+    for(let i = slotStart; i < slotEnd; i++){
+        if(checkQuit()){
+            break
+        }
+        if(chestInv.getSlot(i).getItemId() == itemCode){
+            chestInv.quick(i)
+            spinTicks(6)
+        }
     }
     
     //close the chest object
@@ -1063,6 +1118,16 @@ function getRecipeIndex(recipeName){
 //  ["minecraft:nether_bricks",2],
 //  ["minecraft:nether_bricks",3]]
 //
+
+//Self Craft template
+// [["minecraft:",1],["minecraft:",2],
+//  ["minecraft:",3],["minecraft:",4]]
+
+//Crafting Table template
+// [["minecraft:",1],["minecraft:",2],["minecraft:",3],
+//  ["minecraft:",4],["minecraft:",5],["minecraft:",6],
+//  ["minecraft:",7],["minecraft:",8],["minecraft:",9]]
+//
 //
 function craftManually(listOfItemsAndSlots, quantity){
     if(checkQuit()){
@@ -1237,6 +1302,7 @@ module.exports = {
     endUse: endUse,
     stopUse: stopUse,
     chestItems: chestItems,
+    chestSpecificItems : chestSpecificItems,
     chestAllItems: chestAllItems,
     tossItems: tossItems,
     tossAllSpecificItems : tossAllSpecificItems,
