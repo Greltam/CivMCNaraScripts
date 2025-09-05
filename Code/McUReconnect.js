@@ -75,7 +75,7 @@ function locateFarm(x,z){
     }
     
     //Coords for Zeal Melon farm
-    if(insideOf(3952,7372,3987,7390,x,z)){
+    if(insideOf(3952,7372,3988,7390,x,z)){
         return "McZealWestMelonTower.js"
     }
     
