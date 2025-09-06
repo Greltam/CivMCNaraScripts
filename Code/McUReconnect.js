@@ -29,6 +29,34 @@
    3 Functions End
 -------------------*/
 
+function getScriptFile(directory, fileToSearch){
+
+    filesList = FS.list(directory)
+        
+    //check for file in current directory
+    for(i = 0; i < filesList.length; i++){
+        if(filesList[i] == fileToSearch){
+            rawPath = FS.toRawPath(directory + filesList[i])
+            path = rawPath.toString()
+            subPath = path.split("\\Macros\\")
+            return subPath[1]
+        }
+    }
+    
+    //didn't find the file, check current directory
+    //for subdirectories and querry if they have the file
+    for(i = 0; i < filesList.length; i++){
+        fileLocation = directory + filesList[i]
+        if(FS.isDir(fileLocation)){
+        
+            //check the directory for farm script
+            return getScriptFile(fileLocation, fileToSearch)
+        }
+    }
+    
+    return "notFound"
+}
+
 function insideOf(x1,z1,x2,z2,x,z){
 
     if(x >= x1 &&
@@ -110,7 +138,8 @@ function restartFarmScripts(){
         return
     }
     else{
-        JsMacros.runScript(farmName)
+        farmFile = getScriptFile("", farmName)
+        JsMacros.runScript(farmFile)
     }
     
     /*  
