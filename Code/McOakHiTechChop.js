@@ -321,6 +321,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
             //pick up oak saplings from chest
             //saplings will be in barrel from slot 0 to 15
             util.chestItems(-180,-90,0,16)
+            Client.grabMouse()
         }
     }
     
