@@ -253,19 +253,35 @@ function logScriptStart(farmName){
 }
 
 //regrowthTime is in seconds
-function logScriptEnd(farmName, regrowthTime){
+function logScriptEnd(farmName, regrowthTime, isVerbose){
     setScriptEndTime(Time.time())
     nextHarvest = Math.floor((Time.time()/1000) + regrowthTime)
     hoursElapsed = Math.floor(getScriptElapsedTime()/60)
     minutesElapsed = Math.floor(getScriptElapsedTime()%60)
     if(minutesElapsed < 10){minutesElapsed = "0" + minutesElapsed}
     
-    Chat.say("/g ZealFarm " + farmName + " Finished. "
-        + "Regrown in: <t:" + nextHarvest + ":R>"
-    )
-    spinTicks(10)
-    //Verbose
-    /*
+    if(isVerbose){
+        Chat.say("/g ZealFarm " + farmName + " Finished. "
+            + "Regrown in: <t:" + nextHarvest + ":R>"
+        )
+        spinTicks(10)
+        Chat.say("/g ZealFarm " + "Time Elapsed: " + 
+                    hoursElapsed + ":" + minutesElapsed)
+        spinTicks(10)
+        for(let i = 0; i < tossedItemsArray.length; i++){
+            Chat.say("/g ZealFarm " + "Yield " 
+            + tossedItemsArray[i][0] + ": " + tossedItemsArray[i][1])
+            spinTicks(10)
+        }
+    }
+    else{
+        Chat.say("/g ZealFarm " + farmName + " Finished. "
+            + "Regrown in: <t:" + nextHarvest + ":R>"
+        )
+        spinTicks(10)
+    }
+    
+    /* //Verbose
     Chat.say("/g ZealFarm " + farmName)
     spinTicks(10)
     Chat.say("/g ZealFarm " + "Finished: <t:" + scriptEndTime + ":t> <t:"
@@ -282,6 +298,18 @@ function logScriptEnd(farmName, regrowthTime){
         spinTicks(10)
     }
     */
+}
+//
+function percentComplete(layer,row,totalLayers,rowsPerLayer){
+    return (((layer-1)*rowsPerLayer + row) / (totalLayers*rowsPerLayer))
+}
+function remainingMinutes(
+        layer, row, totalLayers, rowsPerLayer, harvestDuration){
+        
+    durationLeft = harvestDuration 
+        - (harvestDuration 
+          * percentComplete(layer,row,totalLayers, rowsPerLayer))
+    return  durationLeft.toFixed(2)
 }
 
 //If player is using a tool, return durability, 
@@ -362,6 +390,17 @@ function spinTicks(tickNumber){
         //make sure all desired keypresses continue pressed
         checkPlayerKeys()
         Client.waitTick(1) 
+    } 
+}
+//spend milliseconds in wait, but with ability to cancel wait
+function spinTime(milliseconds){
+    for(let i = 0; i < milliseconds; i++){
+        if(checkQuit()){
+            return
+        }
+        //make sure all desired keypresses continue pressed
+        checkPlayerKeys()
+        Time.sleep(1) 
     } 
 }
 
@@ -725,13 +764,20 @@ function panLook(xStart, yStart, xEnd, yEnd, ticks){
     xDif = xEnd - xStart
     yDif = yEnd - yStart
     
-    for(let i = 0; i < ticks; i++){
+    //tick is 50 ms
+    //every 10ms we do a look update for subtickSpeed = 10
+    subtickSpeed = 5
+    duration = ticks * 50
+    
+    for(let i = 0; i < duration ; i += subtickSpeed){
         if(checkQuit()){
             return
         }
-        me.lookAt(xStart + (xDif *(i/ticks)), yStart + (yDif *(i/ticks)))
-        spinTicks(1)
+        Player.getPlayer().lookAt(
+            xStart + (xDif *(i/duration)), yStart + (yDif *(i/duration)))
+        spinTime(subtickSpeed)
     } 
+    Player.getPlayer().lookAt(xEnd, yEnd)
 }
 
 //activate mouse left
@@ -1019,6 +1065,15 @@ function tossItems(){
         tossLookVector[0], tossLookVector[1])
 }
 
+function getTossedItemAmount(itemName){
+    for(let i = 0; i < tossedItemsArray.length; i++){
+        if(tossedItemsArray[i][0] == itemName){
+            return tossedItemsArray[i][1]
+        }
+    }
+    return 0
+}
+
 //set selected hotbar to slotNumber
 //refer to https://wiki.vg/Inventory for getting correct slot numbering
 function selectHotbar(slotNumber){
@@ -1279,12 +1334,15 @@ module.exports = {
     getScriptElapsedTime : getScriptElapsedTime,
     logScriptStart : logScriptStart,
     logScriptEnd : logScriptEnd,
+    percentComplete : percentComplete,
+    remainingMinutes : remainingMinutes,
     getToolSaveDurability : getToolSaveDurability,
     setToolSaveDurability : setToolSaveDurability,
     getToolDurability: getToolDurability,
     swapDamagedTool : swapDamagedTool,
     checkQuit: checkQuit,
     spinTicks: spinTicks,
+    spinTime: spinTime,
     getYawPitchFromCoords: getYawPitchFromCoords,
     smoothLookAt: smoothLookAt,
     simpleMove: simpleMove,
@@ -1307,6 +1365,7 @@ module.exports = {
     tossItems: tossItems,
     tossAllSpecificItems : tossAllSpecificItems,
     tossItems : tossItems,
+    getTossedItemAmount : getTossedItemAmount,
     selectHotbar: selectHotbar,
     nextHotbar: nextHotbar,
     getItemInSelectedHotbar: getItemInSelectedHotbar,
