@@ -1,32 +1,55 @@
-//Zeal GSEZ Carrot Tower Script
+/*------------------------
+   0 Title Start
+------------------------*/
 /*
-    !!! Script starts at 2977, 5137, 80 !!!
-    Find 1.2 Player Configurables to adjust for script restarts
-
-    GSEZ Carrot Tower Script on CivMC @ 2990, 5140, 84
-    Written by Greltam 4/30/2024
-
-    Tab-outable.
+    Name: Zeal GSEZ Carrot Tower Script
+    Location: CivMC @ 2990, 5140, 84
+    Author: Greltam
+    Date: 9/12/2025
+    
+    Description: A tower full of carrots!
+    
+    Directions: 
+        Enter building, go to the west door into the farm.
+        Use lodestone elevator down 1 floor, hold fortune tool in hand
+        Activate farm script.
+        
+    Collector: Lodestone elevator @ 2979, 5140, 83
 */
 /*------------------------
-   0.1 Player Requirements to Start
+   0 Title End
 ------------------------*/
 
-//Directions: Start script while standing on that layers lodestone
-//Start with Fortune 3 tool in mainhand(Any, golden forge to get a cheap one)
+/*------------------------
+   0.1 Player Requirements Start
+------------------------*/
+/*
+    Pre-Start actions: 
+        In entrance room, use lodestone to collector room
+        Open trapdoors to check compactor for health.
+        Repair if necessary and return recipe to compact.
+    Items Required:
+        A fortune 3 tool, I use a golden "harvest" hoe
+        Tool held in mainhand
+    
+    Restarting: Anywhere inside the farm
 
-//Restarting: Stand directly on the current layer's lodestone
-
-//Collector: Lodestone elevator @ 2979, 5140
+*/
 /*-----------------------
-   0.1 Player Requirements to Start End
+   0.1 Player Requirements End
 -----------------------*/
-
 
 /*------------------------
    1.1 Import Files Start
 ------------------------*/
 const util = require("./McUtilityFile.js")
+
+const config = require("./McUConfigFile.js")
+config.initialize()
+
+const visual = require("./McUVisualizer.js")
+visual.clear()
+
 /*-----------------------
    1.1 Import Files End
 -----------------------*/
@@ -34,32 +57,38 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
-util.setPassLookBoundary(false)
-//set item list and look vector for tossing items into collector
-util.setTossItemList(["minecraft:carrot"])
-util.setTossLookVector([90,-25])
+//player control initialization
+quitKey = "key.keyboard.j" // default: "key.keyboard.j"
+leftKey = "key.keyboard.a" // default: "key.keyboard.a"
+rightKey = "key.keyboard.d" // default: "key.keyboard.d"
+forwardKey = "key.keyboard.w" // default: "key.keyboard.w"
+backwardKey = "key.keyboard.s" // default: "key.keyboard.s"
+useKey = "key.mouse.right" // default: "key.mouse.right"
+attackKey = "key.mouse.left" // default: "key.mouse.left"
+lodestoneUpKey = "key.keyboard.space" // default: "key.keyboard.space"
+lodestoneDownKey = "key.keyboard.left.shift" 
+    // default: "key.keyboard.left.shift"
+logDiscord = true // default: "true"
+verboseLog = false // default: "false"
+logoutOnCompletion = false // default: "false"
+
+quitKey = config.getString("quitKey", quitKey)
+leftKey = config.getString("leftKey", leftKey)
+rightKey = config.getString("rightKey", rightKey)
+forwardKey = config.getString("forwardKey", forwardKey)
+backwardKey = config.getString("backwardKey", backwardKey)
+useKey = config.getString("useKey", useKey)
+attackKey = config.getString("attackKey", attackKey)
+lodestoneUpKey = config.getString("lodestoneUpKey", lodestoneUpKey)
+lodestoneDownKey = config.getString("lodestoneDownKey", lodestoneDownKey)
+logDiscord = config.getBool("logDiscord", logDiscord)
+verboseLog = config.getBool("verboseLog", verboseLog)
+logoutOnCompletion = config.getBool("logoutOnCompletion", logoutOnCompletion)
+
 
 //alter the default quitkey from j to whatever you want.
-util.setQuitKey("key.keyboard.j") //default: util.setQuitKey("key.keyboard.j") 
+util.setQuitKey(quitKey) //default: util.setQuitKey("key.keyboard.j") 
 
-
-//Always restart on a lodestone
-startingLayer = 1 //default: startingLayer = 1
-
-//total layers in the tree farm
-totalLayers = 14 //default: totalLayers = 14
-carrotsPerRow = 27 //default: treesPerRow = 27
-rowsPerLayer = 30 //default: rowsPerLayer = 30
-doubleRows = Math.floor(rowsPerLayer/2)
-layerHeight = 3 //default: layerHeight = 3
-
-//Time it takes to cross sides
-//replace after doing hitech stuff
-secondsToHarvest = 7 //or 8
-
-//direction to look at carrots to harvest while strafing
-harvestLookX = 180
-harvestLookY = 20
 /*-----------------------
    1.2 Player Configurables End
 -----------------------*/
@@ -69,15 +98,41 @@ harvestLookY = 20
 ------------------------*/
 farmName = "GSEZ Carrot Tower"
 regrowthTime = 21.34 * 3600 //hours multiplied by seconds per hour
+harvestDuration = 85 //minutes to run a full harvest
 
 //Player starts script at this location
 xStartPosition = 2977 
 zStartPosition = 5137
 yStartPosition = 80
 
-/*-----------------------
+//set item list and look vector for tossing items into collector
+util.setPassLookBoundary(false)
+util.setTossItemList(["minecraft:carrot"])
+util.setTossLookVector([90,-25])
+
+//Allows restarting anywhere in the farm
+startingLayer = 1 //default: startingLayer = 1
+startingRow = 1 //default: startingRow = 1
+restarting = false //default: restarting = false
+
+//total layers in the tree farm
+totalLayers = 14 //default: totalLayers = 14
+carrotsPerRow = 27 //default: treesPerRow = 27
+rowsPerLayer = 30 //default: rowsPerLayer = 30
+layerHeight = 3 //default: layerHeight = 3
+
+//Time it takes to cross sides
+//replace after doing hitech stuff
+secondsToHarvest = 7 //or 8
+
+//direction to look at carrots to harvest while strafing
+harvestLookX = 180
+harvestLookY = 20
+
+
+/*------------------------
    2 Global Variables End
------------------------*/
+------------------------*/
 
 /*------------------------
    2.1 Formatted Strings Start
@@ -109,6 +164,7 @@ finishedText =  Chat.createTextHelperFromJSON(
     ])
 )
     
+    
 /*-----------------------
    2.1 Formatted Strings End
 -----------------------*/
@@ -120,61 +176,73 @@ finishedText =  Chat.createTextHelperFromJSON(
 function harvestStarterStrip(){
     if(util.checkQuit()){
         return
-    }
-    //move flush to fence
-    util.simpleMove("key.keyboard.w", harvestLookX, harvestLookY, 1*20)
+    }    
     //harvest row while strafing right
-    util.complexMove(["key.keyboard.d","key.mouse.right"],
-        harvestLookX, 45, secondsToHarvest * 20)
+    util.complexMove([rightKey,useKey],
+        harvestLookX, 28, secondsToHarvest * 20)
 
     //harvest row while strafing left
-    util.complexMove(["key.keyboard.a","key.mouse.right"],
-        harvestLookX, 30, secondsToHarvest * 20)
+    util.complexMove([leftKey,useKey],
+        harvestLookX, 20, secondsToHarvest * 21)
 }
-function harvestDoubleStrip(){
+
+function harvestOutStrip(){
     if(util.checkQuit()){
         return
     }
-    //move flush to fence
-    util.simpleMove("key.keyboard.w", harvestLookX, harvestLookY, 1*20)
+    
     //harvest row while strafing right
-    util.complexMove(["key.keyboard.d","key.mouse.right"],
+    util.complexMove([rightKey,useKey],
         harvestLookX, harvestLookY, secondsToHarvest * 20)
-
     //move flush to fence
-    util.simpleMove("key.keyboard.w", harvestLookX, harvestLookY, 1*20)
+    util.simpleMove(forwardKey, harvestLookX, harvestLookY, 1*20)
+
+}
+function harvestReturnStrip(){
+    if(util.checkQuit()){
+        return
+    }
     //harvest row while strafing left
-    util.complexMove(["key.keyboard.a","key.mouse.right"],
+    util.complexMove([leftKey,useKey],
         harvestLookX, harvestLookY, secondsToHarvest * 20)
+    //move flush to fence
+    util.simpleMove(forwardKey, harvestLookX, harvestLookY, 1*20)
 }
 
 function moveToNextLayer(){
     //at the end of the left side of the row.
     
     //move flush to forward wall
-    util.simpleMove("key.keyboard.w", harvestLookX, harvestLookY, 1*20)
+    util.simpleMove(forwardKey, harvestLookX, harvestLookY, 1*20)
     
     //move right to return bridge
-    util.simpleMove("key.keyboard.w", -90, 0, 8 * 20)
+    util.simpleMove(forwardKey, -90, 0, 8 * 20)
     
     //move back to front of layer
-    util.simpleMove("key.keyboard.w", 0, 0, 8 * 20)
+    util.simpleMove(forwardKey, 0, 0, 8 * 20)
     
     //move left to lodestone
-    util.simpleMove("key.keyboard.w", 90, 0, 8 * 20)
+    util.simpleMove(forwardKey, 90, 0, 8 * 20)
     
     //jump to next floor
-    util.simpleMove("key.keyboard.space",harvestLookX,harvestLookY,10)
+    util.simpleMove(lodestoneUpKey,harvestLookX,harvestLookY,10)
 }
 
 //called at start of script to set layer in carrot farm
 //especially for restarts
-function setStartingLayer(){
+function setStartingPosition(){
     playerY = util.player.getY()
     //set layer
-    startingLayer = ((playerY - yStartPosition) / layerHeight) + 1
+    startingLayer = ((playerY - yStartPosition) / layerHeight) + 1.5
     startingLayer = Math.floor(startingLayer)
-    //Chat.log("Starting layer = " + startingLayer)
+    Chat.log("Starting layer = " + startingLayer)
+    
+    //set row
+    startingRow = Math.floor(zStartPosition - util.player.getZ() + 1)
+    Chat.log("Starting row = " + startingRow)
+    if(startingLayer > 1 || startingRow > 1){
+        restarting = true
+    }
 }
 
 /*-------------------
@@ -182,14 +250,41 @@ function setStartingLayer(){
 -------------------*/
 
 /*-------------------
-   4 Program Start
+   3.9 Pre-Program Start
 -------------------*/
+//GUI overlay
+visual.fullText("farmName", farmName, 0xdddddd,0,0)
+visual.fullText("toQuit", "Quit key: " + quitKey,0xffaaaa,0,8)
+visual.fullText("carrots","Carrots: " 
+    + util.getTossedItemAmount("minecraft:carrot"), 0xffa500,0,16)
+visual.fullText("timeLeft",
+            "Remaining time: " + harvestDuration, 0x999999,0,24)
+
+//restart farm on reconnect
+GlobalVars.putBoolean("farmRunning",true)
+
+
 Chat.log(greetingsText)
 Chat.log(quitText)
-util.logScriptStart(farmName)
+    
+//output to Discord
+if(logDiscord){
+    util.logScriptStart(farmName)
+}
+
+//protect from tabbed out dysfunction
+Client.grabMouse()
+
+/*-------------------
+   3.9 Pre-Program End
+-------------------*/
+
+/*-------------------
+   4 Program Start
+-------------------*/
 
 //set starting layer in case restarting on another layer
-setStartingLayer()
+setStartingPosition()
 
 //harvest all the layers
 for(let i = startingLayer; i <= totalLayers; i++){
@@ -197,29 +292,72 @@ for(let i = startingLayer; i <= totalLayers; i++){
         break
     }
     
-    harvestStarterStrip()
-    //harvest all the double rows
-    for(let j = 1; j <= doubleRows; j++){
+    //harvest all the rows
+    for(let j = startingRow; j <= rowsPerLayer; j++){
         if(util.checkQuit()){
             break
         }
-        harvestDoubleStrip()
-        util.tossItems()
+        
+        //harvest front 2 strips then move flush to starting fence
+        if(j == 0){
+            harvestStarterStrip()
+            util.simpleMove(forwardKey, harvestLookX, harvestLookY, 1*20)
+        }
+        else if(j % 2 == 1){
+            harvestOutStrip()
+        }
+        else{
+            harvestReturnStrip()
+            util.tossItems()
+            visual.setText("carrots", "Carrots: " 
+                + util.getTossedItemAmount("minecraft:carrot"))
+        }
+        visual.setText("timeLeft", "Remaining time: " 
+                + util.remainingMinutes(
+                i,j,totalLayers, rowsPerLayer,harvestDuration))
     }
     
     //move to the start of the next layer
     moveToNextLayer()
-}
     
+    //if restarting, set restart to false and change 
+    //starting back to defaults
+    if(restarting){
+        restarting = false
+        startingRow = 0
+    }
+}
 
+/*-------------------
+   4 Program End
+-------------------*/
+/*-------------------
+   4.1 Shutdown Start
+-------------------*/
+
+//prevent reconnect from restarting farm
+GlobalVars.putBoolean("farmRunning", false)
 
 //Reset keybinds to prevent phantom key holds.
 util.resetKeys()
 
 //log script completion
 Chat.log(finishedText)
-util.logScriptEnd(farmName, regrowthTime)
 
+//output to Discord
+if(logDiscord){
+    util.logScriptEnd(farmName, regrowthTime, verboseLog)
+}
+
+//clear all GUI overlays
+visual.clear()
+
+//Exit server if on a delay start or desired
+if(logoutOnCompletion || GlobalVars.getBoolean("delayFarm")){
+    GlobalVars.putBoolean("delayFarm", false)
+    GlobalVars.putBoolean("killsnitch", true)
+    Chat.say("/logout")
+}
 /*-------------------
-   4 Program End
+   4.1 Shutdown End
 -------------------*/
