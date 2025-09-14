@@ -1,40 +1,60 @@
-// Hi Tech Oak Tree Script
+/*------------------------
+   0 Title Start
+------------------------*/
 /*
-    !!! Script starts at 2958, 5202, 67 !!!
-    Find 1.2 Player Configurables to adjust for script restarts
-
-    Hi Tech Oak Tree Chopper on CivMC @ 2958, 5202, 67
-    Written by Greltam 4/9/2024
+    Name: Zeal GSEZ Hi Tech Oak Tree Script
+    Location: CivMC @ 2960, 5205, 84
+    Author: Greltam
+    Date: 9/14/2025
     
-    With a largely expanded tree farm, I need a script I won't have to baby every hour
-    for 8+hours that it can run. The old script only ever chopped or replanted 1 layer
-    at a time.
+    Description: A tower full of oak!
     
-    The idea is: start at a lodestone. move west to chopping start. For each time
-    down the row, toss wood into the collectors. At the end of the layer, jump up
-    a lodestone to the next layer, and repeat until finishing the top of the farm.
-
-    I can write a similar script for replanting after this is done the heavy lifting.
-    
-    New Tech being written to swap out tools near breaking to new ones so script can
-    fully run
+    Directions:
+        Enter building, go down lodestone inside
+        Head North and East to mini bunk.
+        Collect Axes/Hoes from chest @ 2959, 5204, -60
+        Use lodestone @ 2958, 5202, -62 up to y19
+        Activate farm script.
+        
+    Collector: Lodestone elevator @ 2960, 5158, 74
 */
 /*------------------------
-   0.1 Player Requirements to Start
+   0 Title End
 ------------------------*/
 
-//Player must place axe in the rightmost hotbar(9)
-//Player must place hoe in the next rightmost hotbar(8)
+/*------------------------
+   0.1 Player Requirements Start
+------------------------*/
+/*
+    Pre-Start actions: 
+        Required axe in the rightmost hotbar(9)
+        Required hoe in the next rightmost hotbar(8)
+        Required food in the next rightmost hotbar(7)
+        Required empty the next rightmost hotbar(6)
+        
+        Fill Barrels on layers 1,5,9,13
+            with 16 stacks of saplings for replanting
+    Items Required:
+        5 Diamond Efficiency 4-5 Unbreaking 3 Axes
+        3 Diamond Unbreaking 3 Hoes
+    
+    Restarting: Anywhere inside the farm
 
+*/
 /*-----------------------
-   0.1 Player Requirements to Start End
+   0.1 Player Requirements End
 -----------------------*/
-
 
 /*------------------------
    1.1 Import Files Start
 ------------------------*/
 const util = require("./McUtilityFile.js")
+
+const config = require("./McUConfigFile.js")
+config.initialize()
+
+const visual = require("./McUVisualizer.js")
+visual.clear()
 
 /*-----------------------
    1.1 Import Files End
@@ -43,28 +63,81 @@ const util = require("./McUtilityFile.js")
 /*------------------------
    1.2 Player Configurables Start
 ------------------------*/
+//player control initialization
+quitKey = "key.keyboard.j" // default: "key.keyboard.j"
+leftKey = "key.keyboard.a" // default: "key.keyboard.a"
+rightKey = "key.keyboard.d" // default: "key.keyboard.d"
+forwardKey = "key.keyboard.w" // default: "key.keyboard.w"
+backwardKey = "key.keyboard.s" // default: "key.keyboard.s"
+useKey = "key.mouse.right" // default: "key.mouse.right"
+attackKey = "key.mouse.left" // default: "key.mouse.left"
+lodestoneUpKey = "key.keyboard.space" // default: "key.keyboard.space"
+lodestoneDownKey = "key.keyboard.left.shift" 
+    // default: "key.keyboard.left.shift"
+logDiscord = true // default: "true"
+verboseLog = false // default: "false"
+logoutOnCompletion = false // default: "false"
+
+quitKey = config.getString("quitKey", quitKey)
+leftKey = config.getString("leftKey", leftKey)
+rightKey = config.getString("rightKey", rightKey)
+forwardKey = config.getString("forwardKey", forwardKey)
+backwardKey = config.getString("backwardKey", backwardKey)
+useKey = config.getString("useKey", useKey)
+attackKey = config.getString("attackKey", attackKey)
+lodestoneUpKey = config.getString("lodestoneUpKey", lodestoneUpKey)
+lodestoneDownKey = config.getString("lodestoneDownKey", lodestoneDownKey)
+logDiscord = config.getBool("logDiscord", logDiscord)
+verboseLog = config.getBool("verboseLog", verboseLog)
+logoutOnCompletion = config.getBool("logoutOnCompletion", logoutOnCompletion)
+
+
+//alter the default quitkey from j to whatever you want.
+util.setQuitKey(quitKey) //default: util.setQuitKey("key.keyboard.j") 
+
+/*-----------------------
+   1.2 Player Configurables End
+-----------------------*/
+
+/*------------------------
+   2 Global Variables Start
+------------------------*/
+
+
+farmName = "GSEZ Oak Tower"
+regrowthTime = 23.5 * 3600 //hours multiplied by seconds per hour
+harvestDuration = 660 //minutes to run a full harvest
+
+//Player starts script at this location
+xStartPosition = 2958 
+zStartPosition = 5202
+yStartPosition = 19
+
+//west side of the tree farm, beginning of chopping trees
+xChopStartPosition = 2866
+zRowEndPosition = 5116
+
 //set item list and look vector for tossing items into collector
 util.setTossItemList(["minecraft:oak_log",
          "minecraft:stick", "minecraft:apple",
          "minecraft:oak_leaves"])
 util.setTossLookVector([-150,0])
 
-//alter the default quitkey from j to whatever you want.
-util.setQuitKey("key.keyboard.j") //default: util.setQuitKey("key.keyboard.j") 
+//sapling to replant
+treeSapling = "minecraft:oak_sapling"
 
 //If Player falls off bridges, stop script.
 //turn on when chopping trees, off when moving between tree layers
 util.setQuitFromFalling(false)
+util.setQuitFromFallingYLevel(yStartPosition)
 
 //If Player wants to scuff harvest using just an axe, let them set to false
 usingHoe = true //default: usingHoe = true
+//hoe some leaves to help allow saplings to fall through canopy
+hoeLeaves = false //default: usingHoe = false
 
 //In case of needing to restart mid tree chop
-//change starting layer/row/tree to your current spot
-//set restarting to true
-//Stand directly in front of tree trunk when restarting.
 restarting = false //default: restarting = false
-
 startingLayer = 1 //default: startingLayer = 1
 startingRow = 1 //default: startingRow = 1
 startingTree = 1 //default: startingTree = 1
@@ -77,32 +150,9 @@ layerHeight = 12 //default: layerHeight = 12
 rowWidth = 6 //default: rowWidth = 6
 treeBridgeLength = 5 //default: treeBridgeLength = 5
 
-treeSapling = "minecraft:oak_sapling"
-/*-----------------------
-   1.2 Player Configurables End
------------------------*/
-
-/*------------------------
-   2 Global Variables Start
-------------------------*/
-
-
-farmName = "GSEZ Oak Tower"
-regrowthTime = 23.5 * 3600 //hours multiplied by seconds per hour
-
-//Player starts script at this location
-xStartPosition = 2958 
-zStartPosition = 5202
-yStartPosition = 19
-
-//west side of the tree farm, beginning of chopping trees
-xChopStartPosition = 2866
-zRowEndPosition = 5116
-
 floorCutTicks = 25
 upperCutTicks = 50
 
-util.setQuitFromFallingYLevel(yStartPosition)
 /*-----------------------
    2 Global Variables End
 -----------------------*/
@@ -191,19 +241,19 @@ function setStartingPosition(){
 
 function replantSapling(){
     //move hotbar to slot 5
-    util.selectHotbar(1)
-    //check if holding bonemeal
+    util.selectHotbar(5)
+    //check if holding sapling
     heldItem = util.getItemInSelectedHotbar()
     
-    //if we don't have bonemeal
+    //if we don't have sapling
     if(heldItem.getItemId() != treeSapling){
         //move from inventory to hotbar
-        util.moveItemToHotbar(treeSapling,1)
+        util.moveItemToHotbar(treeSapling,5)
     }
     
-    //we do have bonemeal
+    //we do have sapling
     util.simpleMove(
-        "key.mouse.right", util.player.getYaw(), 70, 2
+        useKey, util.player.getYaw(), 70, 5
     )
     util.spinTicks(10)
     
@@ -239,19 +289,19 @@ function chopTree(layer, row, tree){
     //try to move to the next tree, but if not, return false
     //to tell tree chop loop to redo next tree
     //Tried a while loop with call to chop last tree but got double recursion
-    if(!util.complexMoveToLocation(["key.mouse.left"],
+    if(!util.complexMoveToLocation([attackKey],
         xDestination, zDestination, yDestination, 0.2)){
         return false
     }
         
     //chop above leaves with hoe instead of making axe chop them
     //odd rows look 180. even rows look 0
-    if(usingHoe){ 
+    if(usingHoe){
         if(row % 2 == 1){
-            util.simpleMove("key.mouse.left",180, -80, 5)
+            util.simpleMove(attackKey,180, -80, 5)
         }
         else{
-            util.simpleMove("key.mouse.left",0, -80, 5)       
+            util.simpleMove(attackKey,0, -80, 5)       
         }
     }
             
@@ -261,16 +311,44 @@ function chopTree(layer, row, tree){
     //util.simpleMove("key.mouse.left",180, -80, 5)
     if(row % 2 == 1){
         //eye and foot level logs
-        util.simpleMove("key.mouse.left",180, 45, floorCutTicks)
+        util.simpleMove(attackKey,180, 45, floorCutTicks)
         //upper level logs
-        util.simpleMove("key.mouse.left",180, -75, upperCutTicks)
+        util.simpleMove(attackKey,180, -75, upperCutTicks)
     
     }
     else{
         //eye and foot level logs
-        util.simpleMove("key.mouse.left",0, 45, floorCutTicks)
+        util.simpleMove(attackKey,0, 45, floorCutTicks)
         //upper level logs
-        util.simpleMove("key.mouse.left",0, -75, upperCutTicks)
+        util.simpleMove(attackKey,0, -75, upperCutTicks)
+    }
+    
+//hoe leaves
+    if(hoeLeaves){
+        util.selectHotbar(7) //select Hoe
+        util.key(attackKey, true)
+        
+        if(row % 2 == 1){
+            util.smoothLookAt(-180,-60)
+            //util.spinTicks(5)
+            util.panLook(-180, -60, 180, -60, 10)
+            
+            util.smoothLookAt(-180,-25)
+            //util.spinTicks(5)
+            util.panLook(-180, -25, 180, -25, 10)
+        }
+        else{
+            util.smoothLookAt(180,-60)
+            //util.spinTicks(5)
+            util.panLook(0, -60, -180, -60, 5)
+            util.panLook(180, -60, 0, -60, 5)
+            util.smoothLookAt(180,-25)
+            //util.spinTicks(5)
+            util.panLook(0, -25, -180, -25, 5)
+            util.panLook(180, -25, 0, -25, 5)
+        }
+        //function panLook(xStart, yStart, xEnd, yEnd, ticks)
+        util.key(attackKey, false)
     }
     
     //Try to replant
@@ -295,11 +373,38 @@ function tossLogs(row){
 -------------------*/
 
 /*-------------------
-   4 Program Start
+   3.9 Pre-Program Start
 -------------------*/
+//GUI overlay
+visual.fullText("farmName", farmName, 0xdddddd,0,0)
+visual.fullText("toQuit", "Quit key: " + quitKey,0xffaaaa,0,8)
+visual.fullText("Oak","Oak: " 
+    + util.getTossedItemAmount("minecraft:oak_log"), 0xffa500,0,16)
+visual.fullText("timeLeft",
+            "Remaining time: " + harvestDuration, 0x999999,0,24)
+
+//restart farm on reconnect
+GlobalVars.putBoolean("farmRunning",true)
+
+
 Chat.log(greetingsText)
 Chat.log(quitText)
-util.logScriptStart(farmName)
+    
+//output to Discord
+if(logDiscord){
+    util.logScriptStart(farmName)
+}
+
+//protect from tabbed out dysfunction
+Client.grabMouse()
+
+/*-------------------
+   3.9 Pre-Program End
+-------------------*/
+
+/*-------------------
+   4 Program Start
+-------------------*/
 
 setStartingPosition()
 
@@ -321,6 +426,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
             //pick up oak saplings from chest
             //saplings will be in barrel from slot 0 to 15
             util.chestItems(-180,-90,0,16)
+            
             Client.grabMouse()
         }
     }
@@ -347,12 +453,22 @@ for(let i = startingLayer; i <= totalLayers; i++){
         for(let l = startingTree; l <= treesPerRow; l++){
             if(util.checkQuit()){break}
             while(!chopTree(i,j,l)){
-                util.simpleMove("key.keyboard.s",
+                util.simpleMove(forwardKey,
                     Player.getPlayer().getYaw(),
                     Player.getPlayer().getPitch(),
                     40)
+                //attempt to clear leaves
+                util.selectHotbar(7) //select Hoe
+                util.key(attackKey, true)
+                util.panLook(-180, 0, 180, 0, 20)
+                util.key(attackKey, false)
+                //reset to last tree.
                 chopTree(i,j,l-1)
             }
+            visual.setText("timeLeft", "Remaining time: " 
+                + util.remainingMinutes(
+                i,j*l,totalLayers,
+                rowsPerLayer*treesPerRow,harvestDuration))
         }
         //move to end, over, and turn around.
         if(j % 2 == 1){
@@ -361,7 +477,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 util.selectHotbar(7) //select Hoe
             }
             util.complexMoveToLocation(
-                ["key.mouse.left"],
+                [attackKey],
                 xChopStartPosition + ((j - 1) * 6),
                 zStartPosition - 86,
                 yStartPosition + ((i-1) * layerHeight) - 1,
@@ -370,7 +486,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
             //toss logs into collector
             tossLogs(j)
             //move to next row, sitting flush with the block so tree bridge chop is already aligned
-            util.simpleMove("key.keyboard.w", -90,0,50)
+            util.simpleMove(forwardKey, -90,0,50)
             /*                
             //move over to next row
             util.moveToLocation(
@@ -386,7 +502,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 util.selectHotbar(7) //select Hoe
             }
             util.complexMoveToLocation(
-                ["key.mouse.left"],
+                [attackKey],
                 xChopStartPosition + ((j - 1) * 6),
                 zStartPosition - 1, 
                 yStartPosition + ((i-1) * layerHeight) - 1,
@@ -399,7 +515,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 break
             }
             //move to next row, sitting flush with the block so tree bridge chop is already aligned
-            util.simpleMove("key.keyboard.w", -90,0,50)
+            util.simpleMove(forwardKey, -90,0,50)
             /*
             //move over to next row
             util.moveToLocation(
@@ -433,7 +549,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
     
     
     //jump to next lodestone. Turn off quitfromfalling and reset when on next layer
-    util.simpleMove("key.keyboard.space",0, 0, 5)
+    util.simpleMove(lodestoneUpKey,0, 0, 5)
     
     //if restarting, set restart to false and change starting back to defaults
     if(restarting){
@@ -443,27 +559,37 @@ for(let i = startingLayer; i <= totalLayers; i++){
         startingTree = 1
     }
 }
+/*-------------------
+   4 Program End
+-------------------*/
+
+/*-------------------
+   4.1 Shutdown Start
+-------------------*/
+
+//prevent reconnect from restarting farm
+GlobalVars.putBoolean("farmRunning", false)
 
 //Reset keybinds to prevent phantom key holds.
 util.resetKeys()
-GlobalVars.putBoolean("delayZealOak",false)
 
+//log script completion
 Chat.log(finishedText)
-util.logScriptEnd(farmName, regrowthTime)
 
-//if we restarted script over night logout because we are
-//probably still asleep.
-if(GlobalVars.getBoolean("delayFarm")){
-
-    GlobalVars.putBoolean("delayFarm",false)
-    GlobalVars.putBoolean("delayZealOak",false)
-    
-    GlobalVars.putBoolean("killsnitch", true)
-    Chat.say("/logout")
-    Client.waitTick(400)
-    Client.disconnect() 
+//output to Discord
+if(logDiscord){
+    util.logScriptEnd(farmName, regrowthTime, verboseLog)
 }
 
+//clear all GUI overlays
+visual.clear()
+
+//Exit server if on a delay start or desired
+if(logoutOnCompletion || GlobalVars.getBoolean("delayFarm")){
+    GlobalVars.putBoolean("delayFarm", false)
+    GlobalVars.putBoolean("killsnitch", true)
+    Chat.say("/logout")
+}
 /*-------------------
-   4 Program End
+   4.1 Shutdown End
 -------------------*/
