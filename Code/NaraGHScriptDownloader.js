@@ -79,9 +79,9 @@ function rewriteScript(scriptName){
     scriptFile.write(scriptGithubText)
 }
 
-function deleteScriptScript(scriptName){
+function deleteScript(scriptName){
     scriptFile = directoryPath + scriptName + ".js"
-    if(FS.exists(scriptFile){
+    if(FS.exists(scriptFile)){
         FS.move(scriptFile, removedDirectory)
         Chat.log("Removing " + scriptFile + "...")
     }
