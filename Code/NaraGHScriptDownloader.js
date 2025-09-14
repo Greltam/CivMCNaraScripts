@@ -1,7 +1,6 @@
 //For a list of Scripts, 
 //download each one from github and replace in Macros folder
 directoryPath = "./"
-removedDirectory = "removed"
 
 ListOfAllScripts = [
     //Self updating
@@ -82,7 +81,7 @@ function rewriteScript(scriptName){
 function deleteScript(scriptName){
     scriptFile = directoryPath + scriptName + ".js"
     if(FS.exists(scriptFile)){
-        FS.move(scriptFile, removedDirectory)
+        FS.unlink(scriptFile)
         Chat.log("Removing " + scriptFile + "...")
     }
 }
@@ -114,21 +113,18 @@ for(let i = 0; i < ListOfAllScripts.length; i++){
     rewriteScript(ListOfAllScripts[i])
 }
 
-if(!FS.exists(removedDirectory)){
-    FS.makeDir(removedDirectory)
-}
 //remove old files
 for(let i = 0; i < ListOfRemovedScripts.length; i++){
     deleteScript(ListOfRemovedScripts[i])
 }
 
 //prepopulate player settings
+Chat.log("Populating playerSettings.txt...")
 JsMacros.runScript(getDirectory() + "McUConfigSetup.js")
 
 /*-------------------
    4 Program End
 -------------------*/
-
 
 
 
