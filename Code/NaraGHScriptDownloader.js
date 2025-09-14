@@ -23,7 +23,6 @@ ListOfAllScripts = [
     "McCraftDeepslateTiles",
     
     //Main Farm files
-    "McOakHiTechReplant",
     "McOakHiTechChop",
     "McZealWestMelonTower",
     "McBeachaEastMelonTower",
