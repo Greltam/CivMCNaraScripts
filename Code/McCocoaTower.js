@@ -2,19 +2,24 @@
    0 Title Start
 ------------------------*/
 /*
-    Name: Zeal GSEZ Carrot Tower Script
-    Location: CivMC @ 2990, 5140, 84
+    Name: Zeal Exclave Cocoa Tower Script
+    Location: CivMC @ 4208, 74, 415
     Author: Greltam
-    Date: 9/12/2025
+    Date: 9/14/2025
     
-    Description: A tower full of carrots!
+    Description: A tower full of cocoa!
     
     Directions: 
-        Enter building, go to the west door into the farm.
-        Use lodestone elevator down 1 floor, hold fortune tool in hand
-        Activate farm script.
+        Travel down lodestone 
+        Flip all glass walkway trapdoors vertical
+        Flip entrance wall trapdoor horizontal
+        Stand @ 4209, 4, 418 nestled into the trapdoor/ladder
+        Activate script
         
-    Collector: Lodestone elevator @ 2979, 5140, 83
+    Collector: 
+        Go down doorway @ 4205, 5, 427
+        Collector room entrance @ 4205, -10, 433
+        
 */
 /*------------------------
    0 Title End
@@ -24,15 +29,15 @@
    0.1 Player Requirements Start
 ------------------------*/
 /*
-    Pre-Start actions: 
-        In entrance room, use lodestone to collector room
-        Open trapdoors to check compactor for health.
+    Pre-Start actions:
+        Flip all trapdoors to prevent walkthrough
+        Go to collector room and check compactor health
         Repair if necessary and return recipe to compact.
+        Remove items if repair keeps stopping.
     Items Required:
-        A fortune 3 tool, I use a golden "harvest" hoe
-        Tool held in mainhand
+        Hold a non-stick anything in hand
     
-    Restarting: Anywhere inside the farm
+    Restarting: Nestled in any of the trapdoor/ladders
 
 */
 /*-----------------------
@@ -63,6 +68,7 @@ leftKey = "key.keyboard.a" // default: "key.keyboard.a"
 rightKey = "key.keyboard.d" // default: "key.keyboard.d"
 forwardKey = "key.keyboard.w" // default: "key.keyboard.w"
 backwardKey = "key.keyboard.s" // default: "key.keyboard.s"
+jumpKey = "key.keyboard.space" // default: "key.keyboard.space"
 useKey = "key.mouse.right" // default: "key.mouse.right"
 attackKey = "key.mouse.left" // default: "key.mouse.left"
 lodestoneUpKey = "key.keyboard.space" // default: "key.keyboard.space"
@@ -77,6 +83,7 @@ leftKey = config.getString("leftKey", leftKey)
 rightKey = config.getString("rightKey", rightKey)
 forwardKey = config.getString("forwardKey", forwardKey)
 backwardKey = config.getString("backwardKey", backwardKey)
+jumpKey = config.getString("jumpKey", jumpKey)
 useKey = config.getString("useKey", useKey)
 attackKey = config.getString("attackKey", attackKey)
 lodestoneUpKey = config.getString("lodestoneUpKey", lodestoneUpKey)
@@ -96,52 +103,39 @@ util.setQuitKey(quitKey) //default: util.setQuitKey("key.keyboard.j")
 /*------------------------
    2 Global Variables Start
 ------------------------*/
-farmName = "GSEZ Carrot Tower"
-regrowthTime = 21.34 * 3600 //hours multiplied by seconds per hour
-harvestDuration = 85 //minutes to run a full harvest
+farmName = "Zeal Exclave Cocoa Tower"
+regrowthTime = 24 * 3600 //hours multiplied by seconds per hour
+harvestDuration = 120 //minutes to run a full harvest
 
 //Player starts script at this location
-xStartPosition = 2977 
-zStartPosition = 5137
-yStartPosition = 80
+xStartPosition = 4208 
+zStartPosition = 416
+yStartPosition = 4
 
-//set item list and look vector for tossing items into collector
-util.setPassLookBoundary(false)
-util.setTossItemList(["minecraft:carrot"])
-util.setTossLookVector([90,-25])
+util.setTossItemList(["minecraft:cocoa_beans"])
 
-//Allows restarting anywhere in the farm
-startingLayer = 1 //default: startingLayer = 1
-startingRow = 1 //default: startingRow = 1
-restarting = false //default: restarting = false
+//Used for script restarts
+towerNumber = 1 //1-4
+cocoaBeam = 1 //1-12
+midTower = false
 
-//total layers in the tree farm
-totalLayers = 14 //default: totalLayers = 14
-carrotsPerRow = 27 //default: treesPerRow = 27
-rowsPerLayer = 30 //default: rowsPerLayer = 30
-layerHeight = 3 //default: layerHeight = 3
+totalTowers = 4
+beamsPerTower = 12
 
-//Time it takes to cross sides
-//replace after doing hitech stuff
-secondsToHarvest = 7 //or 8
-
-//direction to look at carrots to harvest while strafing
-harvestLookX = 180
-harvestLookY = 20
-
-
-/*------------------------
+secondsToClimb = 77 // 45 // + 32 for expansion
+secondsToFall = 62 // 36 // + 26 for expansion
+/*-----------------------
    2 Global Variables End
-------------------------*/
+-----------------------*/
 
 /*------------------------
    2.1 Formatted Strings Start
 ------------------------*/
 greetingsText = Chat.createTextHelperFromJSON(
     util.wrapJSONStringsTogether([
-        util.simpleJSONString("GSEZ", "dark_aqua"),
-        util.simpleJSONString(" Carrot", "gold"),
-        util.simpleJSONString(" Tower", "green"),
+        util.simpleJSONString("GSExclave", "dark_red"),
+        util.simpleJSONString(" Cocoa", "red"),
+        util.simpleJSONString(" Tower", "gray"),
         util.simpleJSONString(", booting", "gold")
     ])
 )
@@ -157,13 +151,12 @@ quitText =  Chat.createTextHelperFromJSON(
 
 finishedText =  Chat.createTextHelperFromJSON(
     util.wrapJSONStringsTogether([
-        util.simpleJSONString("GSEZ", "dark_aqua"),
-        util.simpleJSONString(" Carrot", "gold"),
-        util.simpleJSONString(" Tower", "green"),
+        util.simpleJSONString("GSExclave", "dark_red"),
+        util.simpleJSONString(" Cocoa", "red"),
+        util.simpleJSONString(" Tower", "gray"),
         util.simpleJSONString(", shutting down...", "red")
     ])
 )
-    
     
 /*-----------------------
    2.1 Formatted Strings End
@@ -173,100 +166,169 @@ finishedText =  Chat.createTextHelperFromJSON(
    3 Functions Start
 -------------------*/
 
-function harvestStarterStrip(){
-    if(util.checkQuit()){
-        return
-    }    
-    //harvest row while strafing right
-    util.complexMove([rightKey,useKey],
-        harvestLookX, 28, secondsToHarvest * 20)
-
-    //harvest row while strafing left
-    util.complexMove([leftKey,useKey],
-        harvestLookX, 20, secondsToHarvest * 21)
-}
-
-function harvestOutStrip(){
-    if(util.checkQuit()){
-        return
-    }
-    
-    //harvest row while strafing right
-    util.complexMove([rightKey,useKey],
-        harvestLookX, harvestLookY, secondsToHarvest * 20)
-    //move flush to fence
-    util.simpleMove(forwardKey, harvestLookX, harvestLookY, 1*20)
-
-}
-function harvestReturnStrip(){
-    if(util.checkQuit()){
-        return
-    }
-    //harvest row while strafing left
-    util.complexMove([leftKey,useKey],
-        harvestLookX, harvestLookY, secondsToHarvest * 20)
-    //move flush to fence
-    util.simpleMove(forwardKey, harvestLookX, harvestLookY, 1*20)
-}
-
-function moveToNextLayer(){
-    //at the end of the left side of the row.
-    
-    //move flush to forward wall
-    util.simpleMove(forwardKey, harvestLookX, harvestLookY, 1*20)
-    
-    //move right to return bridge
-    util.simpleMove(forwardKey, -90, 0, 8 * 20)
-    
-    //move back to front of layer
-    util.simpleMove(forwardKey, 0, 0, 8 * 20)
-    
-    //move left to lodestone
-    util.simpleMove(forwardKey, 90, 0, 8 * 20)
-    
-    //jump to next floor
-    util.simpleMove(lodestoneUpKey,harvestLookX,harvestLookY,10)
-}
-
-//called at start of script to set layer in carrot farm
+//called at start of script to set position in tree farm
 //especially for restarts
 function setStartingPosition(){
-    playerY = util.player.getY()
-    //set layer
-    startingLayer = ((playerY - yStartPosition) / layerHeight) + 1.5
-    startingLayer = Math.floor(startingLayer)
-    Chat.log("Starting layer = " + startingLayer)
+    playerX = Math.floor(util.player.getX())
+    playerY = Math.floor(util.player.getY())
+    playerZ = Math.floor(util.player.getZ())
     
-    //set row
-    startingRow = Math.floor(zStartPosition - util.player.getZ() + 1)
-    Chat.log("Starting row = " + startingRow)
-    if(startingLayer > 1 || startingRow > 1){
+    // get Tower Position
+    towerNumber = Math.floor((playerZ - zStartPosition) / 16) + 1
+    
+    playerZOffset = Math.floor(playerZ - zStartPosition)
+    playerXOffset = Math.floor(playerX - xStartPosition) 
+    towerZOffset = (towerNumber - 1) * 16
+    
+    //Chat.log("playerZOffset: " + playerZOffset)
+    //Chat.log("playerXOffset: " + playerXOffset)
+    //Chat.log("towerZOffset: " + towerZOffset)
+    //get Cocoa Beam position
+    
+    //west side of tower
+    if(playerX == 4209){
+        if(playerZOffset - towerZOffset <= 2 ){
+            cocoaBeam = 1
+        }
+        else if(playerZOffset - towerZOffset <= 5 ){
+            cocoaBeam = 2
+        }
+        else if(playerZOffset - towerZOffset <= 8 ){
+            cocoaBeam = 3
+        }
+    }
+    
+    //south side of tower
+    else if(playerZOffset == towerZOffset + 14 ){
+        if (playerXOffset <= 2){
+            cocoaBeam = 4
+        }
+        else if (playerXOffset <= 5){
+            cocoaBeam = 5
+        }
+        else if (playerXOffset <= 8){
+            cocoaBeam = 6
+        }
+    }
+    //east side of tower
+    else if(playerX == 4222){
+        if(playerZOffset - towerZOffset >= 13 ){
+            cocoaBeam = 7
+        }
+        else if(playerZOffset - towerZOffset >= 10 ){
+            cocoaBeam = 8
+        }
+        else if(playerZOffset - towerZOffset >= 7 ){
+            cocoaBeam = 9
+        }
+        
+    }
+    
+    //north side of tower
+    else if(playerZOffset == towerZOffset + 1){
+        if (playerXOffset >= 13){
+            cocoaBeam = 10
+        }
+        else if (playerXOffset >= 10){
+            cocoaBeam = 11
+        }
+        else if (playerXOffset >= 7){
+            cocoaBeam = 12
+        }
+    }
+    
+    //check if in midair
+    if(playerY != yStartPosition){
+        midTower = true
+    }
+    
+    if(towerNumber != 1 || cocoaBeam != 1 || midTower){
         restarting = true
     }
+    Chat.log("Tower: " + towerNumber)
+    Chat.log("Cocoa Beam: " + cocoaBeam)
+    Chat.log("Mid Tower: " + midTower)
+    
 }
 
+function tossCocoa(xAngle){
+    //Chat.log("Tossing items")
+    xLook = xAngle - 90
+    yLook = 45
+    
+    util.setTossLookVector([xLook,yLook])
+    util.tossItems()
+}
+
+function flipTrapdoor(xAngle){
+    if(util.checkQuit()){
+        return
+    }
+    util.simpleInteract(xAngle,60)
+}
+
+//new harvest type, up harvests 2 columns, down harvests 1 column
+function newHarvest(xAngle){
+    if(util.checkQuit()){
+        return
+    }
+    util.complexMove([jumpKey,useKey],
+        xAngle - 43, 23, secondsToClimb * 20)
+        
+    util.simpleMove(useKey,xAngle - 86,23,secondsToFall*20)
+}
+
+function sideHarvest(xAngle){
+    if(util.checkQuit()){
+        return
+    }
+    //don't move forward if already up the ladder
+    if(!midTower){
+        util.simpleMove(forwardKey,xAngle,0,2*20)
+    }
+    newHarvest(xAngle)
+    flipTrapdoor(xAngle)
+       
+    util.simpleMove(forwardKey,xAngle,0,2*20)
+}
+
+function moveToNextTower(){
+    //move to next tower
+    //flip trapdoor at end of tower
+    flipTrapdoor(90)
+    //move out to hallway
+    util.simpleMove(forwardKey,90,0,3*20)
+    //move to block
+    util.simpleMove(forwardKey,0,0,2*20)
+    //strafe to wall
+    util.simpleMove(leftKey,0,0,1*20)
+    //move to next tower
+    util.simpleMove(forwardKey,0,0,5*20)
+    //move into tower
+    util.simpleMove(forwardKey,-90,0,2*20)
+    //move into first cocoa beam
+    util.simpleMove(forwardKey,0,0,1*20)
+    //align to tower wall
+    util.simpleMove(rightKey,0,0,1*20)
+}
 /*-------------------
    3 Functions End
 -------------------*/
-
 /*-------------------
    3.9 Pre-Program Start
 -------------------*/
 //GUI overlay
 visual.fullText("farmName", farmName, 0xdddddd,0,0)
 visual.fullText("toQuit", "Quit key: " + quitKey,0xffaaaa,0,8)
-visual.fullText("carrots","Carrots: " 
-    + util.getTossedItemAmount("minecraft:carrot"), 0xffa500,0,16)
 visual.fullText("timeLeft",
             "Remaining time: " + harvestDuration, 0x999999,0,24)
 
 //restart farm on reconnect
 GlobalVars.putBoolean("farmRunning",true)
 
-
 Chat.log(greetingsText)
 Chat.log(quitText)
-    
+
 //output to Discord
 if(logDiscord){
     util.logScriptStart(farmName)
@@ -282,55 +344,48 @@ Client.grabMouse()
 /*-------------------
    4 Program Start
 -------------------*/
-
-//set starting layer in case restarting on another layer
 setStartingPosition()
 
-//harvest all the layers
-for(let i = startingLayer; i <= totalLayers; i++){
-    if(util.checkQuit()){
-        break
-    }
-    
-    //harvest all the rows
-    for(let j = startingRow; j <= rowsPerLayer; j++){
-        if(util.checkQuit()){
-            break
+//harvest all the towers
+for(let i = towerNumber; i <= 4; i++){
+
+    //harvest all the beams
+    for(let j = cocoaBeam; j <= 12; j++){
+        //west side
+        if(j <= 3){
+            sideHarvest(0)
+            tossCocoa(0)
         }
-        
-        //harvest front 2 strips then move flush to starting fence
-        if(j == 0){
-            harvestStarterStrip()
-            util.simpleMove(forwardKey, harvestLookX, harvestLookY, 1*20)
+        //south side
+        else if(j <= 6){
+            sideHarvest(-90)
+            tossCocoa(-90)
         }
-        else if(j % 2 == 1){
-            harvestOutStrip()
+        //east side
+        else if(j <= 9){
+            sideHarvest(180)
+            tossCocoa(180)
         }
-        else{
-            harvestReturnStrip()
-            util.tossItems()
-            visual.setText("carrots", "Carrots: " 
-                + util.getTossedItemAmount("minecraft:carrot"))
+        //north side
+        else if(j <= 12){
+            sideHarvest(90)
+            tossCocoa(90)
         }
         visual.setText("timeLeft", "Remaining time: " 
                 + util.remainingMinutes(
-                i,j,totalLayers, rowsPerLayer,harvestDuration))
+                i,j,totalTowers, beamsPerTower,harvestDuration))
     }
     
-    //move to the start of the next layer
-    moveToNextLayer()
-    
-    //if restarting, set restart to false and change 
-    //starting back to defaults
-    if(restarting){
-        restarting = false
-        startingRow = 0
-    }
-}
+    moveToNextTower()
 
+    //reset flags after restarts
+    cocoaBeam = 1
+    midTower = false
+}
 /*-------------------
    4 Program End
 -------------------*/
+
 /*-------------------
    4.1 Shutdown Start
 -------------------*/
