@@ -467,7 +467,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
             }
             visual.setText("timeLeft", "Remaining time: " 
                 + util.remainingMinutes(
-                i,j*l,totalLayers,
+                i,((j-1) * treesPerRow) + l,totalLayers,
                 rowsPerLayer*treesPerRow,harvestDuration))
         }
         //move to end, over, and turn around.
