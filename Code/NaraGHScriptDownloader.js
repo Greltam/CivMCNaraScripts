@@ -1,12 +1,17 @@
 //For a list of Scripts, 
 //download each one from github and replace in Macros folder
 directoryPath = "./"
+removedDirectory = "removed"
+
 ListOfAllScripts = [
     //Self updating
     "NaraGHScriptDownloader",
     
     //Main utility file
     "McUtilityFile",
+    "McUConfigFile",
+    "McUConfigSetup",
+    "McUVisualizer",
 
     //Event utility files
     "McUReconnect",
@@ -17,7 +22,6 @@ ListOfAllScripts = [
     "McCraftChests",
     "McCraftBottles",
     "McCraftDeepslateTiles",
-    "McCraftChiseledTuff",
     
     //Main Farm files
     "McOakHiTechReplant",
@@ -37,9 +41,7 @@ ListOfAllScripts = [
     "McNetherStemTower",
 
     //Delayed Start Scripts
-    "vDelayZealOak",
-    "vDelayNetherStem",
-    "vDelayAFK",
+    "vDelayFarm",
 
     //Simple utility scripts
     "zBridge",
@@ -51,6 +53,20 @@ ListOfAllScripts = [
     "zOreBreak"
 ]
 
+ListOfRemovedScripts = [
+    
+    //Main Farm files
+    "McOakHiTechReplant",
+    
+    //Delayed Start Scripts
+    "vDelayZealOak",
+    "vDelayNetherStem",
+    "vDelayAFK"
+]
+
+/*-------------------
+   3 Functions Start
+-------------------*/
 function scriptNameToGithubURL(scriptName){
     return "https://raw.githubusercontent.com/"
          + "Greltam/CivMCNaraScripts/main/Code/"
@@ -63,9 +79,62 @@ function rewriteScript(scriptName){
     scriptFile.write(scriptGithubText)
 }
 
+function deleteScriptScript(scriptName){
+    scriptFile = directoryPath + scriptName + ".js"
+    if(FS.exists(scriptFile){
+        FS.move(scriptFile, removedDirectory)
+        Chat.log("Removing " + scriptFile + "...")
+    }
+}
+function getDirectory(){
 
+    rawPath = FS.toRawPath("NaraGHScriptDownloader.js")
+    path = rawPath.toString()
+    
+    subPath = path.split("\\Macros\\")
+    //subPath[0] should be all the .../.minecraft/config/jsmacros
+    //subPath[1] should be the subdirectory(s)/"NaraGHScriptDownloader.js"
+    
+    subSplit = subPath[1].split("NaraGHScriptDownloader.js")
+    return subSplit[0]
+        
+    //return "./"
+}
+
+/*-------------------
+   3 Functions End
+-------------------*/
+
+/*-------------------
+   4 Program Start
+-------------------*/
 //update all files
 for(let i = 0; i < ListOfAllScripts.length; i++){
     Chat.log("Redownloading " + ListOfAllScripts[i] + " Script...")
     rewriteScript(ListOfAllScripts[i])
 }
+
+if(!FS.exists(removedDirectory)){
+    FS.makeDir(removedDirectory)
+}
+//remove old files
+for(let i = 0; i < ListOfRemovedScripts.length; i++){
+    deleteScript(ListOfRemovedScripts[i])
+}
+
+//prepopulate player settings
+JsMacros.runScript(getDirectory() + "McUConfigSetup.js")
+
+/*-------------------
+   4 Program End
+-------------------*/
+
+
+
+
+
+
+
+
+
+
