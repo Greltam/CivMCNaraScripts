@@ -20,6 +20,27 @@
    0.1 Player Requirements to Start End
 -----------------------*/
 
+/*------------------------
+   1.1 Import Files Start
+------------------------*/
+const config = require("./McUConfigFile.js")
+config.initialize()
+
+/*-----------------------
+   1.1 Import Files End
+-----------------------*/
+
+/*------------------------
+   1.2 Player Configurables Start
+------------------------*/
+//player control initialization
+delayStart = 3 // default: "key.keyboard.j"
+
+delayStart = config.getValue("delayStart", delayStart)
+
+/*-----------------------
+   1.2 Player Configurables End
+-----------------------*/
 /*-------------------
    3 Functions Start
 -------------------*/
@@ -32,7 +53,9 @@
 function getScriptFile(directory, fileToSearch){
 
     filesList = FS.list(directory)
-        
+    
+    Chat.log("Directory = " + directory)
+    
     //check for file in current directory
     for(i = 0; i < filesList.length; i++){
         if(filesList[i] == fileToSearch){
@@ -131,25 +154,22 @@ function locateFarm(x,z){
 }
 
 function restartFarmScripts(){
-    //Do location based farm restarts
-    farmName = locateFarm(Player.getPlayer().getX(),
-                          Player.getPlayer().getZ())
-    if(farmName == "null"){
-        return
+    //if we've delayed the start a farm 
+    //or were in the middle of one that was interrupted
+    if(GlobalVars.getBoolean("delayFarm") ||
+        GlobalVars.getBoolean("farmRunning"))
+    {
+        //Do location based farm restarts
+        farmName = locateFarm(Player.getPlayer().getX(),
+                              Player.getPlayer().getZ())
+        if(farmName == "null"){
+            return
+        }
+        else{
+            farmFile = getScriptFile("", farmName)
+            JsMacros.runScript(farmFile)
+        }
     }
-    else{
-        farmFile = getScriptFile("", farmName)
-        JsMacros.runScript(farmFile)
-    }
-    
-    /*  
-    if(GlobalVars.getBoolean("delayZealOak")){
-        JsMacros.runScript("McOakHiTechChop.js")
-    }
-    if(GlobalVars.getBoolean("delayNetherStem")){
-        JsMacros.runScript("McNetherStemTower.js")
-    }
-    */
 }
 
 /*-------------------
@@ -160,12 +180,11 @@ hasReconnected = false
 while(!hasReconnected){
     
     if(GlobalVars.getBoolean("delayFarm")){
-        startHour = 3 //default incase not set
-        startHour = GlobalVars.getInt("delayStartHour")
+        
         date = new Date()
         hours = date.getHours()
         
-        while(hours != startHour){
+        while(hours != delayStart){
             //every 10 minutes see if we are at the starting hour
             Client.waitTick(600 * 20)
             
@@ -198,7 +217,6 @@ while(!hasReconnected){
         Client.connect("play.civmc.net")
     }
     else{
-    
         //We have connected to a world
         hasReconnected = true
         restartFarmScripts()
