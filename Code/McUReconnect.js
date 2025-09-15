@@ -34,9 +34,13 @@ config.initialize()
    1.2 Player Configurables Start
 ------------------------*/
 //player control initialization
-delayStartHour = 3 // default: 3
-
+delayStartHour = 3 // default: "key.keyboard.j"
 delayStartHour = config.getValue("delayStartHour", delayStartHour)
+
+serverName = "play.civmc.net"
+//serverName = "mini.civmc.net"
+
+hasReconnected = false
 
 /*-----------------------
    1.2 Player Configurables End
@@ -175,7 +179,6 @@ function restartFarmScripts(){
 /*-------------------
    4 Program Start
 -------------------*/
-hasReconnected = false
 
 while(!hasReconnected){
     
@@ -194,33 +197,36 @@ while(!hasReconnected){
         }
         //it is at the delayed starting hour so reconnect
     }
-    
-    //try to connect every 20 seconds
-    Client.waitTick(20 * 20)
-    
+        
     //If a disconnect has occured due to a KillSnitchEngage snitch msg
     if(GlobalVars.getBoolean("killsnitch")){
     
-        //reset killswitch so reconnection will occur
+        //reset killswitch so future reconnections will occur
         //next time player manually joins
         GlobalVars.putBoolean("killsnitch",false)
         Client.waitTick(20)
+        Chat.log("Kill snitched")
         
         //Don't reconnect further down
         break
     }
     
-    //check to see if we are loaded in already
-    //meant to prevent having multiple scripts spam connecting
-    if(!World.isWorldLoaded()){
-        //Client.connect("mini.civmc.net")
-        Client.connect("play.civmc.net")
-    }
-    else{
-        //We have connected to a world
-        hasReconnected = true
-        restartFarmScripts()
-    }
+    //Check every 20 seconds for a server ping
+    do{
+        Time.sleep(20 * 1000)
+    }while(!Client.ping(serverName).isOnline())    
+    Chat.log(serverName + " pinged online.")
+
+    //Try to reconnect to the server
+    while(!World.isWorldLoaded()){
+        Client.connect(serverName)
+        Time.sleep(20 * 1000)
+    }    
+    Chat.log(serverName + " world loaded.")
+    
+    //We have connected to a world, restart farms and break out
+    hasReconnected = true
+    restartFarmScripts()
 }
 
 Chat.log("We have reconnected!")
