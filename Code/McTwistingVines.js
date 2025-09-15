@@ -334,6 +334,7 @@ visual.fullText("timeLeft",
 
 //restart farm on reconnect
 GlobalVars.putBoolean("farmRunning",true)
+GlobalVars.putBoolean("killsnitch", false)
 
 
 Chat.log(greetingsText)
