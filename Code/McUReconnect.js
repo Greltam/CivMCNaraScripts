@@ -34,9 +34,9 @@ config.initialize()
    1.2 Player Configurables Start
 ------------------------*/
 //player control initialization
-delayStart = 3 // default: "key.keyboard.j"
+delayStartHour = 3 // default: 3
 
-delayStart = config.getValue("delayStart", delayStart)
+delayStartHour = config.getValue("delayStartHour", delayStartHour)
 
 /*-----------------------
    1.2 Player Configurables End
@@ -184,7 +184,7 @@ while(!hasReconnected){
         date = new Date()
         hours = date.getHours()
         
-        while(hours != delayStart){
+        while(hours != delayStartHour){
             //every 10 minutes see if we are at the starting hour
             Client.waitTick(600 * 20)
             
