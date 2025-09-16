@@ -53,35 +53,28 @@ hasReconnected = false
 /*-------------------
    3 Functions End
 -------------------*/
+function getDirectory(){
 
-function getScriptFile(directory, fileToSearch){
+    rawPath = FS.toRawPath("McUReconnect.js")
+    path = rawPath.toString()
+    
+    subPath = path.split("\\Macros\\")
+    //subPath[0] should be all the .../.minecraft/config/jsmacros
+    //subPath[1] should be the subdirectory(s)/"vDaisyTwistingWart.js"
+    
+    subSplit = subPath[1].split("McUReconnect.js")
+    return subSplit[0]
+}
 
-    filesList = FS.list(directory)
+function playerAt(x,z,y){
+    playerX = Math.floor(Player.getPlayer().getX())
+    playerY = Math.floor(Player.getPlayer().getY())
+    playerZ = Math.floor(Player.getPlayer().getZ())
     
-    Chat.log("Directory = " + directory)
-    
-    //check for file in current directory
-    for(i = 0; i < filesList.length; i++){
-        if(filesList[i] == fileToSearch){
-            rawPath = FS.toRawPath(directory + filesList[i])
-            path = rawPath.toString()
-            subPath = path.split("\\Macros\\")
-            return subPath[1]
-        }
+    if(playerX == x && playerY == y && playerZ == z){
+        return true
     }
-    
-    //didn't find the file, check current directory
-    //for subdirectories and querry if they have the file
-    for(i = 0; i < filesList.length; i++){
-        fileLocation = directory + filesList[i]
-        if(FS.isDir(fileLocation)){
-        
-            //check the directory for farm script
-            return getScriptFile(fileLocation, fileToSearch)
-        }
-    }
-    
-    return "notFound"
+    return false
 }
 
 function insideOf(x1,z1,x2,z2,x,z){
@@ -98,6 +91,11 @@ function insideOf(x1,z1,x2,z2,x,z){
 }
 
 function locateFarm(x,z){
+    //Daisy chained farm scripts first
+    if(GlobalVars.getBoolean("daisyGNC") || playerAt(2293, 8099, 2)){
+        GlobalVars.putBoolean("daisyGNC",false)
+        return "vDaisyTwistingWart.js"
+    }
     
     //Coords for Oak farm
     if(insideOf(2863,5114,2959,5203,x,z)){
@@ -170,8 +168,7 @@ function restartFarmScripts(){
             return
         }
         else{
-            farmFile = getScriptFile("", farmName)
-            JsMacros.runScript(farmFile)
+            JsMacros.runScript(getDirectory() + farmName)
         }
     }
 }
