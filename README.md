@@ -9,5 +9,7 @@ Directions!
   4. ????
   5. Profit!
 
+Scripts are currently for JSMacros on 1.21.1 version. Download this 1.21.1 mod from the Mods folder and setup a new profile on MultiMC or however you do it.
+
 Disclaimer: New scripts added require 2 runs of the NaraGHScriptDownloader.js to first update the updater, then download the new script.
 If altering scripts, make sure to rename or move into a different folder so the auto-downloader/updater script doesn't destroy your altered script
