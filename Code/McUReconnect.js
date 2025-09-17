@@ -156,6 +156,7 @@ function locateFarm(x,z){
 }
 
 function restartFarmScripts(){
+    Chat.log("Attempting to restart farming")
     //if we've delayed the start a farm 
     //or were in the middle of one that was interrupted
     if(GlobalVars.getBoolean("delayFarm") ||
@@ -164,10 +165,13 @@ function restartFarmScripts(){
         //Do location based farm restarts
         farmName = locateFarm(Player.getPlayer().getX(),
                               Player.getPlayer().getZ())
-        if(farmName == "null"){
+
+    if(farmName == "null"){
+            Chat.log("No Farm found")
             return
         }
         else{
+            Chat.log(farmName + " found, restarting...")
             JsMacros.runScript(getDirectory() + farmName)
         }
     }
@@ -177,9 +181,11 @@ function restartFarmScripts(){
    4 Program Start
 -------------------*/
 
+Chat.log("We've been Disconnected")
 while(!hasReconnected){
     
     if(GlobalVars.getBoolean("delayFarm")){
+        Chat.log("Delayed Farming for: " + delayStartHour)
         
         date = new Date()
         hours = date.getHours()
@@ -192,6 +198,7 @@ while(!hasReconnected){
             date = new Date()
             hours = date.getHours()
         }
+        Chat.log("Delay ended")
         //it is at the delayed starting hour so reconnect
     }
         
@@ -210,12 +217,14 @@ while(!hasReconnected){
     
     //Check every 20 seconds for a server ping
     do{
+        Chat.log("Waiting to ping...")
         Time.sleep(20 * 1000)
     }while(!Client.ping(serverName).isOnline())    
     Chat.log(serverName + " pinged online.")
 
     //Try to reconnect to the server
     while(!World.isWorldLoaded()){
+        Chat.log("Attempting to reconnect to " + serverName)
         Client.connect(serverName)
         Time.sleep(20 * 1000)
     }    
