@@ -175,6 +175,7 @@ function moveToTwistingVines(){
 //starting from wart end, head over and down to vines
 //then up the lodestone
     Chat.log("Moving to Twisting Vines")
+    util.simpleMove(forwardKey,-180, 0, 2*20)
     util.simpleMove(forwardKey,-90, 0, 3*20)
     util.simpleMove(forwardKey,0, 0, 2*20)
     util.simpleMove(lodestoneUpKey,-180, 0, 10)
@@ -191,6 +192,10 @@ function moveToTwistingVines(){
 GlobalVars.putBoolean("farmRunning",true)
 GlobalVars.putBoolean("daisyGNC",true)//for reconnect
 GlobalVars.putBoolean("killsnitch", false)
+
+//used to prematurely terminate after the netherwart
+//in order to relogin and have last twisting vines regrow
+disconnectScript = false
 
 Chat.log(greetingsText)
 Chat.log(quitText)
@@ -240,20 +245,22 @@ if(!GlobalVars.getBoolean("farm2")){
     
     //exit server so vines regrow from RB
     Client.disconnect()
-    context.getContext().closeContext()
+    disconnectScript = true
 } 
 
 //Run third farm of twisting vine
-if(!GlobalVars.getBoolean("farm3")){
-    GlobalVars.putBoolean("farmComplete", false)
-    
-    Chat.log("Booting up Twisting Vines")
-    JsMacros.runScript(getDirectory() + "McTwistingVines.js")
-    while(!GlobalVars.getBoolean("farmComplete")){
-        Time.sleep(60000)//check back in 1 minute
+if(!disconnectScript){
+    if(!GlobalVars.getBoolean("farm3")){
+        GlobalVars.putBoolean("farmComplete", false)
+        
+        Chat.log("Booting up Twisting Vines")
+        JsMacros.runScript(getDirectory() + "McTwistingVines.js")
+        while(!GlobalVars.getBoolean("farmComplete")){
+            Time.sleep(60000)//check back in 1 minute
+        }
+        GlobalVars.putBoolean("farm3", true) 
     }
-    GlobalVars.putBoolean("farm3", true) 
-} 
+}
 /*-------------------
    4 Program End
 -------------------*/
@@ -261,27 +268,27 @@ if(!GlobalVars.getBoolean("farm3")){
 /*-------------------
    4.1 Shutdown Start
 -------------------*/
-//prevent reconnect from restarting farm
-GlobalVars.putBoolean("farmComplete", false)
-GlobalVars.putBoolean("farmRunning", false)
-GlobalVars.putBoolean("daisyGNC",false)
-GlobalVars.putBoolean("farm1", false)
-GlobalVars.putBoolean("farm2", false)
-GlobalVars.putBoolean("farm3", false)
 
-//Reset keybinds to prevent phantom key holds.
-util.resetKeys()
-
-//log script completion
-Chat.log(finishedText)
-
-//Exit server if on a delay start or desired
-if(logoutOnCompletion || GlobalVars.getBoolean("delayFarm")){
-    GlobalVars.putBoolean("delayFarm", false)
+//Run third farm of twisting vine
+if(!disconnectScript){
+    //prevent reconnect from restarting farm
+    GlobalVars.putBoolean("farmComplete", false)
+    GlobalVars.putBoolean("farmRunning", false)
+    GlobalVars.putBoolean("daisyGNC",false)
+    GlobalVars.putBoolean("farm1", false)
+    GlobalVars.putBoolean("farm2", false)
+    GlobalVars.putBoolean("farm3", false)
+    
+    //Reset keybinds to prevent phantom key holds.
+    util.resetKeys()
+    
+    //log script completion
+    Chat.log(finishedText)
+    
+    //logout after daisy chain completion
     GlobalVars.putBoolean("killsnitch", true)
     Chat.say("/logout")
 }
-
 /*-------------------
    4.1 Shutdown End
 -------------------*/
