@@ -371,6 +371,9 @@ if(logoutOnCompletion || GlobalVars.getBoolean("delayFarm")){
     GlobalVars.putBoolean("killsnitch", true)
     Chat.say("/logout")
 }
+
+//For daisy chaining farms together
+    GlobalVars.putBoolean("farmComplete", true)
 /*-------------------
    4.1 Shutdown End
 -------------------*/
