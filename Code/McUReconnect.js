@@ -97,6 +97,10 @@ function locateFarm(x,z){
         return "vDaisyTwistingWart.js"
     }
     
+    if(GlobalVars.getBoolean("daisySata") || playerAt(4020, 7376, -62)){
+        GlobalVars.putBoolean("daisySata",false)
+        return "vDaisyMelonPotato.js"
+    }
     //Coords for Oak farm
     if(insideOf(2863,5114,2959,5203,x,z)){
         return "McOakHiTechChop.js"
