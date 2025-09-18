@@ -41,6 +41,7 @@ ListOfAllScripts = [
     //Delayed Start Scripts
     "vDelayFarm",
     "vDaisyTwistingWart",
+    "vDaisyMelonPotato",
 
     //Simple utility scripts
     "zBridge",
