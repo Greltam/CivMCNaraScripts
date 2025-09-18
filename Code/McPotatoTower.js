@@ -116,7 +116,7 @@ util.setTossLookVector([90,-25])
 
 //Allows restarting anywhere in the farm
 startingLayer = 1 //default: startingLayer = 1
-startingRow = 1 //default: startingRow = 1
+startingRow = 0 //default: startingRow = 1
 restarting = false //default: restarting = false
 
 //total layers in the tree farm
@@ -241,7 +241,7 @@ function setStartingPosition(){
     //set row
     startingRow = Math.floor(util.player.getZ() - zStartPosition)
     Chat.log("Starting row = " + startingRow)
-    if(startingLayer > 1 || startingRow > 1){
+    if(startingLayer > 1 || startingRow > 0){
         restarting = true
     }
 }
