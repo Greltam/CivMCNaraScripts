@@ -218,12 +218,33 @@ while(!hasReconnected){
         //Don't reconnect further down
         break
     }
-    
-    //Check every 20 seconds for a server ping
-    do{
+
+    serverOnline = false
+    pingSuccessful = false
+    ping = null
+    while(!serverOnline) {
+        //Check every 20 seconds for a server ping
         Chat.log("Waiting to ping...")
         Time.sleep(20 * 1000)
-    }while(!Client.ping(serverName).isOnline())    
+        
+        //attempt to ping server, if offline catch error
+        try{
+            Chat.log("Pinging")
+            ping = Client.ping(serverName)
+            pingSuccessful = true
+        }catch(error){
+            Chat.log("Ping failed")
+        }
+        
+        //if server pinged, check if server is online
+        if(pingSuccessful){
+            Chat.log(serverName + " is online?: " + ping.isOnline())
+            if(ping.isOnline()){
+                serverOnline = true
+            }
+            pingSuccessful = false
+        }
+    }   
     Chat.log(serverName + " pinged online.")
 
     //Try to reconnect to the server
