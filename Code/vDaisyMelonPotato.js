@@ -195,6 +195,7 @@ function moveToPotatoes(){
     util.simpleMove(forwardKey,-90, 0, 4*20)
     util.simpleMove(lodestoneUpKey,0, 0, 10)
     util.simpleMove(forwardKey,0, 0, 1*20)
+}
 /*-------------------
    3 Functions End
 -------------------*/
@@ -206,10 +207,6 @@ function moveToPotatoes(){
 GlobalVars.putBoolean("farmRunning",true)
 GlobalVars.putBoolean("daisySata",true)//for reconnect
 GlobalVars.putBoolean("killsnitch", false)
-
-//used to prematurely terminate after the netherwart
-//in order to relogin and have last twisting vines regrow
-disconnectScript = false
 
 Chat.log(greetingsText)
 Chat.log(quitText)
@@ -223,12 +220,6 @@ Client.grabMouse()
 /*-------------------
    4 Program Start
 -------------------*/
-/*
-    Reset farm completion flag
-    Run script
-    Wait for script to complete and set farm completion flag
-    Move to next farm, then repeat
-*/
 //Run first farm of Beacha Melon Tower
 if(!GlobalVars.getBoolean("farm1")){
     GlobalVars.putBoolean("farmComplete", false)
@@ -278,26 +269,24 @@ if(!GlobalVars.getBoolean("farm3")){
    4.1 Shutdown Start
 -------------------*/
 
-//Run third farm of twisting vine
-if(!disconnectScript){
-    //prevent reconnect from restarting farm
-    GlobalVars.putBoolean("farmComplete", false)
-    GlobalVars.putBoolean("farmRunning", false)
-    GlobalVars.putBoolean("daisySata",false)
-    GlobalVars.putBoolean("farm1", false)
-    GlobalVars.putBoolean("farm2", false)
-    GlobalVars.putBoolean("farm3", false)
-    
-    //Reset keybinds to prevent phantom key holds.
-    util.resetKeys()
-    
-    //log script completion
-    Chat.log(finishedText)
-    
-    //logout after daisy chain completion
-    GlobalVars.putBoolean("killsnitch", true)
-    Chat.say("/logout")
-}
+//prevent reconnect from restarting farm
+GlobalVars.putBoolean("farmComplete", false)
+GlobalVars.putBoolean("farmRunning", false)
+GlobalVars.putBoolean("daisySata",false)
+GlobalVars.putBoolean("farm1", false)
+GlobalVars.putBoolean("farm2", false)
+GlobalVars.putBoolean("farm3", false)
+
+//Reset keybinds to prevent phantom key holds.
+util.resetKeys()
+
+//log script completion
+Chat.log(finishedText)
+
+//logout after daisy chain completion
+GlobalVars.putBoolean("killsnitch", true)
+Chat.say("/logout")
+
 /*-------------------
    4.1 Shutdown End
 -------------------*/
