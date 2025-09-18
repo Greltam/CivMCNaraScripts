@@ -828,10 +828,13 @@ function stopUse(){
 }
 
 function inventoryBorderSlot(inventory){
-    invTitle = chestInv.getContainerTitle()
+    invTitle = inventory.getContainerTitle()
     Chat.log(invTitle)
-    if(invTitle == "Barrel"){
+    if(invTitle == "Barrel" || invTitle == "Chest"){
         return 27
+    }
+    if(invTitle == "Large Chest"){
+        return 54
     }
 }
 
