@@ -22,6 +22,7 @@ ListOfAllScripts = [
     "McCraftBottles",
     "McCraftDeepslateTiles",
     "McCraftGoldenCarrots",
+    "McCraftBulkEnchanting",
     
     //Main Farm files
     "McOakHiTechChop",
