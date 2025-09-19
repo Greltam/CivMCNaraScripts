@@ -26,6 +26,9 @@
    0.1 Player Requirements Start
 ------------------------*/
 /*
+    NOTE! If attempting to hoe the leaves:
+        Place 2 full durability U3 hoes in each layers further barrel
+        
     Pre-Start actions: 
         Required axe in the rightmost hotbar(9)
         Required hoe in the next rightmost hotbar(8)
@@ -78,6 +81,9 @@ logDiscord = true // default: "true"
 verboseLog = false // default: "false"
 logoutOnCompletion = false // default: "false"
 
+//hoe some leaves to help allow saplings to fall through canopy
+hoeLeaves = false // default: "false"
+
 quitKey = config.getString("quitKey", quitKey)
 leftKey = config.getString("leftKey", leftKey)
 rightKey = config.getString("rightKey", rightKey)
@@ -90,7 +96,7 @@ lodestoneDownKey = config.getString("lodestoneDownKey", lodestoneDownKey)
 logDiscord = config.getBool("logDiscord", logDiscord)
 verboseLog = config.getBool("verboseLog", verboseLog)
 logoutOnCompletion = config.getBool("logoutOnCompletion", logoutOnCompletion)
-
+hoeLeaves = config.getBool("hoeLeaves", hoeLeaves)
 
 //alter the default quitkey from j to whatever you want.
 util.setQuitKey(quitKey) //default: util.setQuitKey("key.keyboard.j") 
@@ -133,8 +139,6 @@ util.setQuitFromFallingYLevel(yStartPosition)
 
 //If Player wants to scuff harvest using just an axe, let them set to false
 usingHoe = true //default: usingHoe = true
-//hoe some leaves to help allow saplings to fall through canopy
-hoeLeaves = false //default: usingHoe = false
 
 //In case of needing to restart mid tree chop
 restarting = false //default: restarting = false
@@ -238,7 +242,17 @@ function setStartingPosition(){
     restarting = true
 }
 
-
+function getHoe(){
+    util.selectHotbar(7) //select Hoe
+    
+    heldItem = util.getItemInSelectedHotbar()
+    
+    //if we don't have a hoe
+    if(heldItem.getItemId() != "minecraft:diamond_hoe"){
+        //move from inventory to hotbar
+        util.moveItemToHotbar("minecraft:diamond_hoe",7)
+    }
+}
 function replantSapling(){
     //move hotbar to slot 5
     util.selectHotbar(5)
@@ -283,7 +297,7 @@ function chopTree(layer, row, tree){
 
 //chop leaves in front of tree
     if(usingHoe){
-        util.selectHotbar(7) //select Hoe
+        getHoe() //select Hoe
     }
     
     //try to move to the next tree, but if not, return false
@@ -304,8 +318,7 @@ function chopTree(layer, row, tree){
             util.simpleMove(attackKey,0, -80, 5)       
         }
     }
-            
-    
+
 //chop tree
     util.selectHotbar(8) //select Axe
     //util.simpleMove("key.mouse.left",180, -80, 5)
@@ -325,7 +338,7 @@ function chopTree(layer, row, tree){
     
 //hoe leaves
     if(hoeLeaves){
-        util.selectHotbar(7) //select Hoe
+        getHoe() //select Hoe
         util.key(attackKey, true)
         
         if(row % 2 == 1){
@@ -365,7 +378,6 @@ function tossLogs(row){
     
     util.setTossLookVector([xLook,yLook])
     util.tossItems()
-    
 }
 
 /*-------------------
@@ -417,18 +429,21 @@ for(let i = startingLayer; i <= totalLayers; i++){
     
     //check for replant chest
     if(!restarting){
-        if((i % 4) == 1){
-        
+        if((i % 4) == 1){            
             //chest current saplings
             util.chestSpecificItems(-180,-90,
                 "minecraft:oak_sapling", true) 
-            
             
             //pick up oak saplings from chest
             //saplings will be in barrel from slot 0 to 15
             util.chestItems(-180,-90,0,16)
             
             Client.grabMouse()
+        }
+        if(hoeLeaves){
+            //move barrel hoes to inventory
+            util.chestSpecificItems(-180,-55,
+                "minecraft:diamond_hoe", false)
         }
     }
     
@@ -475,7 +490,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
         if(j % 2 == 1){
             //move to end of row
             if(usingHoe){
-                util.selectHotbar(7) //select Hoe
+                getHoe() //select Hoe
             }
             util.complexMoveToLocation(
                 [attackKey],
@@ -500,7 +515,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
         else{
             //move to end of row
             if(usingHoe){
-                util.selectHotbar(7) //select Hoe
+                getHoe() //select Hoe
             }
             util.complexMoveToLocation(
                 [attackKey],
@@ -549,6 +564,11 @@ for(let i = startingLayer; i <= totalLayers; i++){
         0.2)
     
     
+    //dump old hoes in sapling barrel
+    if(hoeLeaves){
+        util.chestSpecificItems(-180,-55,
+            "minecraft:diamond_hoe", true) 
+    }
     //jump to next lodestone. Turn off quitfromfalling and reset when on next layer
     util.simpleMove(lodestoneUpKey,0, 0, 5)
     
