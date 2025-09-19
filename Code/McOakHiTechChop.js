@@ -455,11 +455,21 @@ for(let i = startingLayer; i <= totalLayers; i++){
         if((i % 4) == 1){            
             //chest current saplings
             util.chestSpecificItems(-180,-90,
-                "minecraft:oak_sapling", true) 
+                "minecraft:oak_sapling", true)
+            //if we have even more, toss into collector
+            util.tossAllSpecificItems(
+                ["minecraft:oak_sapling"], -180, 0)
             
-            //pick up oak saplings from chest
-            //saplings will be in barrel from slot 0 to 15
-            util.chestItems(-180,-90,0,16)
+            if(hoeLeaves){
+                //hoeing leaves with fortunes nets us ~3 stacks per layer
+                //just need a stack to start out with
+                util.chestItems(-180,-90,0,1)
+            }
+            else{
+                //pick up oak saplings from chest
+                //saplings will be in barrel from slot 0 to 15
+                util.chestItems(-180,-90,0,16)
+            }
             
             Client.grabMouse()
         }
