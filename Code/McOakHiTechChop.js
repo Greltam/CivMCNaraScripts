@@ -339,26 +339,49 @@ function chopTree(layer, row, tree){
 //hoe leaves
     if(hoeLeaves){
         getHoe() //select Hoe
-        util.key(attackKey, true)
         
         if(row % 2 == 1){
+            util.smoothLookAt(-180,-60)
+            util.key(attackKey, true)
+            
+            util.smoothLookAt(-180,-75)
+            //util.spinTicks(5)
+            util.panLook(-180, -75, 180, -75, 10)
+            
             util.smoothLookAt(-180,-60)
             //util.spinTicks(5)
             util.panLook(-180, -60, 180, -60, 10)
             
-            util.smoothLookAt(-180,-25)
+            util.smoothLookAt(-180,-40)
             //util.spinTicks(5)
-            util.panLook(-180, -25, 180, -25, 10)
+            util.panLook(-180, -40, 180, -40, 10)
+            
+            util.smoothLookAt(-180,-10)
+            //util.spinTicks(5)
+            util.panLook(-180, -10, 180, -10, 10)
         }
         else{
+            util.smoothLookAt(0,-60)
+            util.key(attackKey, true)
+            util.smoothLookAt(0,-75)
+            //util.spinTicks(5)
+            util.panLook(0, -75, -180, -75, 5)
+            util.panLook(180, -75, 0, -75, 5)
+            
             util.smoothLookAt(180,-60)
             //util.spinTicks(5)
             util.panLook(0, -60, -180, -60, 5)
             util.panLook(180, -60, 0, -60, 5)
+            
+            util.smoothLookAt(180,-40)
+            //util.spinTicks(5)
+            util.panLook(0, -40, -180, -40, 5)
+            util.panLook(180, -40, 0, -40, 5)
+            
             util.smoothLookAt(180,-25)
             //util.spinTicks(5)
-            util.panLook(0, -25, -180, -25, 5)
-            util.panLook(180, -25, 0, -25, 5)
+            util.panLook(0, -10, -180, -10, 5)
+            util.panLook(180, -10, 0, -10, 5)
         }
         //function panLook(xStart, yStart, xEnd, yEnd, ticks)
         util.key(attackKey, false)
@@ -464,6 +487,8 @@ for(let i = startingLayer; i <= totalLayers; i++){
     //chop all the rows
     for(let j = startingRow; j <= rowsPerLayer; j++){
         if(util.checkQuit()){break}
+        
+        util.checkHunger() //eat food if hungry
         
         //chop all the trees in each row
         for(let l = startingTree; l <= treesPerRow; l++){
