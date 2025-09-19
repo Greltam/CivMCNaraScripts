@@ -37,6 +37,8 @@ verboseLog = false // default: false
 logoutOnCompletion = false // default: false
 delayStartHour = 3 // default: 3
 
+hoeLeaves = false // default: "false"
+
 quitKey = config.getString("quitKey", quitKey)
 leftKey = config.getString("leftKey", leftKey)
 rightKey = config.getString("rightKey", rightKey)
@@ -52,3 +54,5 @@ logDiscord = config.getBool("logDiscord", logDiscord)
 verboseLog = config.getBool("verboseLog", verboseLog)
 logoutOnCompletion = config.getBool("logoutOnCompletion", logoutOnCompletion)
 delayStartHour = config.getValue("delayStartHour", delayStartHour)
+
+hoeLeaves = config.getBool("hoeLeaves", hoeLeaves)
