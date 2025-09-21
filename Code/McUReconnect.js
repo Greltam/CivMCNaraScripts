@@ -38,7 +38,15 @@ delayStartHour = 3 // default: "key.keyboard.j"
 delayStartHour = config.getValue("delayStartHour", delayStartHour)
 
 serverName = "play.civmc.net"
+desiredWorld = "play"
+
+miniHeaderContains = "Mini"
 //serverName = "mini.civmc.net"
+//desiredWorld = "mini"
+
+pvpHeaderContains = "PvP"
+//serverName = "pvp.civmc.net"
+//desiredWorld = "pvp"
 
 hasReconnected = false
 
@@ -246,13 +254,50 @@ while(!hasReconnected){
         }
     }   
     Chat.log(serverName + " pinged online.")
-
+    
     //Try to reconnect to the server
     while(!World.isWorldLoaded()){
         Chat.log("Attempting to reconnect to " + serverName)
         Client.connect(serverName)
         Time.sleep(20 * 1000)
     }    
+    
+    //make sure we are in the correct world.
+    //because we could be in lobby.
+    loadedIntoCorrectWorld = false
+    while(!loadedIntoCorrectWorld){
+        Chat.log("Checking for correct " + serverName + " world.")
+        Time.sleep(10 * 1000)
+        
+        if(World.isWorldLoaded())
+        {
+            //get Tablist header to check which world we are actually in
+            tablistHeader = World.getTabListHeader()
+            tablistString = tablistHeader.getStringStripFormatting()
+            
+            Chat.log(tablistString)
+            //check for header to contain world tpye
+            if(tablistString.indexOf(miniHeaderContains) != -1){
+                Chat.log("In Mini World")
+                if(desiredWorld == "mini"){
+                    loadedIntoCorrectWorld = true
+                }
+            }
+            else if(tablistString.indexOf(pvpHeaderContains) != -1){
+                Chat.log("In PvP World")
+                if(desiredWorld == "pvp"){
+                    loadedIntoCorrectWorld = true
+                }
+            }
+            else{
+                Chat.log("In Main World")
+                if(desiredWorld == "play"){
+                    loadedIntoCorrectWorld = true
+                }
+            }
+        }//End world check
+    }//Correct world loaded
+    
     Chat.log(serverName + " world loaded.")
     
     //We have connected to a world, restart farms and break out
