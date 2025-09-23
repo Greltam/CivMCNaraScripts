@@ -40,11 +40,11 @@ delayStartHour = config.getValue("delayStartHour", delayStartHour)
 serverName = "play.civmc.net"
 desiredWorld = "play"
 
-miniHeaderContains = "Mini"
+miniHeaderContains = "CivMC Mini"
 //serverName = "mini.civmc.net"
 //desiredWorld = "mini"
 
-pvpHeaderContains = "PvP"
+pvpHeaderContains = "CivMC PvP"
 //serverName = "pvp.civmc.net"
 //desiredWorld = "pvp"
 
