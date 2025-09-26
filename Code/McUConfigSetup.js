@@ -36,6 +36,7 @@ logDiscord = true // default: true
 verboseLog = false // default: false
 logoutOnCompletion = false // default: false
 delayStartHour = 3 // default: 3
+mainServer = "play" //play, mini, or pvp
 
 hoeLeaves = false // default: "false"
 
@@ -54,5 +55,6 @@ logDiscord = config.getBool("logDiscord", logDiscord)
 verboseLog = config.getBool("verboseLog", verboseLog)
 logoutOnCompletion = config.getBool("logoutOnCompletion", logoutOnCompletion)
 delayStartHour = config.getValue("delayStartHour", delayStartHour)
+mainServer = config.getString("mainServer", mainServer)
 
 hoeLeaves = config.getBool("hoeLeaves", hoeLeaves)
