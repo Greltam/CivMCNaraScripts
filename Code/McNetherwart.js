@@ -434,9 +434,6 @@ if(logDiscord){
     util.logScriptStart(farmName)
 }
 
-//protect from tabbed out dysfunction
-Client.grabMouse()
-
 /*-------------------
    3.9 Pre-Program End
 -------------------*/
