@@ -211,8 +211,6 @@ GlobalVars.putBoolean("killsnitch", false)
 Chat.log(greetingsText)
 Chat.log(quitText)
 
-//protect from tabbed out dysfunction
-Client.grabMouse()
 /*-------------------
    3.9 Pre-Program End
 -------------------*/
