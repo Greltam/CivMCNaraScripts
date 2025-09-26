@@ -95,8 +95,17 @@ util.setQuitKey(quitKey) //default: util.setQuitKey("key.keyboard.j")
 ------------------------*/
 //amount of emeralds to consume per enchant
 emeraldsToUse = 16
+
 //which level to enchant on the enchanting table
 enchantingLevel = 3
+desiredLevel = 30
+if(enchantingLevel == 1){
+    desiredLevel = 10
+}
+if(enchantingLevel == 2){
+    desiredLevel = 21
+}
+
 //starting slot for items to enchant
 enchantingSlotStart = 30
 
@@ -204,6 +213,9 @@ function gainXP(){
         //try to quick use xp, but not use over desired amount
         util.smoothLookAt(-180,0)
         for(k = 0; k < emeraldsToUse - 2; k++){
+            if(Player.getPlayer().getXPLevel() >= desiredLevel){
+                return true
+            }
             util.key(useKey,true)
             util.spinTicks(2)
             util.key(useKey,false)
@@ -214,6 +226,9 @@ function gainXP(){
         //use an emerald and check if we've used the correct amount
         while(itemNumber < heldItem.getCount() + emeraldsToUse){
             if(util.checkQuit()){break}
+            if(Player.getPlayer().getXPLevel() >= desiredLevel){
+                return true
+            }
             util.simpleMove(useKey, -180, 0, 2)
             util.spinTicks(8)
             heldItem = util.getItemInSelectedHotbar()
