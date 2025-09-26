@@ -35,18 +35,28 @@ config.initialize()
 ------------------------*/
 //player control initialization
 delayStartHour = 3 // default: "key.keyboard.j"
-delayStartHour = config.getValue("delayStartHour", delayStartHour)
+mainServer = "play" //play, mini, or pvp
 
+delayStartHour = config.getValue("delayStartHour", delayStartHour)
+mainServer = config.getString("mainServer", mainServer)
+
+//For main CivMC world
 serverName = "play.civmc.net"
 desiredWorld = "play"
 
 miniHeaderContains = "CivMC Mini"
-//serverName = "mini.civmc.net"
-//desiredWorld = "mini"
+if(mainServer == "mini")
+{
+    serverName = "mini.civmc.net"
+    desiredWorld = "mini"
+}
 
 pvpHeaderContains = "CivMC PvP"
-//serverName = "pvp.civmc.net"
-//desiredWorld = "pvp"
+if(mainServer == "pvp")
+{
+    serverName = "pvp.civmc.net"
+    desiredWorld = "pvp"
+}
 
 hasReconnected = false
 
