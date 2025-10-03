@@ -116,7 +116,7 @@ startingRow = 1 //default: startingRow = 1
 restarting = false //default: restarting = false
 
 //total layers in the tree farm
-totalLayers = 14 //default: totalLayers = 14
+totalLayers = 28 //default: totalLayers = 14
 carrotsPerRow = 27 //default: treesPerRow = 27
 rowsPerLayer = 30 //default: rowsPerLayer = 30
 layerHeight = 3 //default: layerHeight = 3
