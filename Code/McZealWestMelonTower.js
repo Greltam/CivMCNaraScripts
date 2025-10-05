@@ -367,9 +367,14 @@ visual.clear()
 
 //Exit server if on a delay start or desired
 if(logoutOnCompletion || GlobalVars.getBoolean("delayFarm")){
-    GlobalVars.putBoolean("delayFarm", false)
-    GlobalVars.putBoolean("killsnitch", true)
-    Chat.say("/logout")
+    if(GlobalVars.getBoolean("daisySata")){
+        Chat.log("Daisy Chaining!")
+    }
+    else{
+        GlobalVars.putBoolean("delayFarm", false)
+        GlobalVars.putBoolean("killsnitch", true)
+        Chat.say("/logout")
+    }
 }
 
 //For daisy chaining farms together
