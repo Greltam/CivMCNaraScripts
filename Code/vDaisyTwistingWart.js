@@ -240,6 +240,7 @@ if(!GlobalVars.getBoolean("farm2")){
     
     moveToTwistingVines()
     GlobalVars.putBoolean("farm2", true)
+    GlobalVars.putBoolean("farmRunning",true)
     
     //exit server so vines regrow from RB
     Client.disconnect()
