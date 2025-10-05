@@ -211,6 +211,11 @@ GlobalVars.putBoolean("killsnitch", false)
 Chat.log(greetingsText)
 Chat.log(quitText)
 
+//output to Discord
+if(logDiscord){
+    util.logScriptStart(farmName)
+}
+
 /*-------------------
    3.9 Pre-Program End
 -------------------*/
