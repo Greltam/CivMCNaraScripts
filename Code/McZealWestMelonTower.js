@@ -284,7 +284,11 @@ if(logDiscord){
 }
 
 //protect from tabbed out dysfunction
-Client.grabMouse()
+try{
+    Client.grabMouse()
+}catch(error){
+    Chat.log("Could not grab mouse.")
+}
 
 /*-------------------
    3.9 Pre-Program End
