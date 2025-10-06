@@ -413,7 +413,7 @@ function tossLogs(row){
 //GUI overlay
 visual.fullText("farmName", farmName, 0xdddddd,0,0)
 visual.fullText("toQuit", "Quit key: " + quitKey,0xffaaaa,0,8)
-visual.fullText("Oak","Oak: " 
+visual.fullText("oak","Oak: " 
     + util.getTossedItemAmount("minecraft:oak_log"), 0xffa500,0,16)
 visual.fullText("timeLeft",
             "Remaining time: " + harvestDuration, 0x999999,0,24)
@@ -432,7 +432,11 @@ if(logDiscord){
 }
 
 //protect from tabbed out dysfunction
-Client.grabMouse()
+try{
+    Client.grabMouse()
+}catch(error){
+    Chat.log("Could not grab mouse.")
+}
 
 /*-------------------
    3.9 Pre-Program End
@@ -471,12 +475,19 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 util.chestItems(-180,-90,0,16)
             }
             
-            Client.grabMouse()
         }
         if(hoeLeaves){
             //move barrel hoes to inventory
             util.chestSpecificItems(-180,-55,
                 "minecraft:diamond_hoe", false)
+        }
+        
+        //protect from tabbed out dysfunction
+        //due to barrel interaction
+        try{
+            Client.grabMouse()
+        }catch(error){
+            Chat.log("Could not grab mouse.")
         }
     }
     
@@ -536,6 +547,8 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 
             //toss logs into collector
             tossLogs(j)
+            visual.setText("oak", "Oak: " 
+                + util.getTossedItemAmount("minecraft:oak_log"))
             //move to next row, sitting flush with the block so tree bridge chop is already aligned
             util.simpleMove(forwardKey, -90,0,50)
             /*                
@@ -560,7 +573,9 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 0.2)
             
             //toss logs into collector
-            tossLogs(j)  
+            tossLogs(j)
+            visual.setText("oak", "Oak: " 
+                + util.getTossedItemAmount("minecraft:oak_log"))
             //Last row needs to get to lodestone                     
             if(j == rowsPerLayer){
                 break
