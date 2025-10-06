@@ -42,6 +42,17 @@ logDiscord = config.getBool("logDiscord", logDiscord)
    3 Functions Start
 -------------------*/
 
+function playerAt(x,z,y){
+    playerX = Math.floor(Player.getPlayer().getX())
+    playerY = Math.floor(Player.getPlayer().getY())
+    playerZ = Math.floor(Player.getPlayer().getZ())
+    
+    if(playerX == x && playerY == y && playerZ == z){
+        return true
+    }
+    return false
+}
+
 function insideOf(x1,z1,x2,z2,x,z){
 
     if(x >= x1 &&
@@ -56,6 +67,15 @@ function insideOf(x1,z1,x2,z2,x,z){
 }
 
 function locateFarm(x,z){
+
+    //Daisy chained farm scripts first
+    if(GlobalVars.getBoolean("daisyGNC") || playerAt(2293, 8099, 2)){
+        return "vDaisyTwistingWart.js"
+    }
+    
+    if(GlobalVars.getBoolean("daisySata") || playerAt(4020, 7376, -62)){
+        return "vDaisyMelonPotato.js"
+    }
     
     //Coords for Oak farm
     if(insideOf(2863,5114,2959,5203,x,z)){
