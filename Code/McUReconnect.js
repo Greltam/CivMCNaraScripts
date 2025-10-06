@@ -188,7 +188,7 @@ function restartFarmScripts(){
         farmName = locateFarm(Player.getPlayer().getX(),
                               Player.getPlayer().getZ())
 
-    if(farmName == "null"){
+        if(farmName == "null"){
             Chat.log("No Farm found")
             return
         }
@@ -196,6 +196,10 @@ function restartFarmScripts(){
             Chat.log(farmName + " found, restarting...")
             JsMacros.runScript(getDirectory() + farmName)
         }
+        
+        //reset delayFarm flag so subsequent reconnections
+        //don't wait all over again
+        GlobalVars.putBoolean("delayFarm",false)
     }
 }
 
