@@ -115,6 +115,14 @@ util.setQuitKey(quitKey) //default: util.setQuitKey("key.keyboard.j")
    2 Global Variables Start
 ------------------------*/
 farmName = "GSEZNether Stem Tower"
+if(util.player.getY() >= 40){
+    farmName = "GNC Crimson Nether Stem Tower"
+}
+//Warped is below Crimson
+else{
+    farmName = "GNC Warped Nether Stem Tower"
+}
+
 regrowthTime = 24 * 3600 //hours multiplied by seconds per hour
 harvestDuration = 350 //minutes to complete full harvest
 
