@@ -217,6 +217,20 @@ function setStartingPosition(){
     playerY = util.player.getY()
     playerZ = util.player.getZ()
     
+    //set replanting fungus depending on y level
+    //Crimson's lowest level is at y43
+    if(playerY >= 40){
+        plantAllCrimson = true
+        plantAllWarped = false
+        yStartPosition = 70
+    }
+    //Warped is below Crimson
+    else{
+        plantAllCrimson = false
+        plantAllWarped = true
+        yStartPosition = 34
+    }
+    
     //At the starting position of a layer
     //if we are at the lodestone level, set position as start of a
     //layer and break
@@ -320,12 +334,6 @@ function bonemealNetherrack(){
 function plantFungus(layerNum, rowNum){
     //which fungus should we be using?
     useCrimson = true
-    if(    (layerNum % 2 == 1 && rowNum <= 8) // North-South layer
-        || (layerNum % 2 == 0 && rowNum >= 9) // South-North layer
-      )
-    {
-        useCrimson = false
-    }
     
     if(plantAllCrimson){
         useCrimson = true
@@ -580,8 +588,17 @@ for(let i = startingLayer; i <= totalLayers; i++){
                 util.complexMove([forwardKey,attackKey],
                     180, 0, 50)
             }
-            visual.setText("stems", "Stems: " 
+            
+            //update visual for logged stems
+            if(yStartPosition == 34){
+                visual.setText("stems", "Stems: " 
                 + util.getTossedItemAmount("minecraft:warped_stem"))
+            }
+            else{
+                visual.setText("stems", "Stems: " 
+                + util.getTossedItemAmount("minecraft:crimson_stem"))
+            }
+            
             //Last row needs to get to lodestone                     
             if(j == rowsPerLayer){
                 break
