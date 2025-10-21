@@ -273,9 +273,9 @@ function newHarvest(xAngle){
         return
     }
     util.complexMove([jumpKey,useKey],
-        xAngle - 43, 23, secondsToClimb * 20)
+        xAngle - 37, 17.5, secondsToClimb * 20)
         
-    util.simpleMove(useKey,xAngle - 86,23,secondsToFall*20)
+    util.simpleMove(useKey, xAngle - 74, 17.5, secondsToFall*20)
 }
 
 function sideHarvest(xAngle){
