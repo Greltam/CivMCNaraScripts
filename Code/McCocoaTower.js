@@ -108,9 +108,9 @@ regrowthTime = 24 * 3600 //hours multiplied by seconds per hour
 harvestDuration = 120 //minutes to run a full harvest
 
 //Player starts script at this location
-xStartPosition = 4208 
-zStartPosition = 416
-yStartPosition = 4
+xStartPosition = 4211
+zStartPosition = 419
+yStartPosition = 183
 
 util.setTossItemList(["minecraft:cocoa_beans"])
 
@@ -122,8 +122,7 @@ midTower = false
 totalTowers = 4
 beamsPerTower = 12
 
-secondsToClimb = 77 // 45 // + 32 for expansion
-secondsToFall = 62 // 36 // + 26 for expansion
+secondsToHarvest = 35
 /*-----------------------
    2 Global Variables End
 -----------------------*/
@@ -185,6 +184,7 @@ function setStartingPosition(){
     //Chat.log("towerZOffset: " + towerZOffset)
     //get Cocoa Beam position
     
+    /*
     //west side of tower
     if(playerX == 4209){
         if(playerZOffset - towerZOffset <= 2 ){
@@ -236,6 +236,9 @@ function setStartingPosition(){
             cocoaBeam = 12
         }
     }
+    */
+    
+    cocoaBeam = GlobalVars.getInt("cocoaBeam")
     
     //check if in midair
     if(playerY != yStartPosition){
@@ -245,71 +248,292 @@ function setStartingPosition(){
     if(towerNumber != 1 || cocoaBeam != 1 || midTower){
         restarting = true
     }
+    else{
+        GlobalVars.putBoolean("north",false)
+        GlobalVars.putBoolean("east",false) 
+        GlobalVars.putBoolean("south",false)
+        GlobalVars.putBoolean("west",false)
+    }
     Chat.log("Tower: " + towerNumber)
     Chat.log("Cocoa Beam: " + cocoaBeam)
     Chat.log("Mid Tower: " + midTower)
     
 }
 
-function tossCocoa(xAngle){
+function tossCocoa(beamNumber){
+    if(util.checkQuit()){return}
     //Chat.log("Tossing items")
-    xLook = xAngle - 90
-    yLook = 45
+    xLook = -45
+    yLook = 22
+    
+    if(beamNumber == 1 || beamNumber == 2 || beamNumber == 12){
+        xLook = -45
+    }
+    if(beamNumber == 3 || beamNumber == 4 || beamNumber == 5){
+        xLook = -135
+    }
+    if(beamNumber == 6 || beamNumber == 7 || beamNumber == 8){
+        xLook = 135
+    }
+    if(beamNumber == 9 || beamNumber == 10 || beamNumber == 11){
+        xLook = 45
+    }
     
     util.setTossLookVector([xLook,yLook])
     util.tossItems()
 }
 
-function flipTrapdoor(xAngle){
-    if(util.checkQuit()){
-        return
+//alignment functions to check for needing to flip trapdoors
+//at the top of the cocoa tower to align between cocoa beams
+function alignWest(beamNumber){
+    if(beamNumber == 5 || beamNumber == 6 || beamNumber == 7 ||
+       beamNumber == 10 || beamNumber == 11 || beamNumber == 12){
+        return true
     }
-    util.simpleInteract(xAngle,60)
+    return false
+}
+function alignEast(beamNumber){
+    if(beamNumber == 1 || beamNumber == 4 || beamNumber == 5 ||
+       beamNumber == 6 || beamNumber == 11 || beamNumber == 12){
+        return true
+    }
+    return false
+}
+function alignNorth(beamNumber){
+    if(beamNumber == 2 || beamNumber == 3 || beamNumber == 4 ||
+       beamNumber == 7 || beamNumber == 8 || beamNumber == 9){
+        return true
+    }
+    return false
+}
+function alignSouth(beamNumber){
+    if(beamNumber == 1 || beamNumber == 2 || beamNumber == 3 ||
+       beamNumber == 8 || beamNumber == 9 || beamNumber == 10){
+        return true
+    }
+    return false
 }
 
-//new harvest type, up harvests 2 columns, down harvests 1 column
-function newHarvest(xAngle){
-    if(util.checkQuit()){
-        return
+function moveIntoAlignment(xAngle){
+    util.smoothLookAt(xAngle,-5)           //look at the overhead trapdoor
+    util.simpleMove(useKey,xAngle,-5,2)    //lower trapdoor to block body
+    util.simpleMove(forwardKey,xAngle,0,20)//move into trapdoor
+    util.simpleMove(useKey,xAngle,0,10)    //raise trapdoor back up
+}
+
+//starting from the lodestone at the top, move into cocoa stack
+//harvest, and then lodestone back up
+function harvestNorth(beamNumber){
+    if(util.checkQuit()){return}
+    Chat.log("Harvesting north")
+
+    if(midTower == false){
+        if(alignNorth(beamNumber)){
+            moveIntoAlignment(180)
+        }
+        else{
+            util.simpleMove(forwardKey,180,0,20)
+        }
     }
-    util.complexMove([jumpKey,useKey],
-        xAngle - 37, 17.5, secondsToClimb * 20)
+    
+    //flip trapdoor to go into cocoa
+    util.simpleMove(useKey,0,80,secondsToHarvest * 20)
+    while(Player.getPlayer().getY() > 4){
+        if(util.checkQuit()){break}
+        util.simpleMove(useKey,0,80, 1 * 20)
+    }
         
-    util.simpleMove(useKey, xAngle - 74, 17.5, secondsToFall*20)
+    //move into lower lodestone elevator
+    util.simpleMove(forwardKey,0,0,20)
+    //use elevator back up to the top
+    util.simpleMove(lodestoneUpKey,0,0,20)
+}
+function harvestSouth(beamNumber){
+    if(util.checkQuit()){return}
+    Chat.log("Harvesting south")
+    
+    if(midTower == false){
+        if(alignSouth(beamNumber)){
+            moveIntoAlignment(0)
+        }
+        else{
+            util.simpleMove(forwardKey,0,0,20)
+        }
+    }
+    
+    //flip trapdoor to go into cocoa
+    util.simpleMove(useKey,-180,80,secondsToHarvest * 20)
+    while(Player.getPlayer().getY() > 4){
+        if(util.checkQuit()){break}
+        util.simpleMove(useKey,-180,80, 1 * 20)
+    }
+        
+    //move into lower lodestone elevator
+    util.simpleMove(forwardKey,-180,0,20)
+    //use elevator back up to the top
+    util.simpleMove(lodestoneUpKey,-180,0,20)
+}
+function harvestEast(beamNumber){
+    if(util.checkQuit()){return}
+    Chat.log("Harvesting east")
+    
+    if(midTower == false){
+        if(alignEast(beamNumber)){
+            moveIntoAlignment(-90)
+        }
+        else{
+            util.simpleMove(forwardKey,-90,0,20)
+        }
+    }
+    
+    //flip trapdoor to go into cocoa
+    util.simpleMove(useKey,90,80,secondsToHarvest * 20)
+    while(Player.getPlayer().getY() > 4){
+        if(util.checkQuit()){break}
+        util.simpleMove(useKey,90,80, 1 * 20)
+    }
+    //move into lower lodestone elevator
+    util.simpleMove(forwardKey,90,0,20)
+    //use elevator back up to the top
+    util.simpleMove(lodestoneUpKey,90,0,20)
+}
+function harvestWest(beamNumber){
+    if(util.checkQuit()){return}
+    Chat.log("Harvesting west")
+    
+    if(midTower == false){
+        if(alignWest(beamNumber)){
+            moveIntoAlignment(90)
+        }
+        else{
+            util.simpleMove(forwardKey,90,0,20)
+        }
+    }
+    
+    //flip trapdoor to go into cocoa
+    util.simpleMove(useKey,-90,80,secondsToHarvest * 20)
+    while(Player.getPlayer().getY() > 4){
+        if(util.checkQuit()){break}
+        util.simpleMove(useKey,-90,80, 1 * 20)
+    }
+    
+    //move into lower lodestone elevator
+    util.simpleMove(forwardKey,-90,0,20)
+    //use elevator back up to the top
+    util.simpleMove(lodestoneUpKey,-90,0,20)
 }
 
-function sideHarvest(xAngle){
-    if(util.checkQuit()){
+//
+function harvestBeam(beamNumber){
+    if(util.checkQuit()){return}
+    //useful for restarting
+    GlobalVars.putInt("cocoaBeam",Number(beamNumber))
+    
+    if(GlobalVars.getBoolean("north")){
+        Chat.log("Already did north")
+    }else{    harvestNorth(beamNumber)}
+    GlobalVars.putBoolean("north",true)
+    
+    if(GlobalVars.getBoolean("east")){
+        Chat.log("Already did east")
+    }else{    harvestEast(beamNumber)}   
+    GlobalVars.putBoolean("east",true)
+    
+    if(GlobalVars.getBoolean("south")){
+        Chat.log("Already did south")
+    }else{    harvestSouth(beamNumber)}   
+    GlobalVars.putBoolean("south",true)
+    
+    if(GlobalVars.getBoolean("west")){
+        Chat.log("Already did west")
+    }else{    harvestWest(beamNumber)}   
+    GlobalVars.putBoolean("west",true)
+    
+    //Currently at the top of the beam
+    //use button on lodestone
+    //to reset the important trapdoor to get to next tower
+    util.simpleMove(useKey,90,90,4)
+    GlobalVars.putBoolean("north",false)
+    GlobalVars.putBoolean("east",false) 
+    GlobalVars.putBoolean("south",false)
+    GlobalVars.putBoolean("west",false)
+}
+
+function moveToNextBeam(towerNumber,beamNumber){
+    if(util.checkQuit()){return}
+    //default starting position
+    xDestination = 4211
+    zDestination = 419
+    yDestination = 183
+    tolerance = 0.3
+    
+    //give offsets for each beam
+    if(beamNumber == 1){
+        xDestination = xDestination + 0
+        zDestination = zDestination + 0
+    }
+    if(beamNumber == 2){
+        zDestination = zDestination + 3
+    }
+    if(beamNumber == 3){
+        zDestination = zDestination + 6
+    }
+    if(beamNumber == 4){
+        zDestination = zDestination + 9
+    }
+    if(beamNumber == 5){
+        xDestination = xDestination + 3
+        zDestination = zDestination + 9
+    }
+    if(beamNumber == 6){
+        xDestination = xDestination + 6
+        zDestination = zDestination + 9
+    }
+    if(beamNumber == 7){
+        xDestination = xDestination + 9
+        zDestination = zDestination + 9
+    }
+    if(beamNumber == 8){
+        xDestination = xDestination + 9
+        zDestination = zDestination + 6
+    }
+    if(beamNumber == 9){
+        xDestination = xDestination + 9
+        zDestination = zDestination + 3
+    }
+    if(beamNumber == 10){
+        xDestination = xDestination + 9
+    }
+    if(beamNumber == 11){
+        xDestination = xDestination + 6
+    }
+    if(beamNumber == 12){
+        xDestination = xDestination + 3
+    }
+    if(beamNumber == 13){
+        //end of the tower, don't move, let another
+        //function go to next tower
         return
     }
-    //don't move forward if already up the ladder
-    if(!midTower){
-        util.simpleMove(forwardKey,xAngle,0,2*20)
-    }
-    newHarvest(xAngle)
-    flipTrapdoor(xAngle)
-       
-    util.simpleMove(forwardKey,xAngle,0,2*20)
-}
+    
+    //add z offset for subsequent towers
+    zDestination = zDestination + ((towerNumber - 1) * 16)
+    
 
+    util.complexMoveToLocation([],
+        xDestination, 
+        zDestination, 
+        yDestination, tolerance)
+}
 function moveToNextTower(){
-    //move to next tower
-    //flip trapdoor at end of tower
-    flipTrapdoor(90)
-    //move out to hallway
+    //travel west
+    util.complexMove([forwardKey,jumpKey],0,0,8*20)
+    //move north to trapdoor at start of next tower
     util.simpleMove(forwardKey,90,0,3*20)
-    //move to block
-    util.simpleMove(forwardKey,0,0,2*20)
-    //strafe to wall
-    util.simpleMove(leftKey,0,0,1*20)
-    //move to next tower
-    util.simpleMove(forwardKey,0,0,5*20)
-    //move into tower
-    util.simpleMove(forwardKey,-90,0,2*20)
-    //move into first cocoa beam
-    util.simpleMove(forwardKey,0,0,1*20)
-    //align to tower wall
-    util.simpleMove(rightKey,0,0,1*20)
+    //flip trapdoor to fall down
+    util.simpleMove(useKey,90,90,4)
+    //reset trapdoor for next run
+    util.simpleMove(useKey,-90,-50,4)
 }
 /*-------------------
    3 Functions End
@@ -346,36 +570,30 @@ setStartingPosition()
 
 //harvest all the towers
 for(let i = towerNumber; i <= 4; i++){
+    if(util.checkQuit()){break}
+    Chat.log("Tower #" + i)
 
     //harvest all the beams
     for(let j = cocoaBeam; j <= 12; j++){
-        //west side
-        if(j <= 3){
-            sideHarvest(0)
-            tossCocoa(0)
-        }
-        //south side
-        else if(j <= 6){
-            sideHarvest(-90)
-            tossCocoa(-90)
-        }
-        //east side
-        else if(j <= 9){
-            sideHarvest(180)
-            tossCocoa(180)
-        }
-        //north side
-        else if(j <= 12){
-            sideHarvest(90)
-            tossCocoa(90)
-        }
-        visual.setText("timeLeft", "Remaining time: " 
+        if(util.checkQuit()){break}
+        Chat.log("CocoaBeam #" + j)
+        
+        //harvest the beam
+        harvestBeam(j)
+        tossCocoa(j)
+        //eat food if hungry
+        util.checkHunger()
+        
+        //move to next beam
+        moveToNextBeam(i,j+1)
+        
+        /*visual.setText("timeLeft", "Remaining time: " 
                 + util.remainingMinutes(
-                i,j,totalTowers, beamsPerTower,harvestDuration))
+                i,j,totalTowers, beamsPerTower,harvestDuration))*/
     }
     
     moveToNextTower()
-
+    
     //reset flags after restarts
     cocoaBeam = 1
     midTower = false
