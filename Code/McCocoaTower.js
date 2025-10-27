@@ -37,7 +37,9 @@
     Items Required:
         Hold a non-stick anything in hand
     
-    Restarting: Nestled in any of the trapdoor/ladders
+    Restarting:
+        Aligned on top of the trapdoor of 
+        the current side to harvest
 
 */
 /*-----------------------
