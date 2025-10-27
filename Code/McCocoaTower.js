@@ -742,8 +742,9 @@ for(let i = towerNumber; i <= 4; i++){
                 + util.remainingMinutes(
                 i,j,totalTowers, beamsPerTower,harvestDuration))*/
     }
-    
-    moveToNextTower()
+    if(towerNumber <= 3){
+        moveToNextTower()    
+    }
     
     //reset flags after restarts
     cocoaBeam = 1
