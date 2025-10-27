@@ -116,8 +116,16 @@ util.setTossItemList(["minecraft:cocoa_beans"])
 
 //Used for script restarts
 towerNumber = 1 //1-4
+
 cocoaBeam = 1 //1-12
+
+northDone = false
+southDone = false
+eastDone = false
+westDone = false
+
 midTower = false
+restarting = false
 
 totalTowers = 4
 beamsPerTower = 12
@@ -164,7 +172,18 @@ finishedText =  Chat.createTextHelperFromJSON(
 /*-------------------
    3 Functions Start
 -------------------*/
+function insideOf(x1,z1,x2,z2,x,z){
 
+    if(x >= x1 &&
+       x <= x2 &&
+       z >= z1 &&
+       z <= z2){
+       
+       return true
+    }
+
+    return false
+}
 //called at start of script to set position in tree farm
 //especially for restarts
 function setStartingPosition(){
@@ -182,82 +201,211 @@ function setStartingPosition(){
     //Chat.log("playerZOffset: " + playerZOffset)
     //Chat.log("playerXOffset: " + playerXOffset)
     //Chat.log("towerZOffset: " + towerZOffset)
+    
     //get Cocoa Beam position
+    relXPos = playerXOffset
+    relZPos = playerZOffset - towerZOffset
     
-    /*
-    //west side of tower
-    if(playerX == 4209){
-        if(playerZOffset - towerZOffset <= 2 ){
-            cocoaBeam = 1
+    if(insideOf(-1,-1,1,1,relXPos,relZPos)){
+        cocoaBeam = 1
+        if(relXPos == 1){
+            northDone = true
         }
-        else if(playerZOffset - towerZOffset <= 5 ){
-            cocoaBeam = 2
+        if(relZPos == 1){
+            northDone = true
+            eastDone = true
         }
-        else if(playerZOffset - towerZOffset <= 8 ){
-            cocoaBeam = 3
+        if(relXPos == -1){
+            northDone = true
+            eastDone = true
+            southDone = true
+        }
+    }
+    else if(insideOf(-1,2,1,4,relXPos,relZPos)){
+        cocoaBeam = 2
+        if(relXPos == 1){
+            northDone = true
+        }
+        if(relZPos == 4){
+            northDone = true
+            eastDone = true
+        }
+        if(relXPos == -1){
+            northDone = true
+            eastDone = true
+            southDone = true
+        }
+    }
+    else if(insideOf(-1,5,1,7,relXPos,relZPos)){
+        cocoaBeam = 3
+        if(relXPos == 1){
+            northDone = true
+        }
+        if(relZPos == 7){
+            northDone = true
+            eastDone = true
+        }
+        if(relXPos == -1){
+            northDone = true
+            eastDone = true
+            southDone = true
+        }
+    }
+    else if(insideOf(-1,8,1,10,relXPos,relZPos)){
+        cocoaBeam = 4
+        if(relXPos == 1){
+            northDone = true
+        }
+        if(relZPos == 10){
+            northDone = true
+            eastDone = true
+        }
+        if(relXPos == -1){
+            northDone = true
+            eastDone = true
+            southDone = true
+        }
+    }
+    else if(insideOf(2,8,4,10,relXPos,relZPos)){
+        cocoaBeam = 5
+        if(relXPos == 4){
+            northDone = true
+        }
+        if(relZPos == 10){
+            northDone = true
+            eastDone = true
+        }
+        if(relXPos == 2){
+            northDone = true
+            eastDone = true
+            southDone = true
+        }
+    }
+    else if(insideOf(5,8,7,10,relXPos,relZPos)){
+        cocoaBeam = 6
+        if(relXPos == 7){
+            northDone = true
+        }
+        if(relZPos == 10){
+            northDone = true
+            eastDone = true
+        }
+        if(relXPos == 5){
+            northDone = true
+            eastDone = true
+            southDone = true
+        }
+    }
+    else if(insideOf(8,8,10,10,relXPos,relZPos)){
+        cocoaBeam = 7
+        if(relXPos == 10){
+            northDone = true
+        }
+        if(relZPos == 10){
+            northDone = true
+            eastDone = true
+        }
+        if(relXPos == 8){
+            northDone = true
+            eastDone = true
+            southDone = true
+        }
+    }
+    else if(insideOf(8,5,10,7,relXPos,relZPos)){
+        cocoaBeam = 8
+        if(relXPos == 10){
+            northDone = true
+        }
+        if(relZPos == 7){
+            northDone = true
+            eastDone = true
+        }
+        if(relXPos == 8){
+            northDone = true
+            eastDone = true
+            southDone = true
+        }
+    }
+    else if(insideOf(8,2,10,4,relXPos,relZPos)){
+        cocoaBeam = 9
+        if(relXPos == 10){
+            northDone = true
+        }
+        if(relZPos == 4){
+            northDone = true
+            eastDone = true
+        }
+        if(relXPos == 8){
+            northDone = true
+            eastDone = true
+            southDone = true
+        }
+    }
+    else if(insideOf(8,-1,10,1,relXPos,relZPos)){
+        cocoaBeam = 10
+        if(relXPos == 10){
+            northDone = true
+        }
+        if(relZPos == 1){
+            northDone = true
+            eastDone = true
+        }
+        if(relXPos == 8){
+            northDone = true
+            eastDone = true
+            southDone = true
+        }
+    }
+    else if(insideOf(5,-1,7,1,relXPos,relZPos)){
+        cocoaBeam = 11
+        if(relXPos == 7){
+            northDone = true
+        }
+        if(relZPos == 1){
+            northDone = true
+            eastDone = true
+        }
+        if(relXPos == 5){
+            northDone = true
+            eastDone = true
+            southDone = true
+        }
+    }
+    else if(insideOf(2,-1,4,1,relXPos,relZPos)){
+        cocoaBeam = 12
+        if(relXPos == 4){
+            northDone = true
+        }
+        if(relZPos == 1){
+            northDone = true
+            eastDone = true
+        }
+        if(relXPos == 2){
+            northDone = true
+            eastDone = true
+            southDone = true
         }
     }
     
-    //south side of tower
-    else if(playerZOffset == towerZOffset + 14 ){
-        if (playerXOffset <= 2){
-            cocoaBeam = 4
-        }
-        else if (playerXOffset <= 5){
-            cocoaBeam = 5
-        }
-        else if (playerXOffset <= 8){
-            cocoaBeam = 6
-        }
-    }
-    //east side of tower
-    else if(playerX == 4222){
-        if(playerZOffset - towerZOffset >= 13 ){
-            cocoaBeam = 7
-        }
-        else if(playerZOffset - towerZOffset >= 10 ){
-            cocoaBeam = 8
-        }
-        else if(playerZOffset - towerZOffset >= 7 ){
-            cocoaBeam = 9
-        }
-        
-    }
     
-    //north side of tower
-    else if(playerZOffset == towerZOffset + 1){
-        if (playerXOffset >= 13){
-            cocoaBeam = 10
-        }
-        else if (playerXOffset >= 10){
-            cocoaBeam = 11
-        }
-        else if (playerXOffset >= 7){
-            cocoaBeam = 12
-        }
-    }
-    */
-    
-    cocoaBeam = GlobalVars.getInt("cocoaBeam")
+    //cocoaBeam = GlobalVars.getInt("cocoaBeam")
     
     //check if in midair
     if(playerY != yStartPosition){
         midTower = true
     }
     
-    if(towerNumber != 1 || cocoaBeam != 1 || midTower){
+    if(towerNumber != 1 || cocoaBeam != 1 || midTower
+        || northDone){
         restarting = true
-    }
-    else{
-        GlobalVars.putBoolean("north",false)
-        GlobalVars.putBoolean("east",false) 
-        GlobalVars.putBoolean("south",false)
-        GlobalVars.putBoolean("west",false)
     }
     Chat.log("Tower: " + towerNumber)
     Chat.log("Cocoa Beam: " + cocoaBeam)
     Chat.log("Mid Tower: " + midTower)
-    
+    Chat.log("North Done: " + northDone)
+    Chat.log("East Done: " + eastDone)
+    Chat.log("South Done: " + southDone)
+    Chat.log("West Done: " + westDone)
 }
 
 function tossCocoa(beamNumber){
@@ -327,7 +475,7 @@ function harvestNorth(beamNumber){
     if(util.checkQuit()){return}
     Chat.log("Harvesting north")
 
-    if(midTower == false){
+    if(midTower == false && !restarting){
         if(alignNorth(beamNumber)){
             moveIntoAlignment(180)
         }
@@ -335,6 +483,8 @@ function harvestNorth(beamNumber){
             util.simpleMove(forwardKey,180,0,20)
         }
     }
+    restarting = false
+    midTower = false
     
     //flip trapdoor to go into cocoa
     util.simpleMove(useKey,0,80,secondsToHarvest * 20)
@@ -352,7 +502,7 @@ function harvestSouth(beamNumber){
     if(util.checkQuit()){return}
     Chat.log("Harvesting south")
     
-    if(midTower == false){
+    if(midTower == false && !restarting){
         if(alignSouth(beamNumber)){
             moveIntoAlignment(0)
         }
@@ -360,6 +510,8 @@ function harvestSouth(beamNumber){
             util.simpleMove(forwardKey,0,0,20)
         }
     }
+    restarting = false
+    midTower = false
     
     //flip trapdoor to go into cocoa
     util.simpleMove(useKey,-180,80,secondsToHarvest * 20)
@@ -377,7 +529,7 @@ function harvestEast(beamNumber){
     if(util.checkQuit()){return}
     Chat.log("Harvesting east")
     
-    if(midTower == false){
+    if(midTower == false && !restarting){
         if(alignEast(beamNumber)){
             moveIntoAlignment(-90)
         }
@@ -385,6 +537,8 @@ function harvestEast(beamNumber){
             util.simpleMove(forwardKey,-90,0,20)
         }
     }
+    restarting = false
+    midTower = false
     
     //flip trapdoor to go into cocoa
     util.simpleMove(useKey,90,80,secondsToHarvest * 20)
@@ -401,7 +555,7 @@ function harvestWest(beamNumber){
     if(util.checkQuit()){return}
     Chat.log("Harvesting west")
     
-    if(midTower == false){
+    if(midTower == false && !restarting){
         if(alignWest(beamNumber)){
             moveIntoAlignment(90)
         }
@@ -409,6 +563,8 @@ function harvestWest(beamNumber){
             util.simpleMove(forwardKey,90,0,20)
         }
     }
+    restarting = false
+    midTower = false
     
     //flip trapdoor to go into cocoa
     util.simpleMove(useKey,-90,80,secondsToHarvest * 20)
@@ -429,34 +585,27 @@ function harvestBeam(beamNumber){
     //useful for restarting
     GlobalVars.putInt("cocoaBeam",Number(beamNumber))
     
-    if(GlobalVars.getBoolean("north")){
-        Chat.log("Already did north")
-    }else{    harvestNorth(beamNumber)}
-    GlobalVars.putBoolean("north",true)
+    if(northDone){ Chat.log("Already did north")
+    }else{ harvestNorth(beamNumber)}
     
-    if(GlobalVars.getBoolean("east")){
-        Chat.log("Already did east")
-    }else{    harvestEast(beamNumber)}   
-    GlobalVars.putBoolean("east",true)
+    if(eastDone){ Chat.log("Already did east")
+    }else{ harvestEast(beamNumber)}
     
-    if(GlobalVars.getBoolean("south")){
-        Chat.log("Already did south")
-    }else{    harvestSouth(beamNumber)}   
-    GlobalVars.putBoolean("south",true)
+    if(southDone){ Chat.log("Already did south")
+    }else{ harvestSouth(beamNumber)}
     
-    if(GlobalVars.getBoolean("west")){
-        Chat.log("Already did west")
-    }else{    harvestWest(beamNumber)}   
-    GlobalVars.putBoolean("west",true)
+    if(westDone){ Chat.log("Already did west")
+    }else{ harvestWest(beamNumber)}
     
     //Currently at the top of the beam
     //use button on lodestone
     //to reset the important trapdoor to get to next tower
     util.simpleMove(useKey,90,90,4)
-    GlobalVars.putBoolean("north",false)
-    GlobalVars.putBoolean("east",false) 
-    GlobalVars.putBoolean("south",false)
-    GlobalVars.putBoolean("west",false)
+    northDone = false
+    southDone = false
+    eastDone = false
+    westDone = false
+
 }
 
 function moveToNextBeam(towerNumber,beamNumber){
