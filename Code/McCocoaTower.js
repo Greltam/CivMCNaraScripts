@@ -742,7 +742,7 @@ for(let i = towerNumber; i <= 4; i++){
                 + util.remainingMinutes(
                 i,j,totalTowers, beamsPerTower,harvestDuration))*/
     }
-    if(towerNumber <= 3){
+    if(i <= 3){
         moveToNextTower()    
     }
     
