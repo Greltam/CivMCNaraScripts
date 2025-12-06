@@ -125,7 +125,7 @@ startingRow = 0 //default: startingRow = 1
 restarting = false //default: restarting = false
 
 //total layers in the tree farm
-totalLayers = 35 //default: totalLayers = 14
+totalLayers = 52 //default: totalLayers = 14
 potatoesPerRow = 30 //default: potatoesPerRow = 27
 rowsPerLayer = 30 //default: rowsPerLayer = 30
 layerHeight = 3 //default: layerHeight = 3
