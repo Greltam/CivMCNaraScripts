@@ -320,7 +320,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
         }
         else if(j % 2 == 1){
             harvestOutStrip()
-            if(j % 3 == 0){tossSeeds()}
+            if(j % 4 == 3){tossSeeds()}
         }
         else{
             harvestReturnStrip()
