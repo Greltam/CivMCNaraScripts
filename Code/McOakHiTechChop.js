@@ -515,17 +515,28 @@ for(let i = startingLayer; i <= totalLayers; i++){
         for(let l = startingTree; l <= treesPerRow; l++){
             if(util.checkQuit()){break}
             while(!chopTree(i,j,l)){
-                util.simpleMove(forwardKey,
-                    Player.getPlayer().getYaw(),
-                    Player.getPlayer().getPitch(),
-                    40)
+                xLookCurrent = Player.getPlayer().getYaw()
+                
                 //attempt to clear leaves
                 util.selectHotbar(7) //select Hoe
                 util.key(attackKey, true)
                 util.panLook(-180, 0, 180, 0, 20)
                 util.key(attackKey, false)
+                
+                //walk as forward as possible
+                util.simpleMove(forwardKey,
+                    xLookCurrent,
+                    Player.getPlayer().getPitch(),
+                    40)
+                    
+                //clear logs if possible
+                util.selectHotbar(8) //select Axe
+                util.simpleMove(attackKey,
+                    xLookCurrent, 
+                    45, floorCutTicks)
+                
                 //reset to last tree.
-                chopTree(i,j,l-1)
+                //chopTree(i,j,l-1)
             }
             visual.setText("timeLeft", "Remaining time: " 
                 + util.remainingMinutes(
