@@ -147,7 +147,7 @@ startingRow = 1 //default: startingRow = 1
 startingTree = 1 //default: startingTree = 1
 
 //total layers in the tree farm
-totalLayers = 16 //default: totalLayers = 8
+totalLayers = 20 //default: totalLayers = 8
 treesPerRow = 16 //default: treesPerRow = 16
 rowsPerLayer = 16 //default: rowsPerLayer = 16
 layerHeight = 12 //default: layerHeight = 12
