@@ -128,6 +128,10 @@ function locateFarm(x,z){
     if(insideOf(2863,5114,2959,5203,x,z)){
         return "McOakHiTechChop.js"
     }
+    //Coords for Birch farm
+    if(insideOf(2966,5152,3055,5248,x,z)){
+        return "McBirchHiTechChop.js"
+    }
     //Coords for Carrot farm
     if(insideOf(2974,5105,3007,5138,x,z)){
         return "McCarrotTower.js"
