@@ -26,6 +26,7 @@ ListOfAllScripts = [
     
     //Main Farm files
     "McOakHiTechChop",
+    "McBirchHiTechChop",
     "McZealWestMelonTower",
     "McBeachaEastMelonTower",
     "McCarrotTower",
