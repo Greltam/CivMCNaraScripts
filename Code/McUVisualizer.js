@@ -23,7 +23,7 @@ function addText(keyName, text){
         
         textList.push([keyName, textBox])
     }catch(error){
-        Chat.log("Could not add text for " + keyName)
+        //Chat.log("Could not add text for " + keyName)
     }
 }
 
@@ -43,7 +43,7 @@ function setText(keyName, replaceText){
             }
         }
     }catch(error){
-        Chat.log("Could not set text for " + keyName)
+        //Chat.log("Could not set text for " + keyName)
     }
 }
 
@@ -64,7 +64,7 @@ function colorText(keyName, color){
             }
         }
     }catch(error){
-        Chat.log("Could not change color for " + keyName)
+        //Chat.log("Could not change color for " + keyName)
     }
 }
 
@@ -86,7 +86,7 @@ function moveText(keyName, x, y){
             }
         }
     }catch(error){
-        Chat.log("Could not move position for " + keyName)
+        //Chat.log("Could not move position for " + keyName)
     }
 }
 
@@ -99,7 +99,7 @@ function fullText(keyName, text, color, x, y){
         
         textList.push([keyName, textBox])
     }catch(error){
-        Chat.log("Could not create " + keyName)
+        //Chat.log("Could not create " + keyName)
     }
 }
 
@@ -120,7 +120,7 @@ function remove(keyName){
             }
         }
     }catch(error){
-        Chat.log("Could not remove " + keyName)
+        //Chat.log("Could not remove " + keyName)
     }
     
     //iterate over rect list
