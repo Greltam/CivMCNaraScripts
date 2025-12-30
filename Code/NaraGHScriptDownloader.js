@@ -95,11 +95,17 @@ function getDirectory(){
     rawPath = FS.toRawPath("NaraGHScriptDownloader.js")
     path = rawPath.toString()
     
-    subPath = path.split("\\Macros\\")
-    //subPath[0] should be all the .../.minecraft/config/jsmacros
-    //subPath[1] should be the subdirectory(s)/"NaraGHScriptDownloader.js"
-    
-    subSplit = subPath[1].split("NaraGHScriptDownloader.js")
+    subPath = []
+    subSplit = []
+    try{
+        //windows path structure
+        subPath = path.split("\\Macros\\")
+        subSplit = subPath[1].split("NaraGHScriptDownloader.js")
+    }catch(error){
+        //Linux path structure
+        subPath = path.split("/Macros/")
+        subSplit = subPath[1].split("NaraGHScriptDownloader.js")
+    }
     return subSplit[0]
         
     //return "./"
