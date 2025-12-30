@@ -75,12 +75,19 @@ function getDirectory(){
 
     rawPath = FS.toRawPath("McUReconnect.js")
     path = rawPath.toString()
-    
-    subPath = path.split("\\Macros\\")
+    subPath = []
+    subSplit = []
+    try{
+        //windows path structure
+        subPath = path.split("\\Macros\\")
+        subSplit = subPath[1].split("McUReconnect.js")
+    }catch(error){
+        //Linux path structure
+        subPath = path.split("/Macros/")
+        subSplit = subPath[1].split("McUReconnect.js")
+    }
     //subPath[0] should be all the .../.minecraft/config/jsmacros
     //subPath[1] should be the subdirectory(s)/"vDaisyTwistingWart.js"
-    
-    subSplit = subPath[1].split("McUReconnect.js")
     return subSplit[0]
 }
 
