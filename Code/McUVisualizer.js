@@ -9,127 +9,146 @@
     
 */
 
+const config = require("./McUConfigFile.js")
+config.initialize()
+
+
+visualizer = config.getBool("visualizer", true)
+
+//Variables
     textList = []
     defaultColor = 0xffffff
     defaultShadow = true
 
 function addText(keyName, text){
 //Add a new Draw2D surface with text
-
-    try{
-        textBox = Hud.createDraw2D()
-        textBox.register()
-        textBox.addText(text, 0,0, defaultColor, defaultShadow)
-        
-        textList.push([keyName, textBox])
-    }catch(error){
-        //Chat.log("Could not add text for " + keyName)
+    if(visualizer){
+        try{
+            textBox = Hud.createDraw2D()
+            textBox.register()
+            textBox.addText(text, 0,0, defaultColor, defaultShadow)
+            
+            textList.push([keyName, textBox])
+        }catch(error){
+            //Chat.log("Could not add text for " + keyName)
+        }
     }
 }
 
 function setText(keyName, replaceText){
 //change the text of a text item
-    try{
-        //iterate over draw list
-        for(let i = 0; i < textList.length; i++){
-            
-            //found a key name
-            if(textList[i][0] == keyName){
-            
-                //move from list
-                text = textList[i][1].getTexts().get(0)
-                text.setText(replaceText)
-                return
+    if(visualizer){
+        try{
+            //iterate over draw list
+            for(let i = 0; i < textList.length; i++){
+                
+                //found a key name
+                if(textList[i][0] == keyName){
+                
+                    //move from list
+                    text = textList[i][1].getTexts().get(0)
+                    text.setText(replaceText)
+                    return
+                }
             }
+        }catch(error){
+            //Chat.log("Could not set text for " + keyName)
         }
-    }catch(error){
-        //Chat.log("Could not set text for " + keyName)
     }
 }
 
 function colorText(keyName, color){
 //change the color of a text item
 
-    try{
-        //iterate over draw list
-        for(let i = 0; i < textList.length; i++){
-            
-            //found a key name
-            if(textList[i][0] == keyName){
-            
-                //move from list
-                text = textList[i][1].getTexts().get(0)
-                text.setColor(color)
-                return
+    if(visualizer){
+        try{
+            //iterate over draw list
+            for(let i = 0; i < textList.length; i++){
+                
+                //found a key name
+                if(textList[i][0] == keyName){
+                
+                    //move from list
+                    text = textList[i][1].getTexts().get(0)
+                    text.setColor(color)
+                    return
+                }
             }
+        }catch(error){
+            //Chat.log("Could not change color for " + keyName)
         }
-    }catch(error){
-        //Chat.log("Could not change color for " + keyName)
     }
 }
 
 function moveText(keyName, x, y){
 //move the x,y coordinates of a text item
 
-    try{
-        //iterate over draw list
-        for(let i = 0; i < textList.length; i++){
-            
-            //found a key name
-            if(textList[i][0] == keyName){
-            
-                //move from list
-                text = textList[i][1].getTexts().get(0)
-                text.setX(x)
-                text.setY(y)
-                return
+    if(visualizer){
+        try{
+            //iterate over draw list
+            for(let i = 0; i < textList.length; i++){
+                
+                //found a key name
+                if(textList[i][0] == keyName){
+                
+                    //move from list
+                    text = textList[i][1].getTexts().get(0)
+                    text.setX(x)
+                    text.setY(y)
+                    return
+                }
             }
+        }catch(error){
+            //Chat.log("Could not move position for " + keyName)
         }
-    }catch(error){
-        //Chat.log("Could not move position for " + keyName)
     }
 }
 
 function fullText(keyName, text, color, x, y){
 
-    try{
-        textBox = Hud.createDraw2D()
-        textBox.register()
-        textBox.addText(text, x, y, color, defaultShadow)
-        
-        textList.push([keyName, textBox])
-    }catch(error){
-        //Chat.log("Could not create " + keyName)
+    if(visualizer){
+        try{
+            textBox = Hud.createDraw2D()
+            textBox.register()
+            textBox.addText(text, x, y, color, defaultShadow)
+            
+            textList.push([keyName, textBox])
+        }catch(error){
+            //Chat.log("Could not create " + keyName)
+        }
     }
 }
 
 function remove(keyName){
 //removes a Draw2D surface using key
 
-    try{
-        //iterate over text list
-        for(let i = 0; i < textList.length; i++){
-            
-            //found a key name
-            if(textList[i][0] == keyName){
-            
-                //remove from list
-                textList[i][1].unregister()
-                textList.splice(i,1)
-                return
+    if(visualizer){
+        try{
+            //iterate over text list
+            for(let i = 0; i < textList.length; i++){
+                
+                //found a key name
+                if(textList[i][0] == keyName){
+                
+                    //remove from list
+                    textList[i][1].unregister()
+                    textList.splice(i,1)
+                    return
+                }
             }
+        }catch(error){
+            //Chat.log("Could not remove " + keyName)
         }
-    }catch(error){
-        //Chat.log("Could not remove " + keyName)
     }
-    
     //iterate over rect list
     //iterate over texture list
 }
 
 function clear(){
 //remove every Draw2D from drawlist
-    Hud.clearDraw2Ds()
+    if(visualizer){
+        Hud.clearDraw2Ds()
+    }
     /*
     //iterate over text list
     for(let i = 0; i < textList.length; i++){
