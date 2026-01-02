@@ -34,6 +34,7 @@ lodestoneDownKey = "key.keyboard.left.shift"
 //special flags
 logDiscord = true // default: true
 verboseLog = false // default: false
+visualizer = true // default: true
 logoutOnCompletion = false // default: false
 delayStartHour = 3 // default: 3
 mainServer = "play" //play, mini, or pvp
@@ -53,6 +54,7 @@ lodestoneDownKey = config.getString("lodestoneDownKey", lodestoneDownKey)
 
 logDiscord = config.getBool("logDiscord", logDiscord)
 verboseLog = config.getBool("verboseLog", verboseLog)
+visualizer = config.getBool("visualizer", visualizer)
 logoutOnCompletion = config.getBool("logoutOnCompletion", logoutOnCompletion)
 delayStartHour = config.getValue("delayStartHour", delayStartHour)
 mainServer = config.getString("mainServer", mainServer)
