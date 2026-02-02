@@ -38,8 +38,8 @@
         Hold a non-stick anything in hand
     
     Restarting:
-        Aligned on top of the trapdoor of 
-        the current side to harvest
+        Standing on top of the cocoa of the column to be harvested.
+        Open trapdoor, harvest a few cocoa down, close trapdoor, and restart
 
 */
 /*-----------------------
