@@ -406,7 +406,27 @@ function chopTree(layer, row, tree){
     replantSapling()
     return true
 }
-
+function clearBlockedPath(){
+    xLookCurrent = Player.getPlayer().getYaw()
+    
+    //attempt to clear leaves
+    util.selectHotbar(7) //select Hoe
+    util.key(attackKey, true)
+    util.panLook(-180, 0, 180, 0, 20)
+    util.key(attackKey, false)
+    
+    //walk as forward as possible
+    util.simpleMove(forwardKey,
+        xLookCurrent,
+        Player.getPlayer().getPitch(),
+        40)
+        
+    //clear logs if possible
+    util.selectHotbar(8) //select Axe
+    util.simpleMove(attackKey,
+        xLookCurrent, 
+        45, floorCutTicks)
+}
 function tossLogs(row){
     //Chat.log("Tossing items")
     xLook = 120
@@ -530,28 +550,7 @@ for(let i = startingLayer; i <= totalLayers; i++){
         for(let l = startingTree; l <= treesPerRow; l++){
             if(util.checkQuit()){break}
             while(!chopTree(i,j,l)){
-                xLookCurrent = Player.getPlayer().getYaw()
-                
-                //attempt to clear leaves
-                util.selectHotbar(7) //select Hoe
-                util.key(attackKey, true)
-                util.panLook(-180, 0, 180, 0, 20)
-                util.key(attackKey, false)
-                
-                //walk as forward as possible
-                util.simpleMove(forwardKey,
-                    xLookCurrent,
-                    Player.getPlayer().getPitch(),
-                    40)
-                    
-                //clear logs if possible
-                util.selectHotbar(8) //select Axe
-                util.simpleMove(attackKey,
-                    xLookCurrent, 
-                    45, floorCutTicks)
-                
-                //reset to last tree.
-                //chopTree(i,j,l-1)
+                clearBlockedPath()
             }
             visual.setText("timeLeft", "Remaining time: " 
                 + util.remainingMinutes(
@@ -564,12 +563,14 @@ for(let i = startingLayer; i <= totalLayers; i++){
             if(usingHoe){
                 getHoe() //select Hoe
             }
-            util.complexMoveToLocation(
+            while(!util.complexMoveToLocation(
                 [attackKey],
                 xStartPosition - 86,
                 zChopStartPosition - ((j - 1) * 6),
                 yStartPosition + ((i-1) * layerHeight) - 1,
-                0.2)
+                0.2)){
+                    clearBlockedPath()
+            }
                 
             //toss logs into collector
             tossLogs(j)
@@ -591,12 +592,14 @@ for(let i = startingLayer; i <= totalLayers; i++){
             if(usingHoe){
                 getHoe() //select Hoe
             }
-            util.complexMoveToLocation(
+            while(!util.complexMoveToLocation(
                 [attackKey],
                 xStartPosition - 1, 
                 zChopStartPosition - ((j - 1) * 6),
                 yStartPosition + ((i-1) * layerHeight) - 1,
-                0.2)
+                0.2)){
+                    clearBlockedPath()
+            }
             
             //toss logs into collector
             tossLogs(j)
