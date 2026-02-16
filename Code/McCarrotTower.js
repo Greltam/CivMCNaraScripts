@@ -98,12 +98,12 @@ util.setQuitKey(quitKey) //default: util.setQuitKey("key.keyboard.j")
 ------------------------*/
 farmName = "GSEZ Carrot Tower"
 regrowthTime = 21.34 * 3600 //hours multiplied by seconds per hour
-harvestDuration = 170 //minutes to run a full harvest
+harvestDuration = 340 //minutes to run a full harvest
 
 //Player starts script at this location
 xStartPosition = 2977 
 zStartPosition = 5137
-yStartPosition = 80
+yStartPosition = 2
 
 //set item list and look vector for tossing items into collector
 util.setPassLookBoundary(false)
@@ -116,7 +116,7 @@ startingRow = 1 //default: startingRow = 1
 restarting = false //default: restarting = false
 
 //total layers in the tree farm
-totalLayers = 28 //default: totalLayers = 14
+totalLayers = 54 //default: totalLayers = 14
 carrotsPerRow = 27 //default: treesPerRow = 27
 rowsPerLayer = 30 //default: rowsPerLayer = 30
 layerHeight = 3 //default: layerHeight = 3
