@@ -44,6 +44,7 @@ ListOfAllScripts = [
 
     //Delayed Start Scripts
     "vDelayFarm",
+    "vStartFarm",
     "vDaisyTwistingWart",
     "vDaisyMelonPotato",
 
