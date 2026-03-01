@@ -75,6 +75,7 @@ function getDirectory(){
 
     rawPath = FS.toRawPath("McUReconnect.js")
     path = rawPath.toString()
+    
     subPath = []
     subSplit = []
     try{
@@ -86,8 +87,6 @@ function getDirectory(){
         subPath = path.split("/Macros/")
         subSplit = subPath[1].split("McUReconnect.js")
     }
-    //subPath[0] should be all the .../.minecraft/config/jsmacros
-    //subPath[1] should be the subdirectory(s)/"vDaisyTwistingWart.js"
     return subSplit[0]
 }
 
@@ -235,6 +234,14 @@ function restartFarmScripts(){
 -------------------*/
 
 Chat.log("We've been Disconnected")
+if(GlobalVars.getBoolean("Reconnecting")){
+    Chat.log("Short Circuiting reconnect script")
+    hasReconnected = true
+}
+else{
+    Chat.log("Locking Reconnect script")
+    GlobalVars.putBoolean("Reconnecting", true)
+}
 while(!hasReconnected){
     
     if(GlobalVars.getBoolean("delayFarm")){
@@ -344,9 +351,10 @@ while(!hasReconnected){
     //We have connected to a world, restart farms and break out
     hasReconnected = true
     restartFarmScripts()
+    GlobalVars.putBoolean("Reconnecting", false)
+    Chat.log("We have reconnected!")
 }
 
-Chat.log("We have reconnected!")
 
 /*-------------------
    4 Program End
