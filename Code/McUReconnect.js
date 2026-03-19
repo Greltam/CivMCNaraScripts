@@ -234,29 +234,44 @@ function restartFarmScripts(){
 -------------------*/
 
 Chat.log("We've been Disconnected")
-if(GlobalVars.getBoolean("Reconnecting")){
-    Chat.log("Short Circuiting reconnect script")
-    hasReconnected = true
+
+//Prevent multiple reconnect scripts from running at the same time
+
+openContexts = JsMacros.getOpenContexts()
+alreadyReconnecting = false
+
+for(let i = 0; i < openContexts.length; i++){
+    contextName = openContexts[i].getFile().getName()
+    Chat.log(contextName)
+    if(contextName == "McUReconnect.js"){
+        //The first reconnect script we find let's us know to
+        //cancel any more after
+        if(!alreadyReconnecting){
+            alreadyReconnecting = true
+        }
+        else{
+            Chat.log("Already disconnect script running")
+            hasReconnected = true
+            break
+        }
+    }
 }
-else{
-    Chat.log("Locking Reconnect script")
-    GlobalVars.putBoolean("Reconnecting", true)
-}
+
+//try to reconnect
 while(!hasReconnected){
+    //every 20 seconds, try to connect
+    Time.sleep(10 * 1000)
     
+    //if there is a delay, skip until start time
     if(GlobalVars.getBoolean("delayFarm")){
-        Chat.log("Delayed Farming for: " + delayStartHour)
+        //Chat.log("Delayed Farming for: " + delayStartHour)
         
         date = new Date()
         hours = date.getHours()
         
-        while(hours != delayStartHour){
+        if(hours != delayStartHour){
             //every 10 minutes see if we are at the starting hour
-            Client.waitTick(600 * 20)
-            
-            //refresh current datetime
-            date = new Date()
-            hours = date.getHours()
+            continue
         }
         Chat.log("Delay ended")
         //it is at the delayed starting hour so reconnect
@@ -278,80 +293,89 @@ while(!hasReconnected){
     serverOnline = false
     pingSuccessful = false
     ping = null
-    while(!serverOnline) {
-        //Check every 20 seconds for a server ping
-        Chat.log("Waiting to ping...")
-        Time.sleep(20 * 1000)
+    
+    Chat.log("attempting to ping...")
+    //attempt to ping server, if offline catch error
+    try{
+        ping = Client.ping(serverName)
+        pingSuccessful = true
+    }catch(error){
+        Chat.log("Ping failed")
+        continue
+    }
         
-        //attempt to ping server, if offline catch error
-        try{
-            Chat.log("Pinging")
-            ping = Client.ping(serverName)
-            pingSuccessful = true
-        }catch(error){
-            Chat.log("Ping failed")
+    //if server pinged, check if server is online
+    if(pingSuccessful){
+        Chat.log(serverName + " is online?: " + ping.isOnline())
+        if(ping.isOnline()){
+            serverOnline = true
         }
-        
-        //if server pinged, check if server is online
-        if(pingSuccessful){
-            Chat.log(serverName + " is online?: " + ping.isOnline())
-            if(ping.isOnline()){
-                serverOnline = true
-            }
-            pingSuccessful = false
+        else{
+            continue
         }
-    }   
+    }
+    
+    //server is online
     Chat.log(serverName + " pinged online.")
     
     //Try to reconnect to the server
-    while(!World.isWorldLoaded()){
+    if(!World.isWorldLoaded()){
         Chat.log("Attempting to reconnect to " + serverName)
         Client.connect(serverName)
-        Time.sleep(20 * 1000)
+        Time.sleep(5 * 1000)
     }    
+    
+    //World isn't loaded, we failed to connect to the server
+    if(!World.isWorldLoaded()){
+        continue
+    }
     
     //make sure we are in the correct world.
     //because we could be in lobby.
     loadedIntoCorrectWorld = false
-    while(!loadedIntoCorrectWorld){
-        Chat.log("Checking for correct " + serverName + " world.")
-        Time.sleep(10 * 1000)
+    Chat.log("Checking for correct " + serverName + " world.")
+    
+    if(World.isWorldLoaded())
+    {
+        //get Tablist header to check which world we are actually in
+        tablistHeader = World.getTabListHeader()
+        tablistString = tablistHeader.getStringStripFormatting()
         
-        if(World.isWorldLoaded())
-        {
-            //get Tablist header to check which world we are actually in
-            tablistHeader = World.getTabListHeader()
-            tablistString = tablistHeader.getStringStripFormatting()
-            
-            Chat.log(tablistString)
-            //check for header to contain world tpye
-            if(tablistString.indexOf(miniHeaderContains) != -1){
-                Chat.log("In Mini World")
-                if(desiredWorld == "mini"){
-                    loadedIntoCorrectWorld = true
-                }
+        Chat.log(tablistString)
+        //check for header to contain world tpye
+        if(tablistString.indexOf(miniHeaderContains) != -1){
+            Chat.log("In Mini World")
+            if(desiredWorld == "mini"){
+                loadedIntoCorrectWorld = true
             }
-            else if(tablistString.indexOf(pvpHeaderContains) != -1){
-                Chat.log("In PvP World")
-                if(desiredWorld == "pvp"){
-                    loadedIntoCorrectWorld = true
-                }
+        }
+        else if(tablistString.indexOf(pvpHeaderContains) != -1){
+            Chat.log("In PvP World")
+            if(desiredWorld == "pvp"){
+                loadedIntoCorrectWorld = true
             }
-            else{
-                Chat.log("In Main World")
-                if(desiredWorld == "play"){
-                    loadedIntoCorrectWorld = true
-                }
+        }
+        else{
+            Chat.log("In Main World")
+            if(desiredWorld == "play"){
+                loadedIntoCorrectWorld = true
             }
-        }//End world check
-    }//Correct world loaded
+        }
+    }//End world check
+    //somehow we unloaded from being loaded before
+    else{
+        continue
+    }
+    if(!loadedIntoCorrectWorld){
+        Client.disconnect()
+        continue
+    }
     
     Chat.log(serverName + " world loaded.")
     
     //We have connected to a world, restart farms and break out
     hasReconnected = true
     restartFarmScripts()
-    GlobalVars.putBoolean("Reconnecting", false)
     Chat.log("We have reconnected!")
 }
 
