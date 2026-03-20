@@ -426,6 +426,9 @@ function clearBlockedPath(){
     util.simpleMove(attackKey,
         xLookCurrent, 
         45, floorCutTicks)
+   
+    //Try to replant
+    replantSapling()
 }
 function tossLogs(row){
     //Chat.log("Tossing items")
