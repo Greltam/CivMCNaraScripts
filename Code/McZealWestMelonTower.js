@@ -240,7 +240,30 @@ function harvestReturnStrip(){
             harvestReturnLookX,harvestLookY, 2 * 20)
     }
 }
-
+function harvestLastStrip(){
+    if(util.checkQuit()){
+        return
+    }
+    //Chop back to beginning of row
+    util.complexMove([forwardKey,attackKey],
+        harvestReturnLookX,harvestLookY,secondsToHarvest * 20)
+                
+    //ERROR/LAG CORRECTION
+    //check we reached the end
+    //while not at the end, chop few near us
+    //then chop for a second time
+    while(Player.getPlayer().getX() < RowStartX - 1){
+        if(util.checkQuit()){
+            return
+        }
+        //Chop directly in front melons
+        util.complexMove([attackKey],
+            harvestReturnLookX,RestartYLook, 2)
+        //Chop toward end of row
+        util.complexMove([forwardKey,attackKey],
+            harvestReturnLookX,harvestLookY, 2 * 20)
+    }
+}
 
 function moveToNextLayer(){
     util.simpleMove(rightKey,90,0,5*20)
@@ -347,10 +370,15 @@ for(let i = startingLayer; i <= totalLayers; i++){
         if(util.checkQuit()){
             break
         }
-                
+        //All outstrips are normal
         if(j % 2 == 1){
             harvestOutStrip()
         }
+        //Last strip ends differently returning
+        else if(j == rowsPerLayer){
+            harvestLastStrip()        
+        }
+        //Normal return strip
         else{
             harvestReturnStrip()
         }
