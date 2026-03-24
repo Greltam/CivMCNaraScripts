@@ -113,8 +113,9 @@ xStartPosition = 4020
 zStartPosition = 7378
 yStartPosition = 103
 
-
-
+RowEndZ = 7338
+RowStartZ = 7378
+RestartYLook = 28
 
 //set item list and look vector for tossing items into collector
 //util.setPassLookBoundary(false)
@@ -195,6 +196,22 @@ function harvestOutStrip(){
     //Chop out to end of row
     util.complexMove([forwardKey,attackKey],
         harvestOutLookX,harvestLookY,secondsToHarvest * 20)
+        
+    //ERROR/LAG CORRECTION
+    //check we reached the end
+    //while not at the end, chop few near us
+    //then chop for a second time
+    while(Player.getPlayer().getZ() > RowEndZ){
+        if(util.checkQuit()){
+            return
+        }
+        //Chop directly in front melons
+        util.complexMove([attackKey],
+            harvestOutLookX,RestartYLook, 2)
+        //Chop toward end of row
+        util.complexMove([forwardKey,attackKey],
+            harvestOutLookX,harvestLookY, 2 * 20)
+    }
     
     //move to trapdoor at start of next row
     util.simpleMove(rightKey,harvestReturnLookX,0,2*20)
@@ -207,6 +224,22 @@ function harvestReturnStrip(){
     //Chop back to beginning of row
     util.complexMove([forwardKey,attackKey],
         harvestReturnLookX,harvestLookY,secondsToHarvest * 20)
+        
+    //ERROR/LAG CORRECTION
+    //check we reached the end
+    //while not at the end, chop few near us
+    //then chop for a second time
+    while(Player.getPlayer().getZ() < RowStartZ){
+        if(util.checkQuit()){
+            return
+        }
+        //Chop directly in front melons
+        util.complexMove([attackKey],
+            harvestReturnLookX,RestartYLook, 2)
+        //Chop toward end of row
+        util.complexMove([forwardKey,attackKey],
+            harvestReturnLookX,harvestLookY, 2 * 20)
+    }
 }
 
 
