@@ -116,6 +116,10 @@ function locateFarm(x,z){
     if(insideOf(4208,417,4223,479,x,z)){
         return "McCocoaTower.js"
     }
+    //Coords for Jungle Tower farm
+    if(insideOf(4155,416,4203,465,x,z)){
+        return "McJungleHiTechChop.js"
+    }
     
     //Coords for Netherwart Tower farm
     if(insideOf(2270,8095,2290,8145,x,z)){
