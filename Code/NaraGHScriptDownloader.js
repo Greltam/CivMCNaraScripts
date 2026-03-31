@@ -33,6 +33,7 @@ ListOfAllScripts = [
     "McWheatTower",
     "McPotatoTower",
     "McCocoaTower",
+    "McJungleHiTechChop",
     "McSugarcane",
     "McSweetBerry",
     "McBeetTower",
