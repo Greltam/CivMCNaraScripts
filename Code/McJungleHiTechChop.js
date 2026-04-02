@@ -112,7 +112,7 @@ util.setQuitKey(quitKey) //default: util.setQuitKey("key.keyboard.j")
 
 farmName = "GSEx Jungle Tower"
 regrowthTime = 19 * 3600 //hours multiplied by seconds per hour
-harvestDuration = 30 //minutes to run a full harvest
+harvestDuration = 52 //minutes to run a full harvest
 
 //Player starts script at this location
 xStartPosition = 4202 
@@ -147,7 +147,7 @@ startingRow = 1 //default: startingRow = 1
 startingTree = 1 //default: startingTree = 1
 
 //total layers in the tree farm
-totalLayers = 3 //default: totalLayers = 8
+totalLayers = 4 //default: totalLayers = 8
 treesPerRow = 8 //default: treesPerRow = 16
 rowsPerLayer = 8 //default: rowsPerLayer = 16
 layerHeight = 12 //default: layerHeight = 12
