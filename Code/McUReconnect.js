@@ -295,6 +295,12 @@ try{
         break
     }
 
+    //
+    //    Attempting to ping the server leads a complete lockout
+    //    on the script if there is no internet service. 
+    //    Deactivating for now. 4/19/2026
+    //
+    /*
     serverOnline = false
     pingSuccessful = false
     ping = null
@@ -322,6 +328,8 @@ try{
     
     //server is online
     Chat.log(serverName + " pinged online.")
+    
+    */
     
     //Try to reconnect to the server
     if(!World.isWorldLoaded()){
