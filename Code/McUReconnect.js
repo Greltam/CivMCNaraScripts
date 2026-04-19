@@ -263,6 +263,7 @@ for(let i = 0; i < openContexts.length; i++){
 
 //try to reconnect
 while(!hasReconnected){
+try{
     //every 20 seconds, try to connect
     Time.sleep(10 * 1000)
     
@@ -381,7 +382,11 @@ while(!hasReconnected){
     hasReconnected = true
     restartFarmScripts()
     Chat.log("We have reconnected!")
+    
+}catch(error){
+    Chat.log("Error trying to reconnect")
 }
+}//end of while(!hasReconnected) loop 
 
 
 /*-------------------
