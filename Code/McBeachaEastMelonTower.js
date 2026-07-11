@@ -407,9 +407,11 @@ for(let i = startingLayer; i <= totalLayers; i++){
     //move to the start of the next layer
     //toss melons to collectors
     //then update overlay
-    util.tossItems()
-    visual.setText("melons", "Melons: " 
-        + util.getTossedItemAmount("minecraft:melon"))
+    if(i != 1){
+        util.tossItems()
+        visual.setText("melons", "Melons: " 
+            + util.getTossedItemAmount("minecraft:melon"))
+    }
         
     moveToNextLayer() 
     
