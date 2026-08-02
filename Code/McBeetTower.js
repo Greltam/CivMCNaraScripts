@@ -228,19 +228,30 @@ function harvestReturnStrip(){
 }
 
 function moveToNextLayer(){
+    if(util.checkQuit()){
+            return
+    }
+    //check that we are definitely at the end of the layer
+    
+    layerZEnd = 7494
+    while(layerZEnd - Player.getPlayer().getZ() > 1){
+        harvestOutStrip()
+        harvestReturnStrip()
+    }
+    
     //at the end of the left side of the row.
     
     //move flush to forward wall
     util.simpleMove(forwardKey, harvestLookX, harvestLookY, 1*20)
     
     //move left to return bridge
-    util.simpleMove(forwardKey, -90, 0, 9 * 20)
+    util.simpleMoveToXZ(forwardKey, -90, 0, 4016.5, 7494.5, 0.3)
     
     //move back to front of layer
-    util.simpleMove(forwardKey, 180, 0, 9 * 20)
+    util.simpleMoveToXZ(forwardKey, 180, 0, 4016.5, 7463.5, 0.3)
     
     //move right to lodestone
-    util.simpleMove(forwardKey, 90, 0, 9 * 20)
+    util.simpleMoveToXZ(forwardKey, 90, 0, 3984.5, 7463.5, 0.3)
     
     //jump to next floor
     util.simpleMove(lodestoneDownKey,harvestLookX,harvestLookY,10)
