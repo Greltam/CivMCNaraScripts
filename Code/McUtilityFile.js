@@ -512,6 +512,41 @@ function simpleMove(keyString, xAngle, yAngle, ticks){
     spinTicks(ticks)
     key(keyString, false)
 }
+//Activate a single key/mouse while looking at x,y for ticks length
+function simpleMoveToXZ(keyString, xAngle, yAngle, xPos, zPos, tol){
+    if(checkQuit()){
+        return
+    }
+    smoothLookAt(xAngle,yAngle)
+    spinTicks(5)
+    key(keyString, true)
+    
+    //check for player at x,z
+    while(true){
+    
+        xDif = Math.abs(Player.getPlayer().getX() - xPos)
+        zDif = Math.abs(Player.getPlayer().getZ() - zPos)
+        //Chat.log("Xdif: " + xDif)
+        //Chat.log("Zdif: " + zDif)
+        
+        //I tried to use && in the while condition but it didn't work
+        if(xDif < tol){
+            if(zDif < tol){
+                break
+            }
+        }
+        if(checkQuit()){
+            key(keyString, false) 
+            return
+        }
+        spinTicks(1)
+    }
+    key(keyString, false)
+    spinTicks(10)
+    
+    yPos = Player.getPlayer().getY()
+    Player.getPlayer().setPos(xPos,yPos,zPos)
+}
 
 //Activate a multiple keys/mouse buttons while looking at x,y for ticks length
 //Javascript array is created via [,] e.g. ["key.keyboard.w","key.keyboard.d"]
@@ -1005,7 +1040,7 @@ function trackTossedItem(item){
 
 //toss out items from slotStart for numslots while looking at x,y
 //refer to https://wiki.vg/Inventory for getting correct slot numbering
-function tossItems(xLook, yLook, slotStart, numSlots){
+function tossSlotItems(xLook, yLook, slotStart, numSlots){
     if(checkQuit()){
         return
     }
@@ -1192,7 +1227,7 @@ function craftManually(listOfItemsAndSlots, quantity){
         return
     }
     inventory = Player.openInventory()
-    spinTicks(20)
+    spinTicks(5)
     
     //check if player is self crafting or table crafting
     selfCrafting = true
@@ -1250,7 +1285,7 @@ function craftManually(listOfItemsAndSlots, quantity){
     
     if(selfCrafting){
         inventory.close()
-        spinTicks(20)
+        spinTicks(5)
     }
 }
 
@@ -1259,13 +1294,27 @@ function craftManually(listOfItemsAndSlots, quantity){
 //players green recipe book must be open to work
 function craftRecipe(recipeName, craftAll){
     do{
-        recipeIndex = getRecipeIndex(recipeName)
+        craftRecipeInventory = Player.openInventory()
+        allRecipes = craftRecipeInventory.getCraftableRecipes()
+        ////Chat.log(allRecipes)
+        
+        for(let i = 0; i < allRecipes.length; i++){
+            ////Chat.log(allRecipes[i].getOutput())
+            if(allRecipes[i].getOutput().getItemId() == recipeName){
+                ////Chat.log("This is chest output!")
+                ////Chat.log("attempting to craft all!")
+                allRecipes[i].craft(true)
+                break
+            }
+        }
+        /*recipeIndex = getRecipeIndex(recipeName)
         if(recipeIndex == -1){
             break
         }
         Player.openInventory().getCraftableRecipes().get(recipeIndex).craft(true)
+        */
         spinTicks(5)
-        Player.openInventory().quick(0)
+        craftRecipeInventory.quick(0)
         spinTicks(5)
     }while(craftAll)
 }
@@ -1349,6 +1398,7 @@ module.exports = {
     getYawPitchFromCoords: getYawPitchFromCoords,
     smoothLookAt: smoothLookAt,
     simpleMove: simpleMove,
+    simpleMoveToXZ : simpleMoveToXZ,
     complexMove: complexMove,
     WASDToLocation : WASDToLocation,
     complexMoveToLocation : complexMoveToLocation,
@@ -1365,7 +1415,7 @@ module.exports = {
     chestItems: chestItems,
     chestSpecificItems : chestSpecificItems,
     chestAllItems: chestAllItems,
-    tossItems: tossItems,
+    tossSlotItems: tossSlotItems,
     tossAllSpecificItems : tossAllSpecificItems,
     tossItems : tossItems,
     getTossedItemAmount : getTossedItemAmount,
