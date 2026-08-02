@@ -199,10 +199,10 @@ function moveToNextLayer(){
     //at the end of the left side of the row.
     
     //move flush to the stairs
-    util.simpleMove(forwardKey, -45, 0, 1*20)
+    util.simpleMoveToXZ(forwardKey, -45, 0, 3981.5, 7455.5, 0.3)
     
     //walk to the lodestone
-    util.simpleMove(forwardKey, -180, 0, 7*20)
+    util.simpleMoveToXZ(forwardKey, -180, 0, 3981.5, 7427.5, 0.3)
         
     //crouch to next floor
     util.simpleMove(lodestoneDownKey,-180,0,10)
