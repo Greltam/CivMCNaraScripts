@@ -715,13 +715,9 @@ function complexMoveToLocation(keyArray, xPos, zPos, yPos, tolerance){
         key(keyArray[i], true)
     }
     
-    //Increase to 3 frames to check for player stuck position
-    lastX0 = player.getX()
-    lastX1 = player.getX()
-    lastX2 = player.getX()
-    lastZ0 = player.getZ()
-    lastZ1 = player.getZ()
-    lastZ2 = player.getZ()
+    //Increase to 10 frames to check for player stuck position
+    lastXZ = [[1,1],[2,2],[3,3],[4,4],[5,5],
+              [6,6],[7,7],[8,8],[9,9],[10,10]]
     
     while(Math.abs(Math.abs(player.getX()) - Math.abs(xPos)) > tolerance
         || Math.abs(Math.abs(player.getZ()) -  Math.abs(zPos)) > tolerance)
@@ -744,7 +740,8 @@ function complexMoveToLocation(keyArray, xPos, zPos, yPos, tolerance){
         spinTicks(1)
         
         //player is stuck
-        if(player.getX() === lastX2 && player.getZ() === lastZ2){
+        if(player.getX() === lastXZ[0][0] 
+            && player.getZ() === lastXZ[0][1]){
             //unbind all keyArrays and move forward "w"
             key(keyString, false)
             for(let i = 0; i < keyArray.length; i++){
@@ -752,13 +749,12 @@ function complexMoveToLocation(keyArray, xPos, zPos, yPos, tolerance){
             }
             return false
         }
-        //update player positional frames
-        lastX2 = lastX1
-        lastZ2 = lastZ1
-        lastX1 = lastX0
-        lastZ1 = lastZ0
-        lastX0 = player.getX()
-        lastZ0 = player.getZ()
+        
+        //update positional frames
+        for(let i = 1; i < lastXZ.length; i++){
+            lastXZ[i-1] = lastXZ[i]
+        }
+        lastXZ[lastXZ.length - 1] = [player.getX(),player.getZ()]
     }
 
     //unbind all keyArrays and move forward "w"
