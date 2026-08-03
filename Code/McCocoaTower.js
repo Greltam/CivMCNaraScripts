@@ -194,7 +194,7 @@ function setStartingPosition(){
     playerZ = Math.floor(util.player.getZ())
     
     // get Tower Position
-    towerNumber = Math.floor((playerZ - zStartPosition) / 16) + 1
+    towerNumber = Math.floor((playerZ - zStartPosition + 1) / 16) + 1
     
     playerZOffset = Math.floor(playerZ - zStartPosition)
     playerXOffset = Math.floor(playerX - xStartPosition) 
@@ -681,8 +681,8 @@ function moveToNextBeam(towerNumber,beamNumber){
         xDestination, 
         zDestination, 
         yDestination, tolerance)
-    util.simpleMoveToXZ(lodestoneUpKey,xAngle,0,
-        (xDestination + 0.5),(zDestination + 0.5),0.3)
+    util.simpleMoveToXZ(lodestoneUpKey,Player.getPlayer().getYaw(),0,
+        (xDestination + 0.5),(zDestination + 0.5),0.6)
 }
 function moveToNextTower(){
     //travel west
