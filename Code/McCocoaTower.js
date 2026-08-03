@@ -464,10 +464,16 @@ function alignSouth(beamNumber){
     return false
 }
 
-function moveIntoAlignment(xAngle){
+function moveIntoAlignment(xAngle,xDif,zDif){
     util.smoothLookAt(xAngle,-5)           //look at the overhead trapdoor
     util.simpleMove(useKey,xAngle,-5,2)    //lower trapdoor to block body
-    util.simpleMove(forwardKey,xAngle,0,20)//move into trapdoor
+    
+    
+    playerX = Player.getPlayer().getX() + xDif
+    playerZ = Player.getPlayer().getZ() + zDif
+    util.simpleMoveToXZ(forwardKey,xAngle,0,playerX,playerZ,0.3)
+    
+    //util.simpleMove(forwardKey,xAngle,0,20)//move into trapdoor
     util.simpleMove(useKey,xAngle,0,10)    //raise trapdoor back up
 }
 
@@ -478,12 +484,12 @@ function harvestNorth(beamNumber){
     Chat.log("Harvesting north")
 
     if(midTower == false && !restarting){
-        if(alignNorth(beamNumber)){
-            moveIntoAlignment(180)
-        }
-        else{
-            util.simpleMove(forwardKey,180,0,20)
-        }
+        //if(alignNorth(beamNumber,0)){
+            moveIntoAlignment(180,0,-1.2)
+        //}
+        //else{
+        //    util.simpleMove(forwardKey,180,0,20)
+        //}
     }
     restarting = false
     midTower = false
@@ -505,12 +511,12 @@ function harvestSouth(beamNumber){
     Chat.log("Harvesting south")
     
     if(midTower == false && !restarting){
-        if(alignSouth(beamNumber)){
-            moveIntoAlignment(0)
-        }
-        else{
-            util.simpleMove(forwardKey,0,0,20)
-        }
+        //if(alignSouth(beamNumber)){
+            moveIntoAlignment(0,0,1.2)
+        //}
+        //else{
+        //    util.simpleMove(forwardKey,0,0,20)
+        //}
     }
     restarting = false
     midTower = false
@@ -532,12 +538,12 @@ function harvestEast(beamNumber){
     Chat.log("Harvesting east")
     
     if(midTower == false && !restarting){
-        if(alignEast(beamNumber)){
-            moveIntoAlignment(-90)
-        }
-        else{
-            util.simpleMove(forwardKey,-90,0,20)
-        }
+        //if(alignEast(beamNumber)){
+            moveIntoAlignment(-90,1.2,0)
+        //}
+        //else{
+        //    util.simpleMove(forwardKey,-90,0,20)
+        //}
     }
     restarting = false
     midTower = false
@@ -558,12 +564,12 @@ function harvestWest(beamNumber){
     Chat.log("Harvesting west")
     
     if(midTower == false && !restarting){
-        if(alignWest(beamNumber)){
-            moveIntoAlignment(90)
-        }
-        else{
-            util.simpleMove(forwardKey,90,0,20)
-        }
+        //if(alignWest(beamNumber)){
+            moveIntoAlignment(90,-1.2,0)
+        //}
+        //else{
+        //    util.simpleMove(forwardKey,90,0,20)
+        //}
     }
     restarting = false
     midTower = false
@@ -675,6 +681,8 @@ function moveToNextBeam(towerNumber,beamNumber){
         xDestination, 
         zDestination, 
         yDestination, tolerance)
+    util.simpleMoveToXZ(lodestoneUpKey,xAngle,0,
+        (xDestination + 0.5),(zDestination + 0.5),0.3)
 }
 function moveToNextTower(){
     //travel west
