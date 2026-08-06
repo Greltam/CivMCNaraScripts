@@ -484,12 +484,12 @@ function harvestNorth(beamNumber){
     Chat.log("Harvesting north")
 
     if(midTower == false && !restarting){
-        //if(alignNorth(beamNumber,0)){
+       if(alignNorth(beamNumber,0)){
             moveIntoAlignment(180,0,-1.2)
-        //}
-        //else{
-        //    util.simpleMove(forwardKey,180,0,20)
-        //}
+        }
+        else{
+            util.simpleMove(forwardKey,180,0,20)
+        }
     }
     restarting = false
     midTower = false
@@ -511,12 +511,12 @@ function harvestSouth(beamNumber){
     Chat.log("Harvesting south")
     
     if(midTower == false && !restarting){
-        //if(alignSouth(beamNumber)){
+        if(alignSouth(beamNumber)){
             moveIntoAlignment(0,0,1.2)
-        //}
-        //else{
-        //    util.simpleMove(forwardKey,0,0,20)
-        //}
+        }
+        else{
+            util.simpleMove(forwardKey,0,0,20)
+        }
     }
     restarting = false
     midTower = false
@@ -538,12 +538,12 @@ function harvestEast(beamNumber){
     Chat.log("Harvesting east")
     
     if(midTower == false && !restarting){
-        //if(alignEast(beamNumber)){
+        if(alignEast(beamNumber)){
             moveIntoAlignment(-90,1.2,0)
-        //}
-        //else{
-        //    util.simpleMove(forwardKey,-90,0,20)
-        //}
+        }
+        else{
+            util.simpleMove(forwardKey,-90,0,20)
+        }
     }
     restarting = false
     midTower = false
@@ -564,12 +564,12 @@ function harvestWest(beamNumber){
     Chat.log("Harvesting west")
     
     if(midTower == false && !restarting){
-        //if(alignWest(beamNumber)){
+        if(alignWest(beamNumber)){
             moveIntoAlignment(90,-1.2,0)
-        //}
-        //else{
-        //    util.simpleMove(forwardKey,90,0,20)
-        //}
+        }
+        else{
+            util.simpleMove(forwardKey,90,0,20)
+        }
     }
     restarting = false
     midTower = false
