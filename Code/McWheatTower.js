@@ -102,7 +102,7 @@ harvestDuration = 85 //minutes to run a full harvest
 //Player starts script at this location
 xStartPosition = 3024 
 zStartPosition = 5137
-yStartPosition = 80
+yStartPosition = -49
 
 //set item list and look vector for tossing items into collector
 util.setPassLookBoundary(false)
@@ -115,7 +115,7 @@ startingRow = 1 //default: startingRow = 1
 restarting = false //default: restarting = false
 
 //total layers in the tree farm
-totalLayers = 14 //default: totalLayers = 14
+totalLayers = 57 //default: totalLayers = 14
 wheatPerRow = 27 //default: wheatPerRow = 27
 rowsPerLayer = 30 //default: rowsPerLayer = 30
 layerHeight = 3 //default: layerHeight = 3
@@ -126,7 +126,7 @@ secondsToHarvest = 7 //or 8
 
 //direction to look at carrots to harvest while strafing
 harvestLookX = 180
-harvestLookY = 45
+harvestLookY = 20
 /*------------------------
    2 Global Variables End
 ------------------------*/
@@ -168,7 +168,17 @@ finishedText =  Chat.createTextHelperFromJSON(
 /*-------------------
    3 Functions Start
 -------------------*/
+function tossWheat(){
+    util.setTossItemList(["minecraft:wheat"])
+    util.setTossLookVector([90,-25])
+    util.tossItems()
+}
 
+function tossSeeds(){
+    util.setTossItemList(["minecraft:wheat_seeds"])
+    util.setTossLookVector([-90,-25])
+    util.tossItems()
+}
 function harvestStarterStrip(){
     if(util.checkQuit()){
         return
@@ -211,14 +221,14 @@ function moveToNextLayer(){
     //move flush to forward wall
     util.simpleMove(forwardKey, harvestLookX, harvestLookY, 1*20)
     
-    //move right to return bridge
-    util.simpleMove(forwardKey, -90, 0, 8 * 20)
+    //move left to return bridge
+    util.simpleMoveToXZ(forwardKey, -90, 0, 3053.5, 5106.5, 0.3)
     
     //move back to front of layer
-    util.simpleMove(forwardKey, 0, 0, 8 * 20)
+    util.simpleMoveToXZ(forwardKey, 0, 0, 3053.5, 5137.5, 0.3)
     
-    //move left to lodestone
-    util.simpleMove(forwardKey, 90, 0, 8 * 20)
+    //move right to lodestone
+    util.simpleMoveToXZ(forwardKey, 90, 0, 3024.5, 5137.5, 0.3)
     
     //jump to next floor
     util.simpleMove(lodestoneUpKey,harvestLookX,harvestLookY,10)
@@ -297,10 +307,11 @@ for(let i = startingLayer; i <= totalLayers; i++){
         }
         else if(j % 2 == 1){
             harvestOutStrip()
+            if(j % 4 == 3){tossSeeds()}
         }
         else{
             harvestReturnStrip()
-            util.tossItems()
+            tossWheat()
             visual.setText("wheat", "Wheat: " 
                 + util.getTossedItemAmount("minecraft:wheat"))
         }
