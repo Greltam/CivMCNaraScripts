@@ -97,7 +97,7 @@ util.setQuitKey(quitKey) //default: util.setQuitKey("key.keyboard.j")
 ------------------------*/
 farmName = "GSEZ Wheat Tower"
 regrowthTime = 43 * 3600 //hours multiplied by seconds per hour
-harvestDuration = 85 //minutes to run a full harvest
+harvestDuration = 360 //minutes to run a full harvest
 
 //Player starts script at this location
 xStartPosition = 3024 
