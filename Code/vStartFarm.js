@@ -131,6 +131,10 @@ function locateFarm(x,z){
     if(insideOf(4155,416,4203,465,x,z)){
         return "McJungleHiTechChop.js"
     }
+    //Coords for Sugarcane Tower farm
+    if(insideOf(4224,416,4249,446,x,z)){
+        return "McSugarcane.js"
+    }
     
     //**********//
     //GNC Farms//
