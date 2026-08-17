@@ -56,7 +56,8 @@ ListOfAllScripts = [
     "zKeepAttacking",
     "zKeepMoving",
     "zKeepUsing",
-    "zOreBreak"
+    "zOreBreak",
+    "zCleanRails"
 ]
 
 ListOfRemovedScripts = [
