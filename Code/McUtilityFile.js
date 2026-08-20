@@ -86,10 +86,13 @@ function key(keyString, bool){
 
 //go through playerKeys and make sure they are actually pressed.
 function checkPlayerKeys(){
-    //Sometimes GUI's will deactivate a key and script/minecraft
-    //is unable to tell. Always activate the key every check
+    minecraftKeys = KeyBind.getPressedKeys()
+    //for each key in playerKeys, check if in getPressedKeys
     for(let i = 0; i < playerKeys.length; i++){
-        KeyBind.key(playerKeys[i],true)
+        //if not in getPressedKeys, press
+        if(!minecraftKeys.contains(playerKeys[i])){
+            KeyBind.key(playerKeys[i],true)
+        }
     }
 }
 
