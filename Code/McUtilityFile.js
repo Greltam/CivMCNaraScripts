@@ -47,6 +47,19 @@ SINGLE_CHEST = 1
 DOUBLE_CHEST = 2
 CRAFT_MAX = 999 // used in craftManually to simulate a shift click craft
 
+//Helps declutter the Running Script list when scripts crash
+//due to crashes
+JsMacros.disableScriptListeners("OpenScreen")
+
+//add a new event listener to check for GUI event
+//necessary because they disable key presses
+//without minecraft knowing the key is no longer functional
+openScreenListener = JsMacros.on("OpenScreen", 
+    JavaWrapper.methodToJava((event_params) => {
+        GlobalVars.putBoolean("ScreenOpened", true)
+    }))
+        
+        
 //List of farm items to toss into collectors
 function setTossItemList(list){
     tossItemList = list
@@ -86,6 +99,7 @@ function key(keyString, bool){
 
 //go through playerKeys and make sure they are actually pressed.
 function checkPlayerKeys(){
+
     minecraftKeys = KeyBind.getPressedKeys()
     //for each key in playerKeys, check if in getPressedKeys
     for(let i = 0; i < playerKeys.length; i++){
@@ -93,6 +107,13 @@ function checkPlayerKeys(){
         if(!minecraftKeys.contains(playerKeys[i])){
             KeyBind.key(playerKeys[i],true)
         }
+    }
+    if(GlobalVars.getBoolean("ScreenOpened")){
+        for(let i = 0; i < playerKeys.length; i++){
+            //if not in getPressedKeys, press
+            KeyBind.key(playerKeys[i],true)
+        }
+        GlobalVars.putBoolean("ScreenOpened",false)
     }
 }
 
@@ -102,6 +123,9 @@ function resetKeys(){
         KeyBind.key(playerKeys[i],false)
     }
     playerKeys = []
+    
+    //
+    JsMacros.off(openScreenListener)
 }
 function getPassLookBoundary(){
     return passLookBoundary
@@ -280,25 +304,40 @@ function logScriptEnd(farmName, regrowthTime, isVerbose){
         )
         spinTicks(10)
     }
+}
+/*
+//regrowthTime is in seconds
+function logScriptEnd(farmName, regrowthTime, isVerbose, discordID){
+    setScriptEndTime(Time.time())
+    nextHarvest = Math.floor((Time.time()/1000) + regrowthTime)
+    hoursElapsed = Math.floor(getScriptElapsedTime()/60)
+    minutesElapsed = Math.floor(getScriptElapsedTime()%60)
+    if(minutesElapsed < 10){minutesElapsed = "0" + minutesElapsed}
     
-    /* //Verbose
-    Chat.say("/g ZealFarm " + farmName)
-    spinTicks(10)
-    Chat.say("/g ZealFarm " + "Finished: <t:" + scriptEndTime + ":t> <t:"
-        + scriptEndTime + ":D>")
-    spinTicks(10)
-    Chat.say("/g ZealFarm " + "Regrown in: <t:" + nextHarvest + ":R> on "
-        +"<t:" + nextHarvest + ":t> <t:" + nextHarvest + ":D>")
-    spinTicks(10)
-    Chat.say("/g ZealFarm " + "Time Elapsed: " + hoursElapsed + ":" + minutesElapsed)
-    spinTicks(10)
-    for(let i = 0; i < tossedItemsArray.length; i++){
-        Chat.say("/g ZealFarm " + "Yield " + tossedItemsArray[i][0] +": "
-            + tossedItemsArray[i][1])
+    if(isVerbose){
+        Chat.say("/g ZealFarm " + discordID + " " 
+            + farmName + " Finished. "
+            + "Regrown in: <t:" + nextHarvest + ":R>"
+        )
+        spinTicks(10)
+        Chat.say("/g ZealFarm " + "Time Elapsed: " + 
+                    hoursElapsed + ":" + minutesElapsed)
+        spinTicks(10)
+        for(let i = 0; i < tossedItemsArray.length; i++){
+            Chat.say("/g ZealFarm " + "Yield " 
+            + tossedItemsArray[i][0] + ": " + tossedItemsArray[i][1])
+            spinTicks(10)
+        }
+    }
+    else{
+        Chat.say("/g ZealFarm " + discordID + " " 
+            + farmName + " Finished. "
+            + "Regrown in: <t:" + nextHarvest + ":R>"
+        )
         spinTicks(10)
     }
-    */
 }
+*/
 //
 function percentComplete(layer,row,totalLayers,rowsPerLayer){
     return (((layer-1)*rowsPerLayer + row) / (totalLayers*rowsPerLayer))
